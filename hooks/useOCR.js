@@ -1,8 +1,9 @@
-import axios from 'axios';
+import axios from '../utils/axios';
 
 import { useEffect, useState } from 'react';
 
 const Ocr = async (imgSnippet, annoId, updateAnnoText) => {
+  console.log({ annoId });
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const Ocr = async (imgSnippet, annoId, updateAnnoText) => {
           .split(';base64,')[1];
         const getDescription = async () =>
           axios
-            .post('http://localhost:8000/ocr', {
+            .post('/ocr', {
               imgBase64,
             })
             .then(({ data }) => setDescription(data));

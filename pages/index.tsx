@@ -1,10 +1,9 @@
 import type { NextPage } from 'next';
-import Router from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '../styles/Home.module.css';
-import Ocr from './ocr';
+import OCR from './ocr';
 
 const Home: NextPage = () => {
   const [imgSrc, setImgSrc] = useState('');
@@ -30,7 +29,7 @@ const Home: NextPage = () => {
   };
 
   return showOcr ? (
-    <Ocr imgSrc={imgSrc} />
+    <OCR imgSrc={imgSrc} />
   ) : (
     <div className={styles.container}>
       <Head>
