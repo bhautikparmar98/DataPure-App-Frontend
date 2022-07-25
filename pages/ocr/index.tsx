@@ -4,6 +4,6 @@ const Annotator = dynamic(() => import('../../components/Annotator'), {
   ssr: false,
 });
 
-const OCR = ({ imgSrc }: { imgSrc: string }) => <Annotator imgSrc={imgSrc} />;
+const OCR = ({ img }: { img: File }) => <Annotator img={img} />;
 
 export default OCR;

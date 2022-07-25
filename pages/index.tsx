@@ -6,13 +6,13 @@ import styles from '../styles/Home.module.css';
 import OCR from './ocr';
 
 const Home: NextPage = () => {
-  const [imgSrc, setImgSrc] = useState('');
+  const [img, setImg] = useState<File>();
   const [showOcr, setShowOCr] = useState(false);
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    console.log(imgSrc);
-    if (imgSrc.length > 0) {
+    console.log(img);
+    if (img) {
       setShowOCr(true);
     }
   };
@@ -23,13 +23,13 @@ const Home: NextPage = () => {
     }
 
     let image = e.target.files[0];
-    // setImgSrc(image);
+    setImg(image);
     console.log(image);
-    setImgSrc(URL.createObjectURL(image));
+    // setImgSrc(URL.createObjectURL(image));
   };
 
-  return showOcr ? (
-    <OCR imgSrc={imgSrc} />
+  return showOcr && img ? (
+    <OCR img={img} />
   ) : (
     <div className={styles.container}>
       <Head>
