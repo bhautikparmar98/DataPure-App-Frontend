@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// import { Annotorious } from '@recogito/annotorious';
-// import ShapeLabelsFormatter from '@recogito/annotorious-shape-labels';
-// import EnglishImg from './English.png';
+import { Annotorious } from '@recogito/annotorious';
+import ShapeLabelsFormatter from '@recogito/annotorious-shape-labels';
 import useOCR from '../../hooks/useOCR';
 
 import '@recogito/annotorious/dist/annotorious.min.css';
+import loadAnnos from '../../hooks/loadAnnos';
 
 type Anno = {
   id: string;
@@ -16,77 +16,90 @@ type Anno = {
   }[];
 };
 
-// import './App.css';
+type TextAnnotation = {
+  boundingPoly: {
+    vertices: { x: number; y: number }[];
+  };
+  description: string;
+};
+
+type IOCR = {
+  payload: {
+    textAnnotations: TextAnnotation[];
+  };
+};
 
 function Annotator({ img }: any) {
   // Ref to the image DOM element
   const imgEl = useRef<HTMLImageElement>(null);
-
-  console.log();
   // The current Annotorious instance
-  // const [anno, setAnno] = useState<any>();
-  const [isText, setIsText] = useState(true);
-  const [hideLabels, setHideLabels] = useState(false);
+  const [anno, setAnno] = useState<any>();
 
-  // Current drawing tool name
-  const [tool, setTool] = useState('rect');
+  const [visibleAnnos, setVisibleAnnos] = useState(true);
+  const [showLabels, setShowLabels] = useState(false);
 
-  const [OCR, setOCR] = useState({});
+  const [OCR, setOCR] = useState<IOCR>({ payload: { textAnnotations: [] } });
 
   const updateOCR = (fetchedOCR: any) => {
     setOCR(fetchedOCR);
   };
 
+  const addAnno = (textAnnos: TextAnnotation[]) => {
+    const annos = loadAnnos(textAnnos);
+
+    const annotorious = new Annotorious({
+      image: imgEl.current,
+      formatter: ShapeLabelsFormatter(),
+      // disableEditor: true,
+    });
+
+    annotorious.setAnnotations(annos);
+    annotorious.setVisible(visibleAnnos);
+    setAnno(annotorious);
+  };
+
+  const handleHideAnnos = () => {
+    setVisibleAnnos((prevState) => !prevState);
+    anno.setVisible(!visibleAnnos);
+  };
+
   // OCR Image with Google
   useOCR(img, updateOCR);
 
-  // Toggles current tool + button label
-  // const toggleTool = () => {
-  //   if (tool === 'rect') {
-  //     setTool('polygon');
-  //     anno.setDrawingTool('polygon');
-  //   } else {
-  //     setTool('rect');
-  //     anno.setDrawingTool('rect');
-  //   }
-  // };
-
   useEffect(() => {
-    console.log(OCR);
-  }, [OCR]);
+    if (OCR.payload?.textAnnotations?.length > 0) {
+      addAnno(OCR.payload.textAnnotations);
+    }
+  }, [OCR.payload.textAnnotations]);
 
   return (
     <div
       className={
-        hideLabels
-          ? 'annotationsContainer labels-hidden'
-          : 'annotationsContainer'
+        showLabels
+          ? 'annotationsContainer'
+          : 'annotationsContainer labels-hidden'
       }
     >
       <div style={{ margin: '10px auto', textAlign: 'center' }}>
-        {/* <input
+        <input
           type="checkbox"
-          id="annotateText"
-          checked={isText}
-          onChange={(e) => setIsText((prevState) => !prevState)}
-        /> */}
-
-        <label style={{ padding: 5 }} htmlFor="annotateText">
-          Annotate Text
+          id="hideAnnos"
+          checked={visibleAnnos}
+          onChange={handleHideAnnos}
+        />
+        <label style={{ padding: 5 }} htmlFor="hideAnnos">
+          Show Annotations
         </label>
 
         <input
           type="checkbox"
-          id="hideLabels"
-          checked={hideLabels}
-          onChange={(e) => setHideLabels((prevState) => !prevState)}
+          id="showLabels"
+          checked={showLabels}
+          onChange={(e) => setShowLabels((prevState) => !prevState)}
         />
-        <label style={{ padding: 5 }} htmlFor="hideLabels">
-          Hide Labels
+        <label style={{ padding: 5 }} htmlFor="showLabels">
+          Show Labels
         </label>
-        {/* <button onClick={toggleTool}>
-          {tool === 'rect' ? 'RECTANGLE' : 'POLYGON'}
-        </button> */}
       </div>
       {img && (
         <img
@@ -100,4 +113,4 @@ function Annotator({ img }: any) {
   );
 }
 
-export default Annotator;
+export default React.memo(Annotator);

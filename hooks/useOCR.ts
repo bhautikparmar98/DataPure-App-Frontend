@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react';
 
 type SetOCR = ({}) => void;
 
-const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
-  const [fetchedOCR, setFetchedOCR] = useState({});
+let reqCount = 0;
 
+const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
   useEffect(() => {
     try {
-      if (imgSnippet) {
-        console.log('use ocr');
-        // const imgData = imgSnippet.toDataURL('image/png').split(';base64,')[1];
+      if (imgSnippet && reqCount === 0) {
+        reqCount++;
 
         const imgData = new FormData();
         imgData.append('image', imgSnippet);
@@ -23,7 +22,11 @@ const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
                 'Content-Type': 'multipart/form-data',
               },
             })
-            .then(({ data }) => setFetchedOCR(data));
+            .then(({ data }) => {
+              if (data) {
+                setOcr(data);
+              }
+            });
 
         getOCR();
       }
@@ -31,16 +34,8 @@ const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
       console.error('Axios error');
       console.error(err);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgSnippet]);
 
-  useEffect(() => {
-    if (fetchedOCR) {
-      setOcr(fetchedOCR);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedOCR]);
-
-  return { fetchedOCR };
+  return;
 };
 export default useOCR;

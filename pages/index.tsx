@@ -11,7 +11,6 @@ const Home: NextPage = () => {
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    console.log(img);
     if (img) {
       setShowOCr(true);
     }
@@ -24,8 +23,6 @@ const Home: NextPage = () => {
 
     let image = e.target.files[0];
     setImg(image);
-    console.log(image);
-    // setImgSrc(URL.createObjectURL(image));
   };
 
   return showOcr && img ? (
@@ -58,10 +55,7 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by DataPure
         </a>
       </footer>
     </div>
