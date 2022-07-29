@@ -5,7 +5,19 @@ import useLayers from '../hooks/useLayers';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { Container } from '@mui/material';
 
-const MasksPanel = ({ masks, setSelectedMask, selectedMaskId }) => {
+import { type Mask } from '@constants';
+
+type MasksPanelProps = {
+  masks: Mask[];
+  setSelectedMask: (a: any) => void;
+  selectedMaskId: number;
+};
+
+const MasksPanel = ({
+  masks,
+  setSelectedMask,
+  selectedMaskId,
+}: MasksPanelProps) => {
   return (
     <Container sx={{ marginTop: 2 }}>
       <FormControl sx={{ width: 500 }}>

@@ -48,6 +48,8 @@ function Editor() {
             annotationsCommon={{
               fill: '#ff0000',
             }}
+            savingPixelRatio={4 / 3}
+            previewPixelRatio={4 / 3}
             Text={{ text: 'DataPure...' }}
             Crop={{
               presetsItems: [
