@@ -2934,6 +2934,11 @@
   dependencies:
     "tslib" "^2.0.0"
 
+"use-image@^1.0.12":
+  "integrity" "sha512-h6tCbHSvZOyrAKGkj4LTAyOUcMtL6NFyQdmP1M2spuClZrmyPe6nfB/NaFu135a2KKUt+7oGeUdvCiHcMdJerw=="
+  "resolved" "https://registry.npmjs.org/use-image/-/use-image-1.0.12.tgz"
+  "version" "1.0.12"
+
 "use-sidecar@^1.1.2":
   "integrity" "sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw=="
   "resolved" "https://registry.npmjs.org/use-sidecar/-/use-sidecar-1.1.2.tgz"

@@ -46,10 +46,6 @@ function Toolbar() {
     dispatch(setTool(newTool));
   };
 
-  useEffect(() => {
-    document.body.style.cursor = `url("/tools/${currentTool}.svg"),auto`;
-  }, [currentTool]);
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
