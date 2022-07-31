@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import img from '/public/images/1.png';
+import React, { useState } from 'react';
+// import img from '/public/images/1.png';
 import MasksPanel from './children/MasksPanel';
 import FilerobotImageEditor, {
   TABS,
@@ -10,18 +10,6 @@ import useLayers from './hooks/useMasks';
 function Editor() {
   const [open, setOpen] = useState(false);
   const { masks, setSelectedMask, selectedMaskId } = useLayers();
-  const [annotationsCommon, setAnnotationsCommon] = useState({
-    fill: masks[selectedMaskId].color,
-  });
-  const [isImgEditorShown, setIsImgEditorShown] = useState(true);
-
-  const closeImgEditor = () => {
-    setIsImgEditorShown(false);
-  };
-
-  const handleModify = (currentImageDesignState: any) => {
-    console.log(currentImageDesignState);
-  };
 
   return (
     <div style={{ height: 'calc(100vh - 80px)' }}>
@@ -44,7 +32,7 @@ function Editor() {
             onSave={(editedImageObject, designState) =>
               console.log('saved', editedImageObject, designState)
             }
-            onClose={closeImgEditor}
+            onClose={() => {}}
             annotationsCommon={{
               fill: '#ff0000',
             }}

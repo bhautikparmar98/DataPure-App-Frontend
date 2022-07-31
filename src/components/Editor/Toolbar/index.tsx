@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 // MUI
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -38,7 +37,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 function Toolbar() {
-  const [open, setOpen] = React.useState(false);
+  const open = false;
   const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
 
   const dispatch = useAppDispatch();

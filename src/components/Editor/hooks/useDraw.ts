@@ -7,7 +7,6 @@ import {
   startDrawing,
 } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import _ from 'underscore';
 import useTool from './useTool';
 
 // const DEBOUNCE_WAIT = 300;
@@ -35,8 +34,10 @@ const useDraw = (
   const handleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     if (newAnnotation.length === 0 && isDrawing) {
       //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
-      const { x, y } = event.target.getStage()?.getRelativePointerPosition()!;
-      setNewAnnotation([{ x, y, width: 0, height: 0 }]);
+      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+      if (x != null && y != null) {
+        setNewAnnotation([{ x, y, width: 0, height: 0 }]);
+      }
     }
   };
 
@@ -44,17 +45,19 @@ const useDraw = (
     if (newAnnotation.length === 1 && isDrawing) {
       const sx = newAnnotation[0].x || 0;
       const sy = newAnnotation[0].y || 0;
-      const { x, y } = event.target.getStage()?.getRelativePointerPosition()!;
-      const annotationToAdd = {
-        x: sx,
-        y: sy,
-        width: x - sx,
-        height: y - sy,
-        fill: selectedMaskColor,
-      };
-      annotations.push(annotationToAdd);
-      setNewAnnotation([]);
-      setAnnotations(annotations);
+      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+      if (x != null && y != null) {
+        const annotationToAdd = {
+          x: sx,
+          y: sy,
+          width: x - sx,
+          height: y - sy,
+          fill: selectedMaskColor,
+        };
+        annotations.push(annotationToAdd);
+        setNewAnnotation([]);
+        setAnnotations(annotations);
+      }
     }
   };
 
@@ -62,16 +65,18 @@ const useDraw = (
     if (newAnnotation.length === 1 && isDrawing) {
       const sx = newAnnotation[0].x || 0;
       const sy = newAnnotation[0].y || 0;
-      const { x, y } = event.target.getStage()?.getRelativePointerPosition()!;
-      setNewAnnotation([
-        {
-          x: sx,
-          y: sy,
-          width: x - sx,
-          height: y - sy,
-          fill: selectedMaskColor,
-        },
-      ]);
+      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+      if (x != null && y != null) {
+        setNewAnnotation([
+          {
+            x: sx,
+            y: sy,
+            width: x - sx,
+            height: y - sy,
+            fill: selectedMaskColor,
+          },
+        ]);
+      }
     }
   };
   let annotationsToDraw = [...annotations, ...newAnnotation];

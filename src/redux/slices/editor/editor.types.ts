@@ -6,5 +6,3 @@ export enum EditorActionTypes {
   START_DRAWING = '@editor/START_DRAWING',
   End_DRAWING = '@editor/End_DRAWING',
 }
-
-export interface IEditor {}

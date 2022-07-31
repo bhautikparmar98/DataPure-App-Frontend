@@ -7,15 +7,6 @@ import useOCR from '../../hooks/useOCR';
 import '@recogito/annotorious/dist/annotorious.min.css';
 import loadAnnos from '../../hooks/loadAnnos';
 
-type Anno = {
-  id: string;
-  body: {
-    purpose: string;
-    value: string;
-    type: string;
-  }[];
-};
-
 type TextAnnotation = {
   boundingPoly: {
     vertices: { x: number; y: number }[];
@@ -70,6 +61,7 @@ function Annotator({ img }: any) {
     if (OCR.payload?.textAnnotations?.length > 0) {
       addAnno(OCR.payload.textAnnotations);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [OCR.payload.textAnnotations]);
 
   return (

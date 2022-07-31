@@ -29,12 +29,12 @@ const useLayers = () => {
   };
 
   const addLayer = (layer: Instance, maskId: number) => {
-    setMasks((prev) => {
-      return prev.map((mask, i) => {
+    setMasks((prev) =>
+      prev.map((mask, i) => {
         if (i === maskId) mask.instances.push(layer);
         return mask;
-      });
-    });
+      })
+    );
   };
 
   return {

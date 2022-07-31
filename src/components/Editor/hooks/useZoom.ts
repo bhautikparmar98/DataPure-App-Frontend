@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // const MAX_ZOOM = 200;
 const SCALE_BY = 1.2;

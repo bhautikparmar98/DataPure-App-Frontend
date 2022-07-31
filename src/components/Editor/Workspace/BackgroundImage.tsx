@@ -25,7 +25,7 @@ const BackgroundImage = ({ url, width, height }: Props) => {
       fillPatternScaleY={heightRatio}
       id="canvasBackground"
       listening={false}
-    ></Rect>
+    />
   );
 };
 export default BackgroundImage;

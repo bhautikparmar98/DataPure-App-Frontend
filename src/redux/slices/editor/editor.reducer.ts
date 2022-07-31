@@ -1,4 +1,4 @@
-import { EditorActionTypes, IEditor } from './editor.types';
+import { EditorActionTypes } from './editor.types';
 import { TOOLS, masks, Mask, Instance } from 'src/constants';
 
 const initialState = {

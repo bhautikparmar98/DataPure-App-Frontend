@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import styles from '../styles/Home.module.css';
 import OCR from './ocr';
@@ -21,7 +20,7 @@ const Home: NextPage = () => {
       return;
     }
 
-    let image = e.target.files[0];
+    const image = e.target.files[0];
     setImg(image);
   };
 

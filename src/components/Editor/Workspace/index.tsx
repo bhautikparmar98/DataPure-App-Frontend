@@ -1,6 +1,5 @@
-import { KonvaEventObject } from 'konva/lib/Node';
-import React, { useState, useRef, useEffect } from 'react';
-import { Stage, Layer, Star, Text, Rect, Line } from 'react-konva';
+import React, { useRef } from 'react';
+import { Stage, Layer, Rect, Line } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -30,8 +29,6 @@ const Workspace = () => {
     handleMouseEnter,
     handleMouseLeave,
   } = useDraw(masks[selectedMaskId].color, workspaceRef);
-
-  const masksRef = useRef<Konva.Layer[] | []>([]);
 
   const { stageScale, handleWheel } = useZoom();
 
@@ -103,21 +100,19 @@ const Workspace = () => {
         ))}
         {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected mask */}
         <Layer name="Temp Layer">
-          {annotationsToDraw.map((options, m) => {
-            return (
-              <Rect
-                {...options}
-                stroke="black"
-                key={'temp-rect' + m}
-                opacity={0.7}
-                draggable
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              />
-            );
-          })}
+          {annotationsToDraw.map((options, m) => (
+            <Rect
+              {...options}
+              stroke="black"
+              key={'temp-rect' + m}
+              opacity={0.7}
+              draggable
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            />
+          ))}
         </Layer>
       </Stage>
     </div>
