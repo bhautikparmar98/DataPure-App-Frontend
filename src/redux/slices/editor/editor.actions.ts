@@ -34,3 +34,16 @@ export function addInstance(maskId: number, instance: Instance) {
       payload: { maskId, instance },
     });
 }
+
+export function startDrawing() {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.START_DRAWING,
+    });
+}
+export function endDrawing() {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.End_DRAWING,
+    });
+}

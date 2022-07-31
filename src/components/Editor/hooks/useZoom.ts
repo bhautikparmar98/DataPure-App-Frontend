@@ -1,15 +1,8 @@
 import Konva from 'konva';
 import React, { useState } from 'react';
 
-type Props = {
-  stageRef: React.RefObject<Konva.Stage> | undefined;
-  onChangePosition: (pos: Konva.Vector2d) => void;
-  dragBoundFunc: (pos: Konva.Vector2d) => Konva.Vector2d;
-  onChangeScale: (pos: Konva.Vector2d) => Konva.Vector2d;
-};
-
 // const MAX_ZOOM = 200;
-const SCALE_BY = 1.5;
+const SCALE_BY = 1.2;
 
 const useZoom = () => {
   const [stageScale, setStageScale] = useState({
@@ -18,11 +11,12 @@ const useZoom = () => {
     stageY: 0,
   });
 
+  // We may need to debounce this method for big number of shapes drawn
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
 
     const stage = e.target.getStage();
-    console.log(stage);
+
     if (!stage) return;
     const oldScale = Math.abs(stage.scaleX());
     const pointerPosition = stage.getPointerPosition() as {

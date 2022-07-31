@@ -4,10 +4,10 @@ import Workspace from './Workspace';
 
 const Editor = () => {
   return (
-    <div>
+    <div style={{ marginLeft: 70 }}>
       <MasksPanel />
       <Toolbar />
-      <div style={{ marginLeft: 70 }}>
+      <div>
         <Workspace />
       </div>
     </div>

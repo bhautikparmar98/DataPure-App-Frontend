@@ -5,6 +5,7 @@ const initialState = {
   tool: TOOLS.PEN,
   masks,
   selectedMaskId: 0,
+  isDrawing: true,
 };
 
 export const editorReducer = (state = initialState, action: any) => {
@@ -49,6 +50,12 @@ export const editorReducer = (state = initialState, action: any) => {
         masks,
       };
     }
+    case EditorActionTypes.START_DRAWING:
+    case EditorActionTypes.End_DRAWING:
+      return {
+        ...state,
+        isDrawing: action.type === EditorActionTypes.START_DRAWING,
+      };
 
     default:
       return state;

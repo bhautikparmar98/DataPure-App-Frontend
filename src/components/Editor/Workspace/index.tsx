@@ -1,60 +1,55 @@
 import { KonvaEventObject } from 'konva/lib/Node';
 import React, { useState, useRef, useEffect } from 'react';
-import { Stage, Layer, Star, Text } from 'react-konva';
-import useTool from 'src/components/Editor/hooks/useTool';
+import { Stage, Layer, Star, Text, Rect, Line } from 'react-konva';
+import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
+import { useAppSelector } from 'src/redux/store';
 
 const TOOLBAR_WIDTH = 70;
 const MASKS_PANEL_HEIGHT = 60;
 const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
 const HEIGHT = window.innerHeight - MASKS_PANEL_HEIGHT;
 
-function generateShapes() {
-  return [...Array(10)].map((_, i) => ({
-    id: i.toString(),
-    x: Math.random() * WIDTH,
-    y: Math.random() * HEIGHT,
-    rotation: Math.random() * 180,
-    isDragging: false,
-  }));
-}
-
-const INITIAL_STATE = generateShapes();
-
 const Workspace = () => {
-  const [stars, setStars] = useState(INITIAL_STATE);
+  const [masks, selectedMaskId] = useAppSelector(({ editor }) => [
+    editor.masks,
+    editor.selectedMaskId,
+  ]);
+
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  const {
+    handleMouseDown,
+    handleMouseUp,
+    handleMouseMove,
+    annotationsToDraw,
+    handleDragStart,
+    handleDragEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+  } = useDraw(masks[selectedMaskId].color, workspaceRef);
 
-  const { setCursorStyle } = useTool(workspaceRef);
+  const masksRef = useRef<Konva.Layer[] | []>([]);
 
   const { stageScale, handleWheel } = useZoom();
 
-  const handleDragStart = (e: KonvaEventObject<DragEvent>) => {
-    const id = e.target.id();
-    setCursorStyle('grab');
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: star.id === id,
-        };
-      })
-    );
-  };
-  const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: false,
-        };
-      })
-    );
-    setCursorStyle();
-  };
+  // Cache Layers: Caching will disable shapes dragging
+  // useEffect(() => {
+  //   if (stageRef.current?.children) {
+  //     masksRef.current = stageRef.current.children.slice(
+  //       0,
+  //       stageRef.current.children.length - 1
+  //     );
+  //     masksRef.current.forEach((mask) => {
+  //       if (mask.children?.length! > 0) {
+  //         console.log(mask);
+  //         mask.cache();
+  //       }
+  //     });
+  //   }
+  // }, []);
 
   return (
     <div ref={workspaceRef}>
@@ -67,40 +62,64 @@ const Workspace = () => {
         scaleY={stageScale.stageScale}
         x={stageScale.stageX}
         y={stageScale.stageY}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
       >
-        <Layer>
+        <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
-          <Text text="Try to drag a star" draggable />
-          {stars.map((star) => (
-            <Star
-              key={star.id}
-              id={star.id}
-              x={star.x}
-              y={star.y}
-              numPoints={5}
-              innerRadius={20}
-              outerRadius={40}
-              fill="#89b717"
-              opacity={0.8}
-              draggable
-              rotation={star.rotation}
-              shadowColor="black"
-              shadowBlur={10}
-              shadowOpacity={0.6}
-              shadowOffsetX={star.isDragging ? 10 : 5}
-              shadowOffsetY={star.isDragging ? 10 : 5}
-              scaleX={star.isDragging ? 1.2 : 1}
-              scaleY={star.isDragging ? 1.2 : 1}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onMouseEnter={() => setCursorStyle('grab')}
-              onMouseLeave={() => setCursorStyle()}
-            />
-          ))}
+        </Layer>
+        {masks.map((mask, i) => (
+          <Layer
+            name={mask.title}
+            key={`layer-${mask.title}-${i}`}
+            visible={mask.visible}
+            // listening={i === selectedMaskId}
+          >
+            {mask.instances.map((instance) =>
+              instance.shapes?.map((shape, m) =>
+                shape.width ? (
+                  <Rect
+                    {...shape}
+                    key={`${instance.id}-${m}-rect`}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    draggable
+                  />
+                ) : (
+                  <Line
+                    {...shape}
+                    key={`${instance.id}-${m}-line`}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    draggable
+                  />
+                )
+              )
+            )}
+          </Layer>
+        ))}
+        {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected mask */}
+        <Layer name="Temp Layer">
+          {annotationsToDraw.map((options, m) => {
+            return (
+              <Rect
+                {...options}
+                stroke="black"
+                key={'temp-rect' + m}
+                opacity={0.7}
+                draggable
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              />
+            );
+          })}
         </Layer>
       </Stage>
     </div>
   );
 };
 
-export default Workspace;
+export default React.memo(Workspace);

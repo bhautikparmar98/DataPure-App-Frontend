@@ -6,13 +6,9 @@ const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
 
   const setCursorStyle = (cursorStyle?: string) => {
     if (workspaceRef.current?.style) {
-      console.log({ cursorStyle });
       workspaceRef.current.style.cursor = cursorStyle
         ? cursorStyle
         : `url("/tools/${currentTool}.svg"),auto`;
-      console.log(
-        cursorStyle ? cursorStyle : `url("/tools/${currentTool}.svg"),auto`
-      );
     }
   };
   useEffect(() => {

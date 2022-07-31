@@ -37,6 +37,8 @@ const editorPersistConfig = {
 };
 
 const rootReducer = combineReducers({
+  // editor: editorReducer,
+  // !comment the next line for debugging purposes
   editor: persistReducer(editorPersistConfig, editorReducer),
 });
 
