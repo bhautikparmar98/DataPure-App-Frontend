@@ -5,7 +5,7 @@ import FilerobotImageEditor, {
   TABS,
   TOOLS,
 } from 'react-filerobot-image-editor';
-import useLayers from './hooks/useLayers';
+import useLayers from './hooks/useMasks';
 
 function Editor() {
   const [open, setOpen] = useState(false);

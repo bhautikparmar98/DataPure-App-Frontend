@@ -6,19 +6,20 @@ import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
 
+const TOOLBAR_WIDTH = 70;
+const MASKS_PANEL_HEIGHT = 60;
+const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
+const HEIGHT = window.innerHeight - MASKS_PANEL_HEIGHT;
+
 function generateShapes() {
   return [...Array(10)].map((_, i) => ({
     id: i.toString(),
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
+    x: Math.random() * WIDTH,
+    y: Math.random() * HEIGHT,
     rotation: Math.random() * 180,
     isDragging: false,
   }));
 }
-
-const TOOLBAR_WIDTH = 70;
-const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
-const HEIGHT = window.innerHeight - 1;
 
 const INITIAL_STATE = generateShapes();
 
@@ -27,12 +28,13 @@ const Workspace = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
-  useTool(workspaceRef);
+  const { setCursorStyle } = useTool(workspaceRef);
 
   const { stageScale, handleWheel } = useZoom();
 
   const handleDragStart = (e: KonvaEventObject<DragEvent>) => {
     const id = e.target.id();
+    setCursorStyle('grab');
     setStars(
       stars.map((star) => {
         return {
@@ -51,6 +53,7 @@ const Workspace = () => {
         };
       })
     );
+    setCursorStyle();
   };
 
   return (
@@ -90,6 +93,8 @@ const Workspace = () => {
               scaleY={star.isDragging ? 1.2 : 1}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
+              onMouseEnter={() => setCursorStyle('grab')}
+              onMouseLeave={() => setCursorStyle()}
             />
           ))}
         </Layer>

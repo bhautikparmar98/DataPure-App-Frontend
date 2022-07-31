@@ -22,6 +22,7 @@ const useZoom = () => {
     e.evt.preventDefault();
 
     const stage = e.target.getStage();
+    console.log(stage);
     if (!stage) return;
     const oldScale = Math.abs(stage.scaleX());
     const pointerPosition = stage.getPointerPosition() as {
@@ -35,7 +36,6 @@ const useZoom = () => {
 
     const newScale =
       e.evt.deltaY > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
-    console.log({ newScale, oldScale });
 
     setStageScale({
       stageScale: newScale,

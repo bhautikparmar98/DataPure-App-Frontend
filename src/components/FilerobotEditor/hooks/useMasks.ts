@@ -1,4 +1,8 @@
-import { masks as defaultMasks, Mask, Layer } from '../../../constants/masks';
+import {
+  masks as defaultMasks,
+  Mask,
+  Instance,
+} from '../../../constants/masks';
 
 import { useState } from 'react';
 
@@ -13,21 +17,21 @@ const useLayers = () => {
 
   const deleteLayer = (maskId: number, layerId: string) => {
     const mask = masks[maskId];
-    let layers = mask.layers;
+    let layers = mask.instances;
     layers = layers.filter((layer) => layer.id !== layerId);
     const newMasks = [] as Mask[];
     masks.forEach((item, i) => {
-      if (i === maskId) item.layers = layers;
+      if (i === maskId) item.instances = layers;
       newMasks.push(item);
     });
 
     setMasks(newMasks);
   };
 
-  const addLayer = (layer: Layer, maskId: number) => {
+  const addLayer = (layer: Instance, maskId: number) => {
     setMasks((prev) => {
       return prev.map((mask, i) => {
-        if (i === maskId) mask.layers.push(layer);
+        if (i === maskId) mask.instances.push(layer);
         return mask;
       });
     });

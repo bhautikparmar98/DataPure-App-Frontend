@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-export type Layer = {
+export type Instance = {
   visible: boolean;
   id: string;
 };
@@ -8,14 +8,14 @@ export type Layer = {
 export type Mask = {
   title: string;
   color: string;
-  layers: Layer[];
+  instances: Instance[];
 };
 
 export const masks: Mask[] = [
   {
     title: 'Flame',
     color: '#de15f4',
-    layers: [
+    instances: [
       {
         visible: true,
         id: _.uniqueId(),
@@ -33,7 +33,7 @@ export const masks: Mask[] = [
   {
     title: 'Containers',
     color: '#03a9f4',
-    layers: [
+    instances: [
       {
         visible: true,
         id: _.uniqueId(),
