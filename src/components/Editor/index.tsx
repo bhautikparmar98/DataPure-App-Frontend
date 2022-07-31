@@ -1,5 +1,5 @@
-import Toolbar from './children/Toolbar';
-import Workspace from './children/Workspace';
+import Toolbar from './Toolbar';
+import Workspace from './Workspace';
 
 const Editor = () => {
   return (

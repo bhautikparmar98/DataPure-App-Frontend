@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAppSelector } from 'redux/store';
+import { useAppSelector } from 'src/redux/store';
 
 const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
   const currentTool = useAppSelector(({ editor }) => editor.tool);

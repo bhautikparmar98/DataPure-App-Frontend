@@ -12,9 +12,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 // Icons
 import { Icon } from '@iconify/react';
 // Constants
-import { TOOLS, type Tool } from '@constants';
-import { setTool } from 'redux/slices/editor';
-import { useAppDispatch, useAppSelector } from 'redux/store';
+import { TOOLS, type Tool } from 'src/constants';
+import { setTool } from 'src/redux/slices/editor';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 
 const drawerWidth = 240;
 

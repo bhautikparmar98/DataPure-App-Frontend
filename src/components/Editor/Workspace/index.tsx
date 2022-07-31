@@ -2,7 +2,7 @@ import { KonvaEventObject } from 'konva/lib/Node';
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Star, Text } from 'react-konva';
 import useTool from 'src/components/Editor/hooks/useTool';
-import BackgroundImage from './children/BackgroundImage';
+import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
 
@@ -16,8 +16,9 @@ function generateShapes() {
   }));
 }
 
-const width = window.innerWidth - 70;
-const height = window.innerHeight - 5;
+const TOOLBAR_WIDTH = 70;
+const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
+const HEIGHT = window.innerHeight - 1;
 
 const INITIAL_STATE = generateShapes();
 
@@ -55,8 +56,8 @@ const Workspace = () => {
   return (
     <div ref={workspaceRef}>
       <Stage
-        width={width}
-        height={height}
+        width={WIDTH}
+        height={HEIGHT}
         ref={stageRef}
         onWheel={handleWheel}
         scaleX={stageScale.stageScale}
@@ -65,7 +66,7 @@ const Workspace = () => {
         y={stageScale.stageY}
       >
         <Layer>
-          <BackgroundImage width={width} height={height} url="/images/1.png" />
+          <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
           <Text text="Try to drag a star" draggable />
           {stars.map((star) => (
             <Star
