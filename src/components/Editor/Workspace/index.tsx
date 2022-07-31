@@ -113,6 +113,8 @@ const Workspace = () => {
                 draggable
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               />
             );
           })}
