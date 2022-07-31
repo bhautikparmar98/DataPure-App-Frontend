@@ -6,7 +6,7 @@ const useLayers = () => {
   const [masks, setMasks] = useState(defaultMasks);
   const [selectedMaskId, setSelectedMaskId] = useState(0);
 
-  const setSelectedMask = (e) => {
+  const setSelectedMask = (e: any) => {
     const maskId = +e.target.value;
     setSelectedMaskId(maskId);
   };
