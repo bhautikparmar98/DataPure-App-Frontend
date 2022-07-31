@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppSelector } from 'src/redux/store';
 
 const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
-  const currentTool = useAppSelector(({ editor }) => editor.tool);
+  const currentTool = useAppSelector((state) => state.editor.tool);
 
   const setCursorStyle = (cursorStyle?: string) => {
     if (workspaceRef.current?.style) {

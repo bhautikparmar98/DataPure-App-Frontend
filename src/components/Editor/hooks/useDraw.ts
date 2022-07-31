@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import {
   endDrawing,
@@ -24,13 +24,13 @@ const useDraw = (
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseEnter = () => {
     setCursorStyle('move');
-  }, []);
+  };
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     setCursorStyle();
-  }, []);
+  };
 
   const handleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     if (newAnnotation.length === 0 && isDrawing) {
