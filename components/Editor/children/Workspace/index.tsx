@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Star, Text } from 'react-konva';
 import useTool from 'components/Editor/hooks/useTool';
 import BackgroundImage from './children/BackgroundImage';
+import useZoom from 'components/Editor/hooks/useZoom';
+import Konva from 'konva';
 
 function generateShapes() {
   return [...Array(10)].map((_, i) => ({
@@ -20,9 +22,13 @@ const height = window.innerHeight - 5;
 const INITIAL_STATE = generateShapes();
 
 const Workspace = () => {
-  const workspaceRef = useRef<HTMLDivElement>(null);
-  useTool(workspaceRef);
   const [stars, setStars] = useState(INITIAL_STATE);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<Konva.Stage>(null);
+
+  useTool(workspaceRef);
+
+  const { stageScale, handleWheel } = useZoom();
 
   const handleDragStart = (e: KonvaEventObject<DragEvent>) => {
     const id = e.target.id();
@@ -48,7 +54,16 @@ const Workspace = () => {
 
   return (
     <div ref={workspaceRef}>
-      <Stage width={width} height={height}>
+      <Stage
+        width={width}
+        height={height}
+        ref={stageRef}
+        onWheel={handleWheel}
+        scaleX={stageScale.stageScale}
+        scaleY={stageScale.stageScale}
+        x={stageScale.stageX}
+        y={stageScale.stageY}
+      >
         <Layer>
           <BackgroundImage width={width} height={height} url="/images/1.png" />
           <Text text="Try to drag a star" draggable />
