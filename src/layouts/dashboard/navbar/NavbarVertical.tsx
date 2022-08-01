@@ -2,23 +2,23 @@ import { useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
+import { Box, Drawer, Stack } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Stack, Drawer } from '@mui/material';
 // hooks
-import useResponsive from 'src/hooks/useResponsive';
 import useCollapseDrawer from 'src/hooks/useCollapseDrawer';
+import useResponsive from 'src/hooks/useResponsive';
 // utils
 import cssStyles from 'src/utils/cssStyles';
 // config
 import { NAVBAR } from 'src/config';
 // components
 import Logo from 'src/components/Shared/Logo';
-import Scrollbar from 'src/components/Shared/Scrollbar';
 import { NavSectionVertical } from 'src/components/Shared/nav-section';
+import Scrollbar from 'src/components/Shared/Scrollbar';
 //
-import navConfig from './NavConfig';
-import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
+import NavbarAccount from './NavbarAccount';
+import navConfig from './NavConfig';
 
 // ----------------------------------------------------------------------
 
@@ -38,15 +38,24 @@ type Props = {
   onCloseSidebar: VoidFunction;
 };
 
-export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
+export default function NavbarVertical({
+  isOpenSidebar,
+  onCloseSidebar,
+}: Props) {
   const theme = useTheme();
 
   const { pathname } = useRouter();
 
   const isDesktop = useResponsive('up', 'lg');
 
-  const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
-    useCollapseDrawer();
+  const {
+    isCollapse,
+    collapseClick,
+    collapseHover,
+    onToggleCollapse,
+    onHoverEnter,
+    onHoverLeave,
+  } = useCollapseDrawer();
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -59,7 +68,11 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
     <Scrollbar
       sx={{
         height: 1,
-        '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
+        '& .simplebar-content': {
+          height: 1,
+          display: 'flex',
+          flexDirection: 'column',
+        },
         background: theme.palette.gradients.secondary,
       }}
     >
@@ -72,11 +85,18 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           ...(isCollapse && { alignItems: 'center' }),
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Logo />
 
           {isDesktop && !isCollapse && (
-            <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
+            <CollapseButton
+              onToggleCollapse={onToggleCollapse}
+              collapseClick={collapseClick}
+            />
           )}
         </Stack>
 
@@ -93,7 +113,9 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
     <RootStyle
       sx={{
         width: {
-          lg: isCollapse ? NAVBAR.DASHBOARD_COLLAPSE_WIDTH : NAVBAR.DASHBOARD_WIDTH,
+          lg: isCollapse
+            ? NAVBAR.DASHBOARD_COLLAPSE_WIDTH
+            : NAVBAR.DASHBOARD_WIDTH,
         },
         ...(collapseClick && {
           position: 'absolute',

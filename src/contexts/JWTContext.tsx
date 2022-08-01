@@ -25,6 +25,7 @@ enum Types {
 type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
+    role: keyof typeof ROLES;
     user: AuthUser;
   };
   [Types.Login]: {
@@ -50,7 +51,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         isAuthenticated: action.payload.isAuthenticated,
         isInitialized: true,
-        role: state.role,
+        role: action.payload.role,
         user: action.payload.user,
       };
     case 'LOGIN':
@@ -108,7 +109,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
-              role: user.role!,
+              role: user.role as keyof typeof ROLES,
               user,
             },
           });
@@ -117,6 +118,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             type: Types.Initial,
             payload: {
               isAuthenticated: false,
+              role: ROLES.CLIENT.value as keyof typeof ROLES,
               user: null,
             },
           });
@@ -127,6 +129,7 @@ function AuthProvider({ children }: AuthProviderProps) {
           type: Types.Initial,
           payload: {
             isAuthenticated: true, // !FIXME: change this and the endpoint above
+            role: ROLES.CLIENT.value as keyof typeof ROLES,
             user: null,
           },
         });

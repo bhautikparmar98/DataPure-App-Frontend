@@ -1,58 +1,51 @@
-import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 // next
-import NextLink from 'next/link';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import {
   Card,
-  Table,
-  Avatar,
-  Button,
   Checkbox,
-  TableRow,
+  CircularProgress,
+  Container,
+  Paper,
+  Table,
   TableBody,
   TableCell,
-  Container,
-  Typography,
   TableContainer,
   TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 // routes
-import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 // hooks
 import useSettings from 'src/hooks/useSettings';
 // @types
-import { UserManager } from 'src/@types/user';
 // _mock_
-// layouts
-import Layout from 'src/layouts';
 // components
-import Page from 'src/components/Shared/Page';
-import Label from 'src/components/Shared/Label';
-import Iconify from 'src/components/Shared/Iconify';
 import Scrollbar from 'src/components/Shared/Scrollbar';
 import SearchNotFound from 'src/components/Shared/SearchNotFound';
-import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
 // sections
-import useUserListLogic from './useUserListLogic';
+import BackgroundLetterAvatars from 'src/components/Shared/BackgroundLetterAvatars';
+import { ROLES } from 'src/constants';
+import AddUserDialog from './AddUser';
 import UserListTableHeader from './Body/UserListTableHeader';
-import UserListHeader from './Header';
-import UserMoreMenu from './Body/UserMoreMenu';
 import UserListTableToolbar from './Body/UserListTableToolbar';
+import UserMoreMenu from './Body/UserMoreMenu';
+import UserListHeader from './Header';
+import useUserListLogic from './useUserListLogic';
 
 const TABLE_HEAD = [
+  { id: 'id', label: 'Id', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
 
 const UserListComponent = () => {
   const theme = useTheme();
   const { themeStretch } = useSettings();
+  const [addUserDialog, setAddUserDialog] = useState(false);
   const {
     handleRequestSort,
     handleSelectAllClick,
@@ -72,11 +65,18 @@ const UserListComponent = () => {
     rowsPerPage,
     filteredUsers,
     setPage,
+    usersTotalCount,
+    loading,
   } = useUserListLogic();
 
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
-      <UserListHeader />
+      <UserListHeader onNewUser={() => setAddUserDialog(true)} />
+
+      <AddUserDialog
+        open={addUserDialog}
+        onClose={() => setAddUserDialog(false)}
+      />
 
       <Card>
         <UserListTableToolbar
@@ -98,25 +98,29 @@ const UserListComponent = () => {
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
-              <TableBody>
-                {filteredUsers
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    const {
-                      id,
-                      name,
-                      role,
-                      status,
-                      company,
-                      avatarUrl,
-                      isVerified,
-                    } = row;
-                    const isItemSelected = selected.indexOf(name) !== -1;
+              {loading && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <Paper>
+                        <CircularProgress />
+                      </Paper>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+              {!loading && (
+                <TableBody>
+                  {filteredUsers.map((row) => {
+                    const { id, firstName, lastName, role, email } = row;
+
+                    const fullName = `${firstName} ${lastName}`;
+                    const isItemSelected = selected.indexOf(email) !== -1;
 
                     return (
                       <TableRow
                         hover
-                        key={id}
+                        key={`user ${id}`}
                         tabIndex={-1}
                         role="checkbox"
                         selected={isItemSelected}
@@ -125,52 +129,38 @@ const UserListComponent = () => {
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={isItemSelected}
-                            onClick={() => handleClick(name)}
+                            onClick={() => handleClick(email)}
                           />
                         </TableCell>
+
+                        <TableCell>#{id}</TableCell>
                         <TableCell
                           sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-                          <Typography variant="subtitle2" noWrap>
-                            {name}
+                          <BackgroundLetterAvatars name={fullName} />
+                          <Typography variant="subtitle2" noWrap sx={{ ml: 1 }}>
+                            {fullName}
                           </Typography>
                         </TableCell>
-                        <TableCell align="left">{company}</TableCell>
-                        <TableCell align="left">{role}</TableCell>
-                        <TableCell align="left">
-                          {isVerified ? 'Yes' : 'No'}
-                        </TableCell>
-                        <TableCell align="left">
-                          <Label
-                            variant={
-                              theme.palette.mode === 'light'
-                                ? 'ghost'
-                                : 'filled'
-                            }
-                            color={
-                              (status === 'banned' && 'error') || 'success'
-                            }
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell>
+                        <TableCell align="left">{email}</TableCell>
+                        <TableCell align="left">{ROLES[role]?.label}</TableCell>
 
                         <TableCell align="right">
                           <UserMoreMenu
                             onDelete={() => handleDeleteUser(id)}
-                            userName={name}
+                            userName={email}
                           />
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              )}
               {isNotFound && (
                 <TableBody>
                   <TableRow>
@@ -185,9 +175,9 @@ const UserListComponent = () => {
         </Scrollbar>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[1, 5, 10, 25]}
           component="div"
-          count={userList.length}
+          count={usersTotalCount}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={(e, page) => setPage(page)}

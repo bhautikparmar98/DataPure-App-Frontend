@@ -1,12 +1,15 @@
 // layouts
 // components
+import { Button } from '@mui/material';
 import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
 import Iconify from 'src/components/Shared/Iconify';
 import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
-import  NextLink  from 'next/link';
-import { Button } from '@mui/material';
 
-const UserListHeader = () => (
+interface UserListHeaderProps {
+  onNewUser: () => void;
+}
+
+const UserListHeader: React.FC<UserListHeaderProps> = ({ onNewUser }) => (
   <HeaderBreadcrumbs
     heading="User List"
     links={[
@@ -15,14 +18,13 @@ const UserListHeader = () => (
       { name: 'List' },
     ]}
     action={
-      <NextLink href={'#'} passHref>
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon={'eva:plus-fill'} />}
-        >
-          New User
-        </Button>
-      </NextLink>
+      <Button
+        variant="contained"
+        startIcon={<Iconify icon={'eva:plus-fill'} />}
+        onClick={onNewUser}
+      >
+        New User
+      </Button>
     }
   />
 );

@@ -1,35 +1,21 @@
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserManager } from 'src/@types/user';
-import useAuth from 'src/hooks/useAuth';
-import { FormValuesProps } from '../types';
-
-export const _userList = [...Array(24)].map((_, index) => ({
-  id: index,
-  avatarUrl: '#',
-  name: 'Akram',
-  email: '',
-  phoneNumber: '',
-  address: '',
-  country: '',
-  state: '',
-  city: '',
-  zipCode: '',
-  company: '',
-  isVerified: '',
-  status: '',
-  role: '',
-}));
+import axiosInstance from 'src/utils/axios';
 
 const useUserListLogic = () => {
-  const [userList, setUserList] = useState(_userList);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [userList, setUserList] = useState([]);
+  const [usersTotalCount, setUsersTotalCount] = useState(0);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [loading, setLoading] = useState(false);
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -101,6 +87,28 @@ const useUserListLogic = () => {
 
   const isNotFound = !filteredUsers.length && Boolean(filterName);
 
+  useEffect(() => {
+    const getAllUsers = async () => {
+      try {
+        setLoading(true);
+
+        const response = await axiosInstance.get('/user', {
+          params: { skip: page * rowsPerPage, take: rowsPerPage },
+        });
+
+        const { users, totalCount } = response.data;
+        setUserList(users);
+        setUsersTotalCount(totalCount);
+      } catch (error) {
+        console.log('error', error);
+        enqueueSnackbar('Something went wrong.');
+      }
+      setLoading(false);
+    };
+
+    getAllUsers();
+  }, [page, rowsPerPage]);
+
   return {
     handleRequestSort,
     handleSelectAllClick,
@@ -120,6 +128,8 @@ const useUserListLogic = () => {
     rowsPerPage,
     filteredUsers,
     setPage,
+    usersTotalCount,
+    loading,
   };
 };
 
@@ -158,7 +168,10 @@ function applySortFilter(
   });
   if (query) {
     return array.filter(
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        `${_user.firstName} ${_user.lastName}`
+          .toLowerCase()
+          .indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);

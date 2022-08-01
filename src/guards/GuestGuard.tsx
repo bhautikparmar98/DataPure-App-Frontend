@@ -17,10 +17,12 @@ type Props = {
 export default function GuestGuard({ children }: Props) {
   const { push } = useRouter();
 
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated } = useAuth();
+
+  console.log('isAuthenticated', isAuthenticated);
 
   useEffect(() => {
-    {
+    if (isAuthenticated) {
       push(PATH_DASHBOARD.root);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -7,7 +7,6 @@ import axios from './axios';
 const setSession = (accessToken: string | null) => {
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken);
-
     axios.defaults.headers.common['x-access-token'] = `bearer ${accessToken}`;
   } else {
     localStorage.removeItem('accessToken');
