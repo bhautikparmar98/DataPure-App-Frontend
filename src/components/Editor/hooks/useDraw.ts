@@ -12,7 +12,7 @@ import useTool from './useTool';
 // const DEBOUNCE_WAIT = 300;
 
 const useDraw = (
-  selectedMaskColor: string,
+  selectedLayerColor: string,
   workspaceRef: React.RefObject<HTMLDivElement>
 ) => {
   const isDrawing = useAppSelector(({ editor }) => editor.isDrawing);
@@ -52,7 +52,7 @@ const useDraw = (
           y: sy,
           width: x - sx,
           height: y - sy,
-          fill: selectedMaskColor,
+          fill: selectedLayerColor,
         };
         annotations.push(annotationToAdd);
         setNewAnnotation([]);
@@ -73,7 +73,7 @@ const useDraw = (
             y: sy,
             width: x - sx,
             height: y - sy,
-            fill: selectedMaskColor,
+            fill: selectedLayerColor,
           },
         ]);
       }

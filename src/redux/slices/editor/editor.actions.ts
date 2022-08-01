@@ -11,27 +11,27 @@ export function setTool(tool: Tool) {
     });
 }
 
-export function selectMask(maskId: number) {
+export function selectLayer(layerId: number) {
   return () =>
     dispatch({
-      type: EditorActionTypes.SELECT_MASK,
-      payload: { maskId },
+      type: EditorActionTypes.SELECT_LAYER,
+      payload: { layerId },
     });
 }
 
-export function deleteInstance(maskId: number, instanceId: string) {
+export function deleteInstance(layerId: number, instanceId: string) {
   return () =>
     dispatch({
       type: EditorActionTypes.DELETE_INSTANCE,
-      payload: { maskId, instanceId },
+      payload: { layerId, instanceId },
     });
 }
 
-export function addInstance(maskId: number, instance: Instance) {
+export function addInstance(layerId: number, instance: Instance) {
   return () =>
     dispatch({
       type: EditorActionTypes.ADD_INSTANCE,
-      payload: { maskId, instance },
+      payload: { layerId, instance },
     });
 }
 

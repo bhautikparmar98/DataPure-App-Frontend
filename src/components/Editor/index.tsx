@@ -1,10 +1,10 @@
-import MasksPanel from './MasksPanel';
+import LayersPanel from './LayersPanel';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 
 const Editor = () => (
   <div style={{ marginLeft: 70 }}>
-    <MasksPanel />
+    <LayersPanel />
     <Toolbar />
     <div>
       <Workspace />

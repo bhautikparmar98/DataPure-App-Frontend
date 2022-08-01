@@ -1,10 +1,10 @@
 import { EditorActionTypes } from './editor.types';
-import { TOOLS, masks, Mask, Instance } from 'src/constants';
+import { TOOLS, layers, Mask, Instance } from 'src/constants';
 
 const initialState = {
   tool: TOOLS.PEN,
-  masks,
-  selectedMaskId: 0,
+  layers,
+  selectedLayerId: 0,
   isDrawing: true,
 };
 
@@ -16,38 +16,38 @@ export const editorReducer = (state = initialState, action: any) => {
         tool: action.payload.tool,
       };
 
-    case EditorActionTypes.SELECT_MASK:
+    case EditorActionTypes.SELECT_LAYER:
       return {
         ...state,
-        selectedMaskId: action.payload.maskId,
+        selectedLayerId: action.payload.maskId,
       };
 
     case EditorActionTypes.DELETE_INSTANCE: {
       const { maskId, instanceId } = action.payload;
-      const { masks } = state;
-      let instances = masks[maskId]?.instances;
+      const { layers } = state;
+      let instances = layers[maskId]?.instances;
       instances = instances.filter(
         (instance: Instance) => instance.id !== instanceId
       );
-      const newMasks = [] as Mask[];
+      const newLayers = [] as Mask[];
 
-      masks.forEach((item, i) => {
+      layers.forEach((item, i) => {
         if (i === maskId) item.instances = instances;
-        newMasks.push(item);
+        newLayers.push(item);
       });
       return {
         ...state,
-        masks: newMasks,
+        layers: newLayers,
       };
     }
 
     case EditorActionTypes.ADD_INSTANCE: {
-      const { masks } = state;
-      const { maskId, instance } = action.payload;
-      masks[maskId].instances.push(instance);
+      const { layers } = state;
+      const { layerId, instance } = action.payload;
+      layers[layerId].instances.push(instance);
       return {
         ...state,
-        masks,
+        layers,
       };
     }
     case EditorActionTypes.START_DRAWING:

@@ -7,14 +7,14 @@ import Konva from 'konva';
 import { useAppSelector } from 'src/redux/store';
 
 const TOOLBAR_WIDTH = 70;
-const MASKS_PANEL_HEIGHT = 60;
+const LAYERS_PANEL_HEIGHT = 60;
 const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
-const HEIGHT = window.innerHeight - MASKS_PANEL_HEIGHT;
+const HEIGHT = window.innerHeight - LAYERS_PANEL_HEIGHT;
 
 const Workspace = () => {
-  const [masks, selectedMaskId] = useAppSelector(({ editor }) => [
-    editor.masks,
-    editor.selectedMaskId,
+  const [layers, selectedLayerId] = useAppSelector(({ editor }) => [
+    editor.layers,
+    editor.selectedLayerId,
   ]);
 
   const workspaceRef = useRef<HTMLDivElement>(null);
@@ -28,25 +28,9 @@ const Workspace = () => {
     handleDragEnd,
     handleMouseEnter,
     handleMouseLeave,
-  } = useDraw(masks[selectedMaskId].color, workspaceRef);
+  } = useDraw(layers[selectedLayerId].color, workspaceRef);
 
   const { stageScale, handleWheel } = useZoom();
-
-  // Cache Layers: Caching will disable shapes dragging
-  // useEffect(() => {
-  //   if (stageRef.current?.children) {
-  //     masksRef.current = stageRef.current.children.slice(
-  //       0,
-  //       stageRef.current.children.length - 1
-  //     );
-  //     masksRef.current.forEach((mask) => {
-  //       if (mask.children?.length! > 0) {
-  //         console.log(mask);
-  //         mask.cache();
-  //       }
-  //     });
-  //   }
-  // }, []);
 
   return (
     <div ref={workspaceRef}>
@@ -66,14 +50,14 @@ const Workspace = () => {
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
         </Layer>
-        {masks.map((mask, i) => (
+        {layers.map((layer, i) => (
           <Layer
-            name={mask.title}
-            key={`layer-${mask.title}-${i}`}
-            visible={mask.visible}
-            // listening={i === selectedMaskId}
+            name={layer.title}
+            key={`layer-${layer.title}-${i}`}
+            visible={layer.visible}
+            // listening={i === selectedLayerId}
           >
-            {mask.instances.map((instance) =>
+            {layer.instances.map((instance) =>
               instance.shapes?.map((shape, m) =>
                 shape.width ? (
                   <Rect
@@ -98,14 +82,14 @@ const Workspace = () => {
             )}
           </Layer>
         ))}
-        {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected mask */}
+        {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected layer */}
         <Layer name="Temp Layer">
           {annotationsToDraw.map((options, m) => (
             <Rect
               {...options}
               stroke="black"
               key={'temp-rect' + m}
-              opacity={0.7}
+              opacity={0.3}
               draggable
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
