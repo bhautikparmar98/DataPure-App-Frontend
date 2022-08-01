@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useState } from 'react';
+import { TOOLS } from 'src/constants';
 
 import {
   endDrawing,
@@ -15,13 +16,30 @@ const useDraw = (
   selectedLayerColor: string,
   workspaceRef: React.RefObject<HTMLDivElement>
 ) => {
-  const isDrawing = useAppSelector(({ editor }) => editor.isDrawing);
+  const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
 
   const { setCursorStyle } = useTool(workspaceRef);
 
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
+
+  const AnnotationConfig = {
+    fill: selectedLayerColor.replace(')', ', 0.3)').replace('rgb', 'rgba'),
+    opacity: 0.7,
+    stroke: selectedLayerColor,
+    strokeWidth: 5,
+    globalCompositeOperation: 'source-over',
+  } as const;
+
+  const EraserConfig = {
+    fill: selectedLayerColor,
+    opacity: 1,
+    strokeWidth: 0,
+    globalCompositeOperation: 'destination-out',
+  } as const;
+
+  const config = tool === TOOLS.ERASER ? EraserConfig : AnnotationConfig;
 
   const handleMouseEnter = () => {
     setCursorStyle('move');
@@ -52,7 +70,7 @@ const useDraw = (
           y: sy,
           width: x - sx,
           height: y - sy,
-          fill: selectedLayerColor,
+          ...config,
         };
         annotations.push(annotationToAdd);
         setNewAnnotation([]);
@@ -73,7 +91,7 @@ const useDraw = (
             y: sy,
             width: x - sx,
             height: y - sy,
-            fill: selectedLayerColor,
+            ...config,
           },
         ]);
       }

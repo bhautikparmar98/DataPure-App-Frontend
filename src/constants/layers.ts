@@ -27,7 +27,7 @@ const mockLines = () =>
 export const layers: Layer[] = [
   {
     title: 'Flame',
-    color: '#de15f4',
+    color: 'rgb(3,169,244)',
     visible: true,
     instances: [
       {
@@ -49,7 +49,7 @@ export const layers: Layer[] = [
   },
   {
     title: 'Containers',
-    color: '#03a9f4',
+    color: 'rgb(15,220,144)',
     visible: true,
     instances: [
       {

@@ -1,8 +1,8 @@
 import { EditorActionTypes } from './editor.types';
-import { TOOLS, layers, Mask, Instance } from 'src/constants';
+import { TOOLS, layers, Layer, Instance, Tool } from 'src/constants';
 
 const initialState = {
-  tool: TOOLS.PEN,
+  tool: TOOLS.PEN as Tool,
   layers,
   selectedLayerId: 0,
   isDrawing: true,
@@ -19,20 +19,20 @@ export const editorReducer = (state = initialState, action: any) => {
     case EditorActionTypes.SELECT_LAYER:
       return {
         ...state,
-        selectedLayerId: action.payload.maskId,
+        selectedLayerId: action.payload.layerId,
       };
 
     case EditorActionTypes.DELETE_INSTANCE: {
-      const { maskId, instanceId } = action.payload;
+      const { layerId, instanceId } = action.payload;
       const { layers } = state;
-      let instances = layers[maskId]?.instances;
+      let instances = layers[layerId]?.instances;
       instances = instances.filter(
         (instance: Instance) => instance.id !== instanceId
       );
-      const newLayers = [] as Mask[];
+      const newLayers = [] as Layer[];
 
       layers.forEach((item, i) => {
-        if (i === maskId) item.instances = instances;
+        if (i === layerId) item.instances = instances;
         newLayers.push(item);
       });
       return {

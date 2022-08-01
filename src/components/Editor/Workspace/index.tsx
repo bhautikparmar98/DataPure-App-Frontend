@@ -19,6 +19,7 @@ const Workspace = () => {
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  console.log(layers, selectedLayerId);
   const {
     handleMouseDown,
     handleMouseUp,
@@ -87,9 +88,7 @@ const Workspace = () => {
           {annotationsToDraw.map((options, m) => (
             <Rect
               {...options}
-              stroke="black"
               key={'temp-rect' + m}
-              opacity={0.3}
               draggable
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
