@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
-import { Stage, Layer, Rect, Line } from 'react-konva';
+import React, { useEffect, useRef, useState } from 'react';
+import { Stage, Layer, Rect, Line, Circle } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
 import { useAppSelector } from 'src/redux/store';
+import { TOOLS } from 'src/constants';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_HEIGHT = 60;
@@ -12,25 +13,30 @@ const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
 const HEIGHT = window.innerHeight - LAYERS_PANEL_HEIGHT;
 
 const Workspace = () => {
-  const [layers, selectedLayerId] = useAppSelector(({ editor }) => [
-    editor.layers,
-    editor.selectedLayerId,
-  ]);
+  const [layers, selectedLayerId, currentTool] = useAppSelector(
+    ({ editor }) => [editor.layers, editor.selectedLayerId, editor.tool]
+  );
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
-  console.log(layers, selectedLayerId);
   const {
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    annotationsToDraw,
+    rects: newRects,
+    erasedParts,
     handleDragStart,
     handleDragEnd,
     handleMouseEnter,
     handleMouseLeave,
-  } = useDraw(layers[selectedLayerId].color, workspaceRef);
+  } = useDraw(
+    selectedLayerId,
+    layers[selectedLayerId].color,
+    workspaceRef,
+    currentTool
+  );
 
+  // const [rects, setRects] = useState<Konva.ShapeConfig[]>([]);
   const { stageScale, handleWheel } = useZoom();
 
   return (
@@ -56,44 +62,55 @@ const Workspace = () => {
             name={layer.title}
             key={`layer-${layer.title}-${i}`}
             visible={layer.visible}
-            // listening={i === selectedLayerId}
           >
             {layer.instances.map((instance) =>
               instance.shapes?.map((shape, m) =>
-                shape.width ? (
+                shape.type === TOOLS.ERASER ? (
+                  <Circle
+                    {...shape}
+                    key={'temp-rect' + m}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    listening={false}
+                  />
+                ) : (
                   <Rect
                     {...shape}
                     key={`${instance.id}-${m}-rect`}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    draggable
-                  />
-                ) : (
-                  <Line
-                    {...shape}
-                    key={`${instance.id}-${m}-line`}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                    draggable
+                    // onDragStart={handleDragStart}
+                    // onDragEnd={handleDragEnd}
+                    // onMouseEnter={handleMouseEnter}
+                    // onMouseLeave={handleMouseLeave}
+                    // draggable
                   />
                 )
               )
             )}
           </Layer>
         ))}
+
         {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected layer */}
         <Layer name="Temp Layer">
-          {annotationsToDraw.map((options, m) => (
+          {newRects.map((options, m) => (
             <Rect
               {...options}
               key={'temp-rect' + m}
-              draggable
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
+              // draggable
+              // onDragStart={handleDragStart}
+              // onDragEnd={handleDragEnd}
+              // onMouseEnter={handleMouseEnter}
+              // onMouseLeave={handleMouseLeave}
+            />
+          ))}
+        </Layer>
+        <Layer>
+          {erasedParts.map((options, m) => (
+            <Circle
+              {...options}
+              key={'temp-rect' + m}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              listening={false}
             />
           ))}
         </Layer>

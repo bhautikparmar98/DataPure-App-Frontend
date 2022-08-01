@@ -1,10 +1,11 @@
 import Konva from 'konva';
 import _ from 'underscore';
+import { Tool, TOOLS } from './tools';
 
 export type Instance = {
   visible: boolean;
   id: string;
-  shapes: Konva.ShapeConfig[];
+  shapes: Konva.ShapeConfig[] & { type?: Tool };
 };
 
 export type Layer = {

@@ -1,45 +1,53 @@
-import Konva from 'konva';
+import { Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useState } from 'react';
-import { TOOLS } from 'src/constants';
-
-import {
-  endDrawing,
-  startDrawing,
-} from 'src/redux/slices/editor/editor.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import useRect from './useRect';
 import useTool from './useTool';
+import useEraser from './useEraser';
 
 // const DEBOUNCE_WAIT = 300;
 
 const useDraw = (
+  selectedLayerId: number,
   selectedLayerColor: string,
-  workspaceRef: React.RefObject<HTMLDivElement>
+  workspaceRef: React.RefObject<HTMLDivElement>,
+  currentTool: Tool
 ) => {
-  const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
-  const dispatch = useAppDispatch();
+  const {
+    rectHandleDragStart,
+    rectHandleDragEnd,
+    rectHandleMouseDown,
+    rectHandleMouseUp,
+    rectHandleMouseMove,
+    rects,
+  } = useRect(selectedLayerId, selectedLayerColor, workspaceRef);
+
+  const {
+    eraseHandleMouseDown,
+    eraseHandleMouseUp,
+    eraseHandleMouseMove,
+    erasedParts,
+  } = useEraser(selectedLayerId, selectedLayerColor, workspaceRef);
 
   const { setCursorStyle } = useTool(workspaceRef);
 
-  const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
-  const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
+  let handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {};
+  let handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {};
+  let handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {};
+  let handleDragStart = (e: KonvaEventObject<WheelEvent>) => {};
+  let handleDragEnd = (e: KonvaEventObject<WheelEvent>) => {};
 
-  const AnnotationConfig = {
-    fill: selectedLayerColor.replace(')', ', 0.3)').replace('rgb', 'rgba'),
-    opacity: 0.7,
-    stroke: selectedLayerColor,
-    strokeWidth: 5,
-    globalCompositeOperation: 'source-over',
-  } as const;
-
-  const EraserConfig = {
-    fill: selectedLayerColor,
-    opacity: 1,
-    strokeWidth: 0,
-    globalCompositeOperation: 'destination-out',
-  } as const;
-
-  const config = tool === TOOLS.ERASER ? EraserConfig : AnnotationConfig;
+  // console.log(currentTool);
+  if (currentTool === TOOLS.RECTANGLE) {
+    handleMouseDown = (e) => rectHandleMouseDown(e);
+    handleMouseUp = (e) => rectHandleMouseUp(e);
+    handleMouseMove = (e) => rectHandleMouseMove(e);
+    handleDragStart = (e: KonvaEventObject<WheelEvent>) => rectHandleDragStart;
+    handleDragEnd = (e: KonvaEventObject<WheelEvent>) => rectHandleDragEnd;
+  } else if (currentTool === TOOLS.ERASER) {
+    handleMouseDown = (e) => eraseHandleMouseDown(e);
+    handleMouseUp = (e) => eraseHandleMouseUp(e);
+    handleMouseMove = (e) => eraseHandleMouseMove(e);
+  }
 
   const handleMouseEnter = () => {
     setCursorStyle('move');
@@ -49,75 +57,12 @@ const useDraw = (
     setCursorStyle();
   };
 
-  const handleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
-    if (newAnnotation.length === 0 && isDrawing) {
-      //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
-      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      if (x != null && y != null) {
-        setNewAnnotation([{ x, y, width: 0, height: 0 }]);
-      }
-    }
-  };
-
-  const handleMouseUp = (event: KonvaEventObject<WheelEvent>) => {
-    if (newAnnotation.length === 1 && isDrawing) {
-      const sx = newAnnotation[0].x || 0;
-      const sy = newAnnotation[0].y || 0;
-      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      if (x != null && y != null) {
-        const annotationToAdd = {
-          x: sx,
-          y: sy,
-          width: x - sx,
-          height: y - sy,
-          ...config,
-        };
-        annotations.push(annotationToAdd);
-        setNewAnnotation([]);
-        setAnnotations(annotations);
-      }
-    }
-  };
-
-  const handleMouseMove = (event: KonvaEventObject<WheelEvent>) => {
-    if (newAnnotation.length === 1 && isDrawing) {
-      const sx = newAnnotation[0].x || 0;
-      const sy = newAnnotation[0].y || 0;
-      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      if (x != null && y != null) {
-        setNewAnnotation([
-          {
-            x: sx,
-            y: sy,
-            width: x - sx,
-            height: y - sy,
-            ...config,
-          },
-        ]);
-      }
-    }
-  };
-  let annotationsToDraw = [...annotations, ...newAnnotation];
-
-  const handleDragStart = () => {
-    setCursorStyle('move');
-    annotationsToDraw = [];
-    setNewAnnotation([]);
-    dispatch(endDrawing());
-  };
-
-  const handleDragEnd = () => {
-    setCursorStyle();
-    setNewAnnotation([]);
-    dispatch(startDrawing());
-    annotationsToDraw = [];
-  };
-
   return {
+    rects,
+    erasedParts,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    annotationsToDraw,
     handleDragStart,
     handleDragEnd,
     handleMouseEnter,

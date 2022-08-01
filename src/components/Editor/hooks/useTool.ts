@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react';
+import { TOOLS } from 'src/constants';
 import { useAppSelector } from 'src/redux/store';
 
 const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
   const currentTool = useAppSelector((state) => state.editor.tool);
 
+  const toolName =
+    currentTool === TOOLS.ERASER ? 'eraser-working' : currentTool;
+
   const setCursorStyle = (cursorStyle?: string) => {
     if (workspaceRef.current?.style) {
       workspaceRef.current.style.cursor = cursorStyle
         ? cursorStyle
-        : `url("/tools/${currentTool}.svg"),auto`;
+        : `url("/tools/${toolName}.svg"),auto`;
     }
   };
   useEffect(() => {
