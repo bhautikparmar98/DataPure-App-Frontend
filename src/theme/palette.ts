@@ -2,15 +2,14 @@ import { alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-function createGradient(color1: string, color2: string, direction = 'to bottom') {
-  return `linear-gradient(${direction}, ${color1}, ${color2})`;
+function createGradient(color1: string, color2: string) {
+  return `linear-gradient(to bottom, ${color1}, ${color2})`;
 }
 
 export type ColorSchema = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 
 interface GradientsPaletteOptions {
   primary: string;
-  secondary: string;
   info: string;
   success: string;
   warning: string;
@@ -25,18 +24,6 @@ interface ChartPaletteOptions {
   red: string[];
 }
 
-interface LabelProps {
-  background: string;
-  color: string;
-  borderRadius: string;
-}
-
-type Label = {
-  Listed: LabelProps;
-  Delisted: LabelProps;
-  Draft: LabelProps;
-  Submitted: LabelProps;
-};
 declare module '@mui/material/styles/createPalette' {
   interface TypeBackground {
     neutral: string;
@@ -52,7 +39,6 @@ declare module '@mui/material/styles/createPalette' {
   interface Palette {
     gradients: GradientsPaletteOptions;
     chart: ChartPaletteOptions;
-    label: Label;
   }
   interface PaletteOptions {
     gradients: GradientsPaletteOptions;
@@ -76,11 +62,11 @@ declare module '@mui/material' {
 
 // SETUP COLORS
 const PRIMARY = {
-  lighter: '#E8F2FF',
-  light: '#2583FD',
-  main: '#136DE1',
-  dark: '#3776BB',
-  darker: '#2660a0',
+  lighter: '#C8FACD',
+  light: '#5BE584',
+  main: '#00AB55',
+  dark: '#007B55',
+  darker: '#005249',
 };
 const SECONDARY = {
   lighter: '#D6E4FF',
@@ -92,7 +78,7 @@ const SECONDARY = {
 const INFO = {
   lighter: '#D0F2FF',
   light: '#74CAFF',
-  main: '#688BB1',
+  main: '#1890FF',
   dark: '#0C53B7',
   darker: '#04297A',
 };
@@ -124,8 +110,8 @@ const GREY = {
   200: '#F4F6F8',
   300: '#DFE3E8',
   400: '#C4CDD5',
-  500: '#B2BFCC',
-  600: '#688BB1',
+  500: '#919EAB',
+  600: '#637381',
   700: '#454F5B',
   800: '#212B36',
   900: '#161C24',
@@ -141,7 +127,6 @@ const GREY = {
 
 const GRADIENTS = {
   primary: createGradient(PRIMARY.light, PRIMARY.main),
-  secondary: createGradient('#FFFFFF 0%', '#F3F8FF 100%', '180deg'),
   info: createGradient(INFO.light, INFO.main),
   success: createGradient(SUCCESS.light, SUCCESS.main),
   warning: createGradient(WARNING.light, WARNING.main),
@@ -156,11 +141,6 @@ const CHART_COLORS = {
   red: ['#FF6C40', '#FF8F6D', '#FFBD98', '#FFF2D4'],
 };
 
-const defaultLabel = {
-  borderRadius: '16px',
-  padding: '3px 10px 3px 10px',
-};
-
 const COMMON = {
   common: { black: '#000', white: '#fff' },
   primary: { ...PRIMARY, contrastText: '#fff' },
@@ -173,17 +153,11 @@ const COMMON = {
   gradients: GRADIENTS,
   chart: CHART_COLORS,
   divider: GREY[500_24],
-  label: {
-    Draft: { ...defaultLabel, background: '#F5F4F4', color: '#A1A1A1' },
-    Listed: { ...defaultLabel, background: '#DBFFF4', color: '#00D897' },
-    Delisted: { ...defaultLabel, background: '#FFEAEA', color: '#FF4F4F' },
-    Submitted: { ...defaultLabel, background: '#E8F2FF', color: '#2583FD' },
-  },
   action: {
     hover: GREY[500_8],
     selected: GREY[500_16],
     disabled: GREY[500_80],
-    disabledBackground: GREY[500],
+    disabledBackground: GREY[500_24],
     focus: GREY[500_24],
     hoverOpacity: 0.08,
     disabledOpacity: 0.48,
@@ -195,7 +169,7 @@ const palette = {
     ...COMMON,
     mode: 'light',
     text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-    background: { paper: '#fff', default: '#fff', neutral: GREY[100] },
+    background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
     action: { active: GREY[600], ...COMMON.action },
   },
   dark: {

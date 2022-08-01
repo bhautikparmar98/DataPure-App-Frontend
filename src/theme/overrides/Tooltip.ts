@@ -9,15 +9,12 @@ export default function Tooltip(theme: Theme) {
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: theme.palette.grey[600],
-          paddingTop: theme.spacing(2),
-          paddingBottom: theme.spacing(2),
-          fontSize: theme.typography.pxToRem(12),
+          backgroundColor: theme.palette.grey[isLight ? 800 : 700]
         },
         arrow: {
-          color: theme.palette.grey[isLight ? 800 : 700],
-        },
-      },
-    },
+          color: theme.palette.grey[isLight ? 800 : 700]
+        }
+      }
+    }
   };
 }

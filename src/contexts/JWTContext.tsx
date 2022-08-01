@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useEffect, useReducer } from 'react';
 // @types
+import jwt from 'jsonwebtoken';
 import {
   ActionMap,
   AuthState,
@@ -7,8 +8,10 @@ import {
   JWTContextType,
 } from 'src/@types/auth';
 import { ROLES } from 'src/constants';
-import axios from 'src/utils/axios';
+import axios, { setAuthHeader } from 'src/utils/axios';
+
 // utils
+import { accessToken } from 'mapbox-gl';
 import { setSession } from 'src/utils/jwt';
 
 // ----------------------------------------------------------------------
@@ -17,7 +20,6 @@ enum Types {
   Initial = 'INITIALIZE',
   Login = 'LOGIN',
   Logout = 'LOGOUT',
-  Register = 'REGISTER',
 }
 
 type JWTAuthPayload = {
@@ -30,9 +32,6 @@ type JWTAuthPayload = {
     role: keyof typeof ROLES;
   };
   [Types.Logout]: undefined;
-  [Types.Register]: {
-    user: AuthUser;
-  };
 };
 
 export type JWTActions =
@@ -68,13 +67,6 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         user: null,
       };
 
-    case 'REGISTER':
-      return {
-        ...state,
-        isAuthenticated: true,
-        user: action.payload.user,
-      };
-
     default:
       return state;
   }
@@ -95,31 +87,28 @@ function AuthProvider({ children }: AuthProviderProps) {
     const initialize = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
-        // TODO: get this from the server when refactoring the auth
-        // const role = ROLES.AGENT.value;
 
         if (accessToken) {
-          setSession(accessToken, state.role);
+          setSession(accessToken);
 
-          const config = {
-            headers: { 'x-access-token': `bearer ${accessToken}` },
-          };
+          // update axios auth header with access token
+          setAuthHeader(accessToken);
+
+          const encoded: AuthUser = jwt.decode(accessToken) as any;
+
+          if (!encoded || typeof encoded === 'string')
+            throw new Error('invalid access token');
           // get user info
 
-          let user = null;
-
-          // TODO: THIS ALL SHOULD BE REMOVED WHEN REFACTORING THE AUTH
-          if (state.role === ROLES.CLIENT.value) {
-            const response = await axios.get('/clientdetails', config);
-
-            user = response.data;
-            user.fullName = `${user.firstName} ${user.lastName}`;
-          }
+          const user = {
+            ...encoded,
+          };
 
           dispatch({
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
+              role: user.role!,
               user,
             },
           });
@@ -150,7 +139,6 @@ function AuthProvider({ children }: AuthProviderProps) {
   const login = async (
     loginKey: string,
     password: string,
-    role: keyof typeof ROLES,
     rememberMe: boolean
   ) => {
     const loginData = { email: loginKey, password };
@@ -158,73 +146,30 @@ function AuthProvider({ children }: AuthProviderProps) {
     const response = await axios.post('/user/login', loginData);
     const { token } = response.data;
 
-    const config = {
-      headers: { 'x-access-token': `bearer ${token}` },
+    setAuthHeader(token);
+
+    const encoded: AuthUser = jwt.decode(token) as any;
+
+    if (!encoded || typeof encoded === 'string')
+      throw new Error('invalid access token');
+    // get user info
+
+    const user = {
+      ...encoded,
     };
 
-    let user = null;
-
-    if (role === ROLES.CLIENT.value) {
-      const clientResponse = await axios.get('/clientdetails', config);
-      user = clientResponse.data;
-      user.fullName = `${user.firstName} ${user.lastName}`;
-    } else {
-      const agentResponse = await axios.get(
-        '/agentdetail/' + response.data.session.userId,
-        config
-      );
-      user = agentResponse.data;
-      user.fullName = user.username;
-    }
-
-    if (rememberMe) setSession(token, role);
+    if (rememberMe) setSession(token);
     dispatch({
       type: Types.Login,
       payload: {
         user,
-        role,
-      },
-    });
-  };
-
-  const register = async (
-    firstName: string,
-    lastName: string,
-    email: string,
-    phoneno: string,
-    password: string,
-    confirmPassword: string,
-    referralCode: string,
-    termsofservice: boolean,
-    privacyagreement: boolean
-  ) => {
-    const role = ROLES.CLIENT.value as keyof typeof ROLES;
-    //Client only have power to register
-
-    const response = await axios.post('/signup', {
-      firstName,
-      lastName,
-      email,
-      phoneno,
-      password,
-      confirmPassword,
-      referralCode,
-      termsofservice,
-      privacyagreement,
-    });
-    const { token, user } = response.data;
-
-    window.localStorage.setItem('accessToken', token);
-    dispatch({
-      type: Types.Register,
-      payload: {
-        user,
+        role: user.role as any,
       },
     });
   };
 
   const logout = async () => {
-    setSession(null, ROLES.CLIENT.value);
+    setSession(null);
     dispatch({ type: Types.Logout });
   };
 
@@ -235,7 +180,6 @@ function AuthProvider({ children }: AuthProviderProps) {
         method: 'jwt',
         login,
         logout,
-        register,
         role: state.role,
       }}
     >

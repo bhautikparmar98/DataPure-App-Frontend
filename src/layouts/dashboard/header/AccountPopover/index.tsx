@@ -5,14 +5,23 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Icon } from '@mui/material';
+import {
+  Box,
+  Divider,
+  Typography,
+  Stack,
+  MenuItem,
+  Avatar,
+  IconButton,
+  Icon,
+} from '@mui/material';
 // routes
 import { PATH_AUTH } from 'src/routes/auth/paths';
 // hooks
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 // paths
-import { PATH_DASHBOARD } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 // components
 import MenuPopover from 'src/components/Shared/MenuPopover';
 import { useTheme, styled } from '@mui/material/styles';
@@ -81,6 +90,8 @@ export default function AccountPopover() {
       enqueueSnackbar('Unable to logout!', { variant: 'error' });
     }
   };
+
+  console.log('user', user);
 
   return (
     <>
