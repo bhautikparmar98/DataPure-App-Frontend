@@ -4,8 +4,10 @@ import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
-import { useAppSelector } from 'src/redux/store';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
+import Rectangle from '../Rectangle';
+import { updateShape } from 'src/redux/slices/editor/editor.actions';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_HEIGHT = 60;
@@ -19,6 +21,19 @@ const Workspace: any = () => {
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+
+  const [selectedId, selectShape] = React.useState('');
+
+  const dispatch = useAppDispatch();
+
+  const checkDeselect = (e: any) => {
+    // deselect when clicked on empty area
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      selectShape('');
+    }
+  };
+
   const {
     handleMouseDown,
     handleMouseUp,
@@ -36,6 +51,13 @@ const Workspace: any = () => {
 
   const { stageScale, handleWheel } = useZoom();
 
+  const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
+    if (newAttrs?.id && newAttrs?.id?.length > 0) {
+      // console.log({ newAttrs, selectedLayerId });
+      dispatch(updateShape(selectedLayerId, newAttrs));
+    }
+  };
+
   return (
     <div ref={workspaceRef}>
       <Stage
@@ -48,8 +70,12 @@ const Workspace: any = () => {
         x={stageScale.stageX}
         y={stageScale.stageY}
         onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onMouseDown={(e: any) => {
+          checkDeselect(e);
+          handleMouseDown(e);
+        }}
+        onTouchStart={checkDeselect}
       >
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
@@ -86,16 +112,18 @@ const Workspace: any = () => {
                         draggable={false}
                       />
                     ) : (
-                      <Rect
-                        {...shape}
+                      <Rectangle
                         key={`${instance.id}-${m}-rect`}
-                        // onDragStart={handleDragStart}
-                        // onDragEnd={handleDragEnd}
+                        shapeProps={shape}
+                        isSelected={shape.id === selectedId}
+                        onSelect={() => {
+                          if (shape.id) {
+                            selectShape(shape.id);
+                          }
+                        }}
+                        onChange={handleRectChange}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
-                        onMouseDown={handleMouseDown}
-                        onMouseUp={handleMouseUp}
-                        draggable={false}
                       />
                     )
                   )}

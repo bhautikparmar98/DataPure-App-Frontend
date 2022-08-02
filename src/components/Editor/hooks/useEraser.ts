@@ -72,6 +72,7 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
     if (lines.length > 0) {
       //just store lines in redux store when mouse click ends
       if (rectId.current?.length > 0) {
+        console.log(selectedLayerId, rectId.current, lines);
         dispatch(addEraserLines(selectedLayerId, rectId.current, lines));
         rectId.current = '';
       }

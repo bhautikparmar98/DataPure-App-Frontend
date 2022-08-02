@@ -36,6 +36,17 @@ export function addInstance(layerId: number, instance: Instance) {
     });
 }
 
+export function updateShape(
+  selectedLayerId: number,
+  newAttrs: Konva.ShapeConfig
+) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.UPDATE_SHAPE,
+      payload: { selectedLayerId, newAttrs },
+    });
+}
+
 export function addEraserLines(
   layerId: number,
   rectId: string,
