@@ -6,7 +6,7 @@ import axiosInstance from 'src/utils/axios';
 const useUserListLogic = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const [userList, setUserList] = useState([]);
+  const [userList, setUserList] = useState<any[]>([]);
   const [usersTotalCount, setUsersTotalCount] = useState(0);
 
   const [page, setPage] = useState(0);
@@ -85,6 +85,11 @@ const useUserListLogic = () => {
     filterName
   );
 
+  const addUserHandler = (user: any) => {
+    setUserList((prev) => [...prev, { ...user }]);
+    setUsersTotalCount((prev) => prev + 1);
+  };
+
   const isNotFound = !filteredUsers.length && Boolean(filterName);
 
   useEffect(() => {
@@ -130,6 +135,7 @@ const useUserListLogic = () => {
     setPage,
     usersTotalCount,
     loading,
+    addUserHandler,
   };
 };
 

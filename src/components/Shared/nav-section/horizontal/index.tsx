@@ -18,6 +18,15 @@ const hideScrollbar = {
 } as const;
 
 function NavSectionHorizontal({ navConfig }: NavSectionProps) {
+  const navAccessible = navConfig.map((group: any) => {
+    group.items = group.items.filter((item: NavListProps) => {
+      if (item.roles && !item.roles?.includes(role)) return false;
+      else return true;
+    });
+
+    return group;
+  });
+
   return (
     <Stack
       direction="row"
@@ -25,7 +34,7 @@ function NavSectionHorizontal({ navConfig }: NavSectionProps) {
       sx={{ bgcolor: 'background.neutral', borderRadius: 1, px: 0.5 }}
     >
       <Stack direction="row" sx={{ ...hideScrollbar, py: 1 }}>
-        {navConfig.map((group) => (
+        {navAccessible.map((group) => (
           <Stack key={group.subheader} direction="row" flexShrink={0}>
             {group.items.map((list) => (
               <NavListRoot key={list.title} list={list} />

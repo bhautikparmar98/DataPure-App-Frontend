@@ -1,29 +1,46 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogActions,
-} from '@mui/material';
-import React from 'react';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import axiosInstance from 'src/utils/axios';
 import RegisterForm from './RegisterForm';
 import { FormValuesProps } from './types/registerForm.Type';
 
 interface AddUserProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (user: any) => void;
 }
 
 const AddUserDialog: React.FC<AddUserProps> = ({ open, onClose }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+
   const submitHandler = async (data: FormValuesProps) => {
-    console.log(data);
+    setLoading(true);
+    try {
+      const payload = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        company: data.company,
+      };
+
+      const response = await axiosInstance.post('/user/invite', payload);
+      const { user } = response.data;
+
+      enqueueSnackbar('User Added Successfully!');
+      onClose(user);
+    } catch (error) {
+      console.log('error', error);
+      enqueueSnackbar('Something went wrong.', { variant: 'error' });
+    }
+    setLoading(false);
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add User</DialogTitle>
       <DialogContent>
-        <RegisterForm onSubmit={submitHandler} />
+        <RegisterForm loading={loading} onSubmit={submitHandler} />
       </DialogContent>
     </Dialog>
   );

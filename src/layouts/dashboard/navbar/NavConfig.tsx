@@ -30,6 +30,7 @@ const sidebarConfig = [
         title: 'Users',
         path: PATH_DASHBOARD.user.listUsers,
         icon: ICONS.user,
+        roles: [ROLES.SUPER_ADMIN.value],
       },
     ],
   },

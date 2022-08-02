@@ -22,9 +22,10 @@ import RegisterSchema from './validation/registerSchema.Validation';
 
 interface RegisterFormProps {
   onSubmit: (data: FormValuesProps) => void;
+  loading: boolean;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
   const [errorMessage, setErrorMessage] = useState('Error');
 
   const defaultValues = {
@@ -106,7 +107,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           type="submit"
           variant="contained"
           fullWidth
-          loading={isSubmitting}
+          loading={isSubmitting || loading}
         >
           Send Invitation
         </LoadingButton>
