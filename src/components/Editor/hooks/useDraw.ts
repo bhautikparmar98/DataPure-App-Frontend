@@ -3,6 +3,11 @@ import { KonvaEventObject } from 'konva/lib/Node';
 import useRect from './useRect';
 import useTool from './useTool';
 import useEraser from './useEraser';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import {
+  endDrawing,
+  startDrawing,
+} from 'src/redux/slices/editor/editor.actions';
 
 // const DEBOUNCE_WAIT = 300;
 
@@ -12,37 +17,31 @@ const useDraw = (
   workspaceRef: React.RefObject<HTMLDivElement>,
   currentTool: Tool
 ) => {
-  const {
-    rectHandleDragStart,
-    rectHandleDragEnd,
-    rectHandleMouseDown,
-    rectHandleMouseUp,
-    rectHandleMouseMove,
-    rects,
-  } = useRect(selectedLayerId, selectedLayerColor, workspaceRef);
+  const dispatch = useAppDispatch();
+
+  const isDrawing = useAppSelector(({ editor }) => editor.isDrawing);
+
+  const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
+    useRect(selectedLayerId, selectedLayerColor, workspaceRef);
 
   const {
     eraseHandleMouseDown,
     eraseHandleMouseUp,
     eraseHandleMouseMove,
-    erasedParts,
-  } = useEraser(selectedLayerId, selectedLayerColor, workspaceRef);
+    eraserLines,
+  } = useEraser(selectedLayerId, selectedLayerColor);
 
   const { setCursorStyle } = useTool(workspaceRef);
 
   let handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {};
   let handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {};
   let handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {};
-  let handleDragStart = (e: KonvaEventObject<WheelEvent>) => {};
-  let handleDragEnd = (e: KonvaEventObject<WheelEvent>) => {};
 
-  // console.log(currentTool);
+  // !TODO: Enhance this part
   if (currentTool === TOOLS.RECTANGLE) {
     handleMouseDown = (e) => rectHandleMouseDown(e);
     handleMouseUp = (e) => rectHandleMouseUp(e);
     handleMouseMove = (e) => rectHandleMouseMove(e);
-    handleDragStart = (e: KonvaEventObject<WheelEvent>) => rectHandleDragStart;
-    handleDragEnd = (e: KonvaEventObject<WheelEvent>) => rectHandleDragEnd;
   } else if (currentTool === TOOLS.ERASER) {
     handleMouseDown = (e) => eraseHandleMouseDown(e);
     handleMouseUp = (e) => eraseHandleMouseUp(e);
@@ -50,21 +49,25 @@ const useDraw = (
   }
 
   const handleMouseEnter = () => {
-    setCursorStyle('move');
+    if (rects.length === 0 && currentTool === TOOLS.SELECT) {
+      dispatch(endDrawing());
+    }
   };
 
   const handleMouseLeave = () => {
-    setCursorStyle();
+    if (rects.length === 0 && !isDrawing) {
+      setCursorStyle();
+      dispatch(startDrawing());
+    }
   };
 
   return {
     rects,
-    erasedParts,
+    eraserLines,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    handleDragStart,
-    handleDragEnd,
+
     handleMouseEnter,
     handleMouseLeave,
   };

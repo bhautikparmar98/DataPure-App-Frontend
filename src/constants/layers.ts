@@ -2,10 +2,11 @@ import Konva from 'konva';
 import _ from 'underscore';
 import { Tool, TOOLS } from './tools';
 
+// shapes are array and each array element will represent Konva.Group. This is done to so if there are erased parts, they will be grouped together with their rectangle/polygon and when the shape is dragged, the erased part is dragged too
 export type Instance = {
   visible: boolean;
   id: string;
-  shapes: Konva.ShapeConfig[] & { type?: Tool };
+  shapes: [Konva.ShapeConfig[] & { type?: Tool; id?: string }];
 };
 
 export type Layer = {
@@ -15,14 +16,19 @@ export type Layer = {
   instances: Instance[];
 };
 
-const mockLines = () =>
-  [...Array(10)].map((_, i) => ({
-    x: Math.random() * 1200,
-    y: Math.random() * 500,
+const mockRects = () =>
+  [...Array(1)].map((_, i) => ({
+    id: (Math.random() * 10).toString(),
+    x: Math.random() * 600,
+    y: Math.random() * 300,
     width: Math.random() * 500,
-    height: Math.random() * 500,
-    fill: ['royalblue', 'chocolate', '#b5d5b6'][Math.floor(Math.random() * 3)],
-    stroke: 'black',
+    height: Math.random() * 600,
+    fill: ['rgba(15,220,144,0.3)', 'rgba(3,169,244,0.3)'][
+      Math.floor(Math.random() * 2)
+    ],
+    stroke: ['rgb(15,220,144)', 'rgb(3,169,244)'][
+      Math.floor(Math.random() * 2)
+    ],
   }));
 
 export const layers: Layer[] = [
@@ -34,17 +40,17 @@ export const layers: Layer[] = [
       {
         visible: true,
         id: _.uniqueId(),
-        shapes: [...mockLines()],
+        shapes: [[...mockRects()]],
       },
       {
         visible: true,
         id: _.uniqueId(),
-        shapes: [...mockLines()],
+        shapes: [[]],
       },
       {
         visible: false,
         id: _.uniqueId(),
-        shapes: [],
+        shapes: [[]],
       },
     ],
   },
@@ -56,17 +62,17 @@ export const layers: Layer[] = [
       {
         visible: true,
         id: _.uniqueId(),
-        shapes: [],
+        shapes: [[]],
       },
       {
         visible: true,
         id: _.uniqueId(),
-        shapes: [],
+        shapes: [[]],
       },
       {
         visible: false,
         id: _.uniqueId(),
-        shapes: [],
+        shapes: [[]],
       },
     ],
   },

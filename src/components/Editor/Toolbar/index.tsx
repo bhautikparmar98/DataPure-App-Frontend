@@ -36,6 +36,15 @@ const Drawer = styled(MuiDrawer, {
   boxSizing: 'border-box',
 }));
 
+const ICONS = {
+  [TOOLS.PEN]: 'la:pen',
+  [TOOLS.RECTANGLE]: 'bx:rectangle',
+  [TOOLS.ERASER]: 'clarity:eraser-line',
+  [TOOLS.BRUSH]: 'bi:brush',
+  [TOOLS.PEN_TOOL]: 'bi:vector-pen',
+  [TOOLS.SELECT]: 'la:mouse-pointer',
+};
+
 function Toolbar() {
   const open = false;
   const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
@@ -74,42 +83,12 @@ function Toolbar() {
                     justifyContent: 'center',
                   }}
                 >
-                  {text === TOOLS.PEN ? (
-                    <Icon
-                      icon="la:pen"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.RECTANGLE ? (
-                    <Icon
-                      icon="bx:rectangle"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.BRUSH ? (
-                    <Icon
-                      icon="bi:brush"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.PEN_TOOL ? (
-                    <Icon
-                      icon="bi:vector-pen"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : (
-                    <Icon
-                      icon="clarity:eraser-line"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  )}
+                  <Icon
+                    icon={ICONS[text]}
+                    width="30"
+                    color={text === currentTool ? 'royalblue' : 'inherit'}
+                    onClick={(e) => handleToolClick(text)}
+                  />
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>

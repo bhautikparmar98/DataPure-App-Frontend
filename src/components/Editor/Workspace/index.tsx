@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Stage, Layer, Rect, Line, Circle } from 'react-konva';
+import React, { useEffect, useRef } from 'react';
+import { Stage, Layer, Rect, Line, Group } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -12,7 +12,7 @@ const LAYERS_PANEL_HEIGHT = 60;
 const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
 const HEIGHT = window.innerHeight - LAYERS_PANEL_HEIGHT;
 
-const Workspace = () => {
+const Workspace: any = () => {
   const [layers, selectedLayerId, currentTool] = useAppSelector(
     ({ editor }) => [editor.layers, editor.selectedLayerId, editor.tool]
   );
@@ -24,9 +24,7 @@ const Workspace = () => {
     handleMouseUp,
     handleMouseMove,
     rects: newRects,
-    erasedParts,
-    handleDragStart,
-    handleDragEnd,
+    eraserLines,
     handleMouseEnter,
     handleMouseLeave,
   } = useDraw(
@@ -36,7 +34,6 @@ const Workspace = () => {
     currentTool
   );
 
-  // const [rects, setRects] = useState<Konva.ShapeConfig[]>([]);
   const { stageScale, handleWheel } = useZoom();
 
   return (
@@ -50,70 +47,76 @@ const Workspace = () => {
         scaleY={stageScale.stageScale}
         x={stageScale.stageX}
         y={stageScale.stageY}
+        onMouseMove={handleMouseMove}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
       >
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
         </Layer>
+
+        <Layer name="Temp Layer">
+          {/* <Group> */}
+          {newRects.map((options, m) => (
+            <Rect {...options} key={'temp-rect' + m} />
+          ))}
+        </Layer>
+
         {layers.map((layer, i) => (
-          <Layer
-            name={layer.title}
-            key={`layer-${layer.title}-${i}`}
-            visible={layer.visible}
-          >
+          <Layer name={layer.title} key={`layer-${i}`} visible={layer.visible}>
             {layer.instances.map((instance) =>
-              instance.shapes?.map((shape, m) =>
-                shape.type === TOOLS.ERASER ? (
-                  <Circle
-                    {...shape}
-                    key={'temp-rect' + m}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    listening={false}
-                  />
-                ) : (
-                  <Rect
-                    {...shape}
-                    key={`${instance.id}-${m}-rect`}
-                    // onDragStart={handleDragStart}
-                    // onDragEnd={handleDragEnd}
-                    // onMouseEnter={handleMouseEnter}
-                    // onMouseLeave={handleMouseLeave}
-                    // draggable
-                  />
-                )
-              )
+              instance.shapes?.map((group, m) => (
+                <Group
+                  key={`group-${m}-${i}`}
+                  x={0}
+                  y={0}
+                  draggable={currentTool === TOOLS.SELECT}
+                >
+                  {group.map((shape, l) =>
+                    shape.type === TOOLS.ERASER ? (
+                      <Line
+                        {...shape}
+                        key={`line-${m}-${l}`}
+                        // listening={false}
+                        listening={false}
+                        strokeWidth={25}
+                        tension={0.5}
+                        lineCap={'round'}
+                        lineJoin={'round'}
+                        draggable={false}
+                      />
+                    ) : (
+                      <Rect
+                        {...shape}
+                        key={`${instance.id}-${m}-rect`}
+                        // onDragStart={handleDragStart}
+                        // onDragEnd={handleDragEnd}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseDown={handleMouseDown}
+                        onMouseUp={handleMouseUp}
+                        draggable={false}
+                      />
+                    )
+                  )}
+                </Group>
+              ))
             )}
+            {/* Temporary lines */}
+            {eraserLines.map((options, m) => (
+              <Line
+                {...options}
+                key={'temp-rect' + m}
+                listening={false}
+                strokeWidth={25}
+                tension={0.5}
+                lineCap={'round'}
+                lineJoin={'round'}
+                draggable={false}
+              />
+            ))}
           </Layer>
         ))}
-
-        {/* Temp Layer: Shapes are drawn here then when finished they are sent back to the selected layer */}
-        <Layer name="Temp Layer">
-          {newRects.map((options, m) => (
-            <Rect
-              {...options}
-              key={'temp-rect' + m}
-              // draggable
-              // onDragStart={handleDragStart}
-              // onDragEnd={handleDragEnd}
-              // onMouseEnter={handleMouseEnter}
-              // onMouseLeave={handleMouseLeave}
-            />
-          ))}
-        </Layer>
-        <Layer>
-          {erasedParts.map((options, m) => (
-            <Circle
-              {...options}
-              key={'temp-rect' + m}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              listening={false}
-            />
-          ))}
-        </Layer>
       </Stage>
     </div>
   );

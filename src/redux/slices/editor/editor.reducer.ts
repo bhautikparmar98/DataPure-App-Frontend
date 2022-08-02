@@ -57,6 +57,24 @@ export const editorReducer = (state = initialState, action: any) => {
         isDrawing: action.type === EditorActionTypes.START_DRAWING,
       };
 
+    case EditorActionTypes.ADD_ERASER_LINES: {
+      const { layers } = state;
+      const { layerId, rectId, lines } = action.payload;
+      layers[layerId].instances.forEach((instance, i) => {
+        instance.shapes.forEach((shape, s) => {
+          shape.forEach((item, r) => {
+            if (item?.id === rectId) {
+              layers[layerId].instances[i].shapes[s].push(...lines);
+            }
+          });
+        });
+      });
+      return {
+        ...state,
+        layers,
+      };
+    }
+
     default:
       return state;
   }

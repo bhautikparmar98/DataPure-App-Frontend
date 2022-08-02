@@ -1,33 +1,34 @@
 import Konva from 'konva';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addInstance } from 'src/redux/slices/editor/editor.actions';
+import { addEraserLines } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import useTool from './useTool';
 import { TOOLS } from 'src/constants';
 import _ from 'underscore';
 
-const useEraser = (
-  selectedLayerId: number,
-  selectedLayerColor: string,
-  workspaceRef: React.RefObject<HTMLDivElement>
-) => {
-  const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
+/* 
+  TODO: 
+    - Erased parts are shown out of rectangles, cut parts out of rectangles borders
+    - Make the erased part's stroke width responsive to the Stage zoom scale
+*/
+
+const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
+  const { tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
-  const { setCursorStyle } = useTool(workspaceRef);
-  const [erasedParts, setErasedParts] = useState<Konva.ShapeConfig[]>([]);
+
+  const rectId = useRef('');
+  const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
 
   const EraserConfig = {
     type: TOOLS.ERASER,
-    fill: selectedLayerColor,
-    globalCompositeOperation: 'destination-out', //for erasing effect
     opacity: 1,
-    // strokeWidth: 0,
-    radius: 25,
+    stroke: selectedLayerColor,
+    globalCompositeOperation: 'destination-out', //for erasing effect
   } as const;
 
   const memoisedFunc = useCallback(() => {}, []);
 
+  // !Enhance this part instead of calling memoised function
   if (tool !== TOOLS.ERASER) {
     return {
       eraseHandleDragStart: memoisedFunc,
@@ -35,44 +36,47 @@ const useEraser = (
       eraseHandleMouseDown: memoisedFunc,
       eraseHandleMouseUp: memoisedFunc,
       eraseHandleMouseMove: memoisedFunc,
-      erasedParts: [],
+      eraserLines: [],
     };
   }
 
   const eraseHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
+    if (event.target.attrs?.id?.length > 0 && rectId.current === '') {
+      rectId.current = event.target.attrs.id;
+    }
+
     //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-
-    if (x != null && y != null) {
-      setErasedParts((prevAnnos) => {
-        return [...prevAnnos, { x, y, ...EraserConfig }];
-      });
-    }
+    setLines([...lines, { points: [x, y], ...EraserConfig }]);
   };
 
   const eraseHandleMouseMove = (event: KonvaEventObject<WheelEvent>) => {
     // when the left button is clicked
     if (event.evt.buttons === 1) {
-      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      if (x != null && y != null) {
-        setErasedParts((prevAnnos) => [
-          ...prevAnnos,
-          { x, y, ...EraserConfig },
-        ]);
+      if (event.target.attrs?.id?.length > 0 && rectId.current === '') {
+        rectId.current = event.target.attrs.id;
       }
+      const lastLine = lines[lines.length - 1] || [];
+
+      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+      // add point
+      lastLine.points = lastLine.points.concat([x, y]);
+
+      // replace last line
+      lines.splice(lines.length - 1, 1, lastLine);
+      setLines(lines.concat());
     }
   };
 
   const eraseHandleMouseUp = (event: KonvaEventObject<WheelEvent>) => {
-    if (erasedParts.length > 0) {
-      // !set the selected instanceId here instead
-      dispatch(
-        addInstance(selectedLayerId, {
-          visible: true,
-          id: _.uniqueId(),
-          shapes: [...erasedParts],
-        })
-      );
+    if (lines.length > 0) {
+      //just store lines in redux store when mouse click ends
+      if (rectId.current?.length > 0) {
+        dispatch(addEraserLines(selectedLayerId, rectId.current, lines));
+        rectId.current = '';
+      }
+      //remove temp lines
+      setLines([]);
     }
   };
 
@@ -80,7 +84,7 @@ const useEraser = (
     eraseHandleMouseDown,
     eraseHandleMouseUp,
     eraseHandleMouseMove,
-    erasedParts,
+    eraserLines: lines,
   };
 };
 

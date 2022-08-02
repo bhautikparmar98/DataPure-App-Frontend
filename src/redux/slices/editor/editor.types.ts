@@ -5,4 +5,5 @@ export enum EditorActionTypes {
   ADD_INSTANCE = '@editor/ADD_INSTANCE',
   START_DRAWING = '@editor/START_DRAWING',
   End_DRAWING = '@editor/End_DRAWING',
+  ADD_ERASER_LINES = '@editor/ADD_ERASER_LINES',
 }

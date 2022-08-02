@@ -25,7 +25,7 @@ const rootPersistConfig = {
   key: 'root',
   keyPrefix: 'redux-',
   storage,
-  whitelist: [],
+  whitelist: ['redux-editor', 'editor'],
 };
 
 const editorPersistConfig = {

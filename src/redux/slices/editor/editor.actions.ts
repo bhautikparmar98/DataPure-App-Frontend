@@ -2,6 +2,7 @@ import { EditorActionTypes } from './editor.types';
 
 import { Instance, Tool } from 'src/constants';
 import { dispatch } from 'src/redux/store';
+import Konva from 'konva';
 
 export function setTool(tool: Tool) {
   return () =>
@@ -33,6 +34,19 @@ export function addInstance(layerId: number, instance: Instance) {
       type: EditorActionTypes.ADD_INSTANCE,
       payload: { layerId, instance },
     });
+}
+
+export function addEraserLines(
+  layerId: number,
+  rectId: string,
+  lines: Konva.ShapeConfig[]
+) {
+  return () => {
+    dispatch({
+      type: EditorActionTypes.ADD_ERASER_LINES,
+      payload: { layerId, rectId, lines },
+    });
+  };
 }
 
 export function startDrawing() {

@@ -1,11 +1,7 @@
 import Konva from 'konva';
 import { useCallback, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import {
-  addInstance,
-  endDrawing,
-  startDrawing,
-} from 'src/redux/slices/editor/editor.actions';
+import { addInstance } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import useTool from './useTool';
 import { TOOLS } from 'src/constants';
@@ -40,22 +36,7 @@ const useRect = (
     opacity: 0.7,
     stroke: selectedLayerColor,
     strokeWidth: 5,
-    globalCompositeOperation: 'source-over',
   } as const;
-
-  const rectHandleDragStart = (e: KonvaEventObject<WheelEvent>) => {
-    setCursorStyle('move');
-    rects = [];
-    setNewAnnotation([]);
-    dispatch(endDrawing());
-  };
-
-  const rectHandleDragEnd = (e: KonvaEventObject<WheelEvent>) => {
-    setCursorStyle();
-    setNewAnnotation([]);
-    dispatch(startDrawing());
-    rects = [];
-  };
 
   const rectHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     if (newAnnotation.length === 0 && isDrawing) {
@@ -100,13 +81,13 @@ const useRect = (
           width: x - sx,
           height: y - sy,
           ...config,
+          id: _.uniqueId(),
         };
-
         dispatch(
           addInstance(selectedLayerId, {
             visible: true,
             id: _.uniqueId(),
-            shapes: [annotationToAdd],
+            shapes: [[{ ...annotationToAdd }]],
           })
         );
 
@@ -118,8 +99,6 @@ const useRect = (
   };
 
   return {
-    rectHandleDragStart,
-    rectHandleDragEnd,
     rectHandleMouseDown,
     rectHandleMouseUp,
     rectHandleMouseMove,

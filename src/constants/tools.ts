@@ -1,4 +1,5 @@
 export const TOOLS = {
+  SELECT: 'Select',
   PEN: 'Pen',
   RECTANGLE: 'Rectangle',
   PEN_TOOL: 'Pentool',
