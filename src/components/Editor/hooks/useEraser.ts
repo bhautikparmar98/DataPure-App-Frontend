@@ -4,7 +4,6 @@ import { KonvaEventObject } from 'konva/lib/Node';
 import { addEraserLines } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
-import _ from 'underscore';
 
 /* 
   TODO: 

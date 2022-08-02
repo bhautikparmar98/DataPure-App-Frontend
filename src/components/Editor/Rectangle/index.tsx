@@ -9,6 +9,7 @@ const Rectangle = ({
   onChange,
   onMouseEnter,
   onMouseLeave,
+  onDblClick,
 }) => {
   const shapeRef = useRef<Konva.Rect>();
   const trRef = useRef<Konva.Transformer>();
@@ -61,6 +62,7 @@ const Rectangle = ({
         {...shapeProps}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onDblClick={onDblClick}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Stage, Layer, Rect, Line, Group } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
@@ -23,7 +23,6 @@ const Workspace: any = () => {
   const stageRef = useRef<Konva.Stage>(null);
 
   const [selectedId, selectShape] = React.useState('');
-
   const dispatch = useAppDispatch();
 
   const checkDeselect = (e: any) => {
@@ -56,6 +55,16 @@ const Workspace: any = () => {
       // console.log({ newAttrs, selectedLayerId });
       dispatch(updateShape(selectedLayerId, newAttrs));
     }
+  };
+
+  const hideShapeTemporarily = (e) => {
+    console.log(e.target.attrs.fill, layers[selectedLayerId].color);
+    e.target.attrs.fill =
+      e.target.attrs.fill === 'rgba(0,0,0,0)'
+        ? layers[selectedLayerId].color
+            .replace(')', ', 0.3)')
+            .replace('rgb', 'rgba')
+        : 'rgba(0,0,0,0)';
   };
 
   return (
@@ -124,6 +133,7 @@ const Workspace: any = () => {
                         onChange={handleRectChange}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
+                        onDblClick={hideShapeTemporarily}
                       />
                     )
                   )}
