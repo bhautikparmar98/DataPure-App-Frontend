@@ -1,6 +1,6 @@
 // components
 import SvgIconStyle from 'src/components/Shared/SvgIconStyle';
-import { PATH_DASHBOARD } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 import { ROLES } from 'src/constants';
 
 // ----------------------------------------------------------------------
@@ -21,8 +21,17 @@ const sidebarConfig = [
   // ----------------------------------------------------------------------
   {
     items: [
-      { title: 'Dashboard', path: PATH_DASHBOARD.general.dashboard, icon: ICONS.dashboard },
-      { title: 'My Listings', path: PATH_DASHBOARD.general.listings, icon: ICONS.ecommerce },
+      {
+        title: 'Dashboard',
+        path: PATH_DASHBOARD.general.app,
+        icon: ICONS.dashboard,
+      },
+      {
+        title: 'Users',
+        path: PATH_DASHBOARD.user.listUsers,
+        icon: ICONS.user,
+        roles: [ROLES.SUPER_ADMIN.value],
+      },
     ],
   },
 

@@ -1,5 +1,5 @@
 // routes
-import { PATH_PAGE } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 import { PATH_AUTH } from 'src/routes/auth/paths';
 
 // components
@@ -26,21 +26,14 @@ const menuConfig = [
     icon: <Iconify icon={'eva:file-fill'} {...ICON_SIZE} />,
     children: [
       {
-        subheader: 'Other',
-        items: [
-          { title: 'About us', path: PATH_PAGE.about },
-          { title: 'Contact us', path: PATH_PAGE.contact },
-          { title: 'Pricing', path: PATH_PAGE.pricing },
-          { title: 'Payment', path: PATH_PAGE.payment },
-          { title: 'Maintenance', path: PATH_PAGE.maintenance },
-          { title: 'Coming Soon', path: PATH_PAGE.comingSoon },
-        ],
+        subheader: 'Main',
+        items: [{ title: 'Users', path: PATH_DASHBOARD.user.listUsers }],
       },
       {
         subheader: 'Authentication',
         items: [
           { title: 'Login', path: PATH_AUTH.login },
-          { title: 'Register', path: PATH_AUTH.register },
+          // { title: 'Register', path: PATH_AUTH.register },
           { title: 'Reset password', path: PATH_AUTH.resetPassword },
           // { title: 'Verify code', path: PATH_AUTH.verify },
         ],
@@ -48,8 +41,8 @@ const menuConfig = [
       {
         subheader: 'Error',
         items: [
-          { title: 'Page 404', path: PATH_PAGE.page404 },
-          { title: 'Page 500', path: PATH_PAGE.page500 },
+          // { title: 'Page 404', path: PATH_PAGE.page404 },
+          // { title: 'Page 500', path: PATH_PAGE.page500 },
         ],
       },
       {

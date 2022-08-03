@@ -6,6 +6,7 @@ export { default as NavSectionVertical } from './vertical';
 export { default as NavSectionHorizontal } from './horizontal';
 
 export function isExternalLink(path: string) {
+  if (!path) return;
   return path.includes('http');
 }
 

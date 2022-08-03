@@ -1,98 +1,104 @@
 // react
-import { TabContext, TabList } from '@mui/lab';
-import { Container, Link, Tab, Typography } from '@mui/material';
+import { capitalCase } from 'change-case';
 // next
 import NextLink from 'next/link';
-import Iconify from 'src/components/Shared/Iconify';
+
+import {
+  Box,
+  Container,
+  Link,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material';
+
 import Image from 'src/components/Shared/Image';
 // components
 import Page from 'src/components/Shared/Page';
-// routes
-import { PATH_AUTH } from 'src/routes/auth/paths';
-//types
-import { LoginProps } from './types';
-// sections
-import LoginForm from './LoginForm';
-import { Block } from 'src/sections/overview/Block';
+// hooks
+import useResponsive from 'src/hooks/useResponsive';
+// guards
+import GuestGuard from 'src/guards/GuestGuard';
+// components
 // styling
-import { ContentStyle, RootStyle, style } from './styles';
+import Logo from 'src/components/Shared/Logo';
+import { PATH_AUTH } from 'src/routes/auth/paths';
 import useLoginLogic from './hooks/useLoginLogic';
-import { ROLES } from 'src/constants';
+import LoginForm from './LoginForm';
+import { ContentStyle, HeaderStyle, RootStyle, SectionStyle } from './styles';
 
-const SIMPLE_TAB = [
-  {
-    value: ROLES.CLIENT.value,
-    icon: <Iconify icon="eva:person-outline" width={24} height={24} />,
-    label: ROLES.CLIENT.label,
-    disabled: false,
-  },
-];
+const Login = () => {
 
-const Login = ({ isAdminLogin }: LoginProps) => {
-  const { handleTabChange, method, tabValue, submitHandler } = useLoginLogic({
-    isAdminLogin,
-  });
+  const smUp = useResponsive('up', 'sm');
+  const mdUp = useResponsive('up', 'md');
+
+  const { method, submitHandler } = useLoginLogic();
 
   // hee
   return (
-    <Page title="Sign In">
-      <RootStyle>
-        <Container>
-          <ContentStyle>
-            <>
-              <Image
-                disabledEffect
-                alt={method}
-                src="/static/hm-logo.png"
-                sx={{ width: 60, height: 30.35, margin: 'auto', mt: 10 }}
-              />
-            </>
-
-            <Typography variant="h4" sx={{ textAlign: 'center', mt: 10 }}>
-              Welcome!
-            </Typography>
-
-            {!isAdminLogin && (
-              <Block sx={style}>
-                <TabContext value={tabValue}>
-                  <TabList onChange={handleTabChange}>
-                    {SIMPLE_TAB.map((tab) => (
-                      <Tab
-                        key={tab.value}
-                        icon={tab.icon}
-                        label={tab.label}
-                        value={tab.value}
-                        disabled={tab.disabled}
-                      />
-                    ))}
-                  </TabList>
-                  {/*@todo  when register check value */}
-                </TabContext>
-              </Block>
+    <GuestGuard>
+      <Page title="Login">
+        <RootStyle>
+          <HeaderStyle>
+            <Logo />
+            {smUp && (
+              <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+                Don’t have an account? {''}
+                <NextLink href={PATH_AUTH.login} passHref>
+                  <Link variant="subtitle2">Connect with us</Link>
+                </NextLink>
+              </Typography>
             )}
+          </HeaderStyle>
 
-            {/* Login form */}
-            <LoginForm
-              onSubmit={submitHandler}
-              tab={tabValue}
-              isAdminLogin={isAdminLogin || false}
-            />
+          {mdUp && (
+            <SectionStyle>
+              <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+                Hi, Welcome Back
+              </Typography>
+              <Image src="/images/illustration_login.png" alt="login" />
+            </SectionStyle>
+          )}
 
-            <Typography
-              variant="body2"
-              align="center"
-              sx={{ mt: 10.625 }}
-              color="text.secondary"
-            >
-              Don't have an account yet?{' '}
-              <NextLink href={PATH_AUTH.register} passHref>
-                <Link>Sign Up</Link>
-              </NextLink>
-            </Typography>
-          </ContentStyle>
-        </Container>
-      </RootStyle>
-    </Page>
+          <Container maxWidth="sm">
+            <ContentStyle>
+              <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="h4" gutterBottom>
+                    Sign in to DataPure
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    Enter your details below.
+                  </Typography>
+                </Box>
+
+                <Tooltip title={capitalCase(method)} placement="right">
+                  <>
+                    <Image
+                      disabledEffect
+                      alt={method}
+                      src={`/images/logo.png`}
+                      sx={{ width: 32, height: 32 }}
+                    />
+                  </>
+                </Tooltip>
+              </Stack>
+
+              <LoginForm onSubmit={submitHandler} />
+
+              {!smUp && (
+                <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+                  Don’t have an account?{' '}
+                  <NextLink href={PATH_AUTH.register} passHref>
+                    <Link variant="subtitle2">Get started</Link>
+                  </NextLink>
+                </Typography>
+              )}
+            </ContentStyle>
+          </Container>
+        </RootStyle>
+      </Page>
+    </GuestGuard>
   );
 };
 

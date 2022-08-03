@@ -15,8 +15,8 @@ const Logo = forwardRef<any, Props>(({ disabledLink = false, sx }, ref) => {
   const theme = useTheme();
 
   const logo = (
-    <Box ref={ref} sx={{ width: 60, height: 20, cursor: 'pointer', ...sx }}>
-      <Image src="/static/hm-logo.png" alt="login" />
+    <Box ref={ref} sx={{ width: 30, height: 30, cursor: 'pointer', ...sx }}>
+      <Image src="/images/logo.png" alt="login" />
     </Box>
   );
 

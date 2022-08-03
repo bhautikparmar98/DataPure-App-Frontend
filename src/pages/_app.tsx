@@ -1,3 +1,5 @@
+// i18n
+import '../locales/i18n';
 // highlight
 import 'src/utils/highlight';
 
@@ -57,6 +59,7 @@ import ThemeLocalization from 'src/components/Shared/ThemeLocalization';
 
 import App, { AppContext, AppProps } from 'next/app';
 import { AuthProvider } from 'src/contexts/JWTContext';
+import { AxiosInterceptor } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -81,30 +84,32 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <AuthProvider>
-        <ReduxProvider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <CollapseDrawerProvider>
-              <SettingsProvider defaultSettings={settings}>
-                <ThemeProvider>
-                  <NotistackProvider>
-                    <MotionLazyContainer>
-                      <ThemeColorPresets>
-                        <ThemeLocalization>
-                          <RtlLayout>
-                            <ChartStyle />
-                            <Settings />
-                            <ProgressBar />
-                            {getLayout(<Component {...pageProps} />)}
-                          </RtlLayout>
-                        </ThemeLocalization>
-                      </ThemeColorPresets>
-                    </MotionLazyContainer>
-                  </NotistackProvider>
-                </ThemeProvider>
-              </SettingsProvider>
-            </CollapseDrawerProvider>
-          </PersistGate>
-        </ReduxProvider>
+        <AxiosInterceptor>
+          <ReduxProvider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <CollapseDrawerProvider>
+                <SettingsProvider defaultSettings={settings}>
+                  <ThemeProvider>
+                    <NotistackProvider>
+                      <MotionLazyContainer>
+                        <ThemeColorPresets>
+                          <ThemeLocalization>
+                            <RtlLayout>
+                              <ChartStyle />
+                              <Settings />
+                              <ProgressBar />
+                              {getLayout(<Component {...pageProps} />)}
+                            </RtlLayout>
+                          </ThemeLocalization>
+                        </ThemeColorPresets>
+                      </MotionLazyContainer>
+                    </NotistackProvider>
+                  </ThemeProvider>
+                </SettingsProvider>
+              </CollapseDrawerProvider>
+            </PersistGate>
+          </ReduxProvider>
+        </AxiosInterceptor>
       </AuthProvider>
     </>
   );
