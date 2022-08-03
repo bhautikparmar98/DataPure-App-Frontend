@@ -36,6 +36,18 @@ export function addInstance(layerId: number, instance: Instance) {
     });
 }
 
+export function addShape(
+  layerId: number,
+  instanceId: number,
+  shape: Konva.ShapeConfig
+) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.ADD_SHAPE,
+      payload: { layerId, instanceId, shape },
+    });
+}
+
 export function updateShape(
   selectedLayerId: number,
   newAttrs: Konva.ShapeConfig

@@ -1,11 +1,21 @@
 import { EditorActionTypes } from './editor.types';
 import { TOOLS, layers, Layer, Instance, Tool } from 'src/constants';
+import Konva from 'konva';
 
-const initialState = {
+type State = {
+  tool: Tool;
+  layers: Layer[];
+  selectedLayerId: number;
+  isDrawing: boolean;
+  currentInstanceId: number | null;
+};
+
+const initialState: State = {
   tool: TOOLS.PEN as Tool,
   layers,
   selectedLayerId: 0,
   isDrawing: true,
+  currentInstanceId: 0, //!Unset this value later
 };
 
 export const editorReducer = (state = initialState, action: any) => {
@@ -57,22 +67,39 @@ export const editorReducer = (state = initialState, action: any) => {
         isDrawing: action.type === EditorActionTypes.START_DRAWING,
       };
 
+    case EditorActionTypes.ADD_SHAPE: {
+      const { layerId, instanceId, shape } = action.payload;
+      const layer = state.layers[layerId];
+      const instance = layer?.instances[instanceId];
+      instance.shapes.push([shape]);
+
+      state.layers[layerId].instances[instanceId] = instance;
+      return state;
+    }
+
     case EditorActionTypes.UPDATE_SHAPE: {
       const { layers } = state;
-      const { newAttrs, selectedLayerId } = action.payload;
-      const shapeId = newAttrs.id;
-      layers[selectedLayerId]?.instances?.forEach((instance, i) => {
-        instance.shapes.forEach((group, g) => {
-          group.forEach((shape, s) => {
-            if (shape.id === shapeId) {
-              layers[selectedLayerId].instances[i].shapes[g][s] = {
-                ...shape,
-                ...newAttrs,
-              };
-            }
+      const {
+        newAttrs,
+        selectedLayerId,
+      }: { newAttrs: Konva.ShapeConfig; selectedLayerId: number } =
+        action.payload;
+      const shapeId = newAttrs?.id;
+      const instances: Instance[] = layers[selectedLayerId]?.instances;
+      if (instances && typeof shapeId === 'string') {
+        instances.forEach((instance: Instance, i) => {
+          instance.shapes.forEach((group, g) => {
+            group.forEach((shape, s) => {
+              if (shape.id === shapeId) {
+                layers[selectedLayerId].instances[i].shapes[g][s] = {
+                  ...shape,
+                  ...newAttrs,
+                };
+              }
+            });
           });
         });
-      });
+      }
       return {
         ...state,
         layers,
@@ -83,7 +110,7 @@ export const editorReducer = (state = initialState, action: any) => {
       const { layers } = state;
       const { layerId, rectId, lines } = action.payload;
       if (layerId != null) {
-        layers[layerId].instances.forEach((instance, i) => {
+        layers[layerId].instances.forEach((instance: Instance, i) => {
           instance.shapes.forEach((shape, s) => {
             shape.forEach((item, r) => {
               if (item?.id === rectId) {

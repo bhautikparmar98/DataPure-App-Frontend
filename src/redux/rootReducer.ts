@@ -25,7 +25,7 @@ const rootPersistConfig = {
   key: 'root',
   keyPrefix: 'redux-',
   storage,
-  whitelist: ['redux-editor', 'editor'],
+  // whitelist: ['redux-editor', 'editor'],
 };
 
 const editorPersistConfig = {
@@ -35,9 +35,9 @@ const editorPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  // editor: editorReducer,
+  editor: editorReducer,
   // !comment the next line for debugging purposes
-  editor: persistReducer(editorPersistConfig, editorReducer),
+  // editor: persistReducer(editorPersistConfig, editorReducer),
 });
 
 export { rootPersistConfig, rootReducer };

@@ -12,6 +12,8 @@ const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
     if (workspaceRef.current?.style) {
       workspaceRef.current.style.cursor = cursorStyle
         ? cursorStyle
+        : toolName === TOOLS.LINE
+        ? 'default'
         : `url("/tools/${toolName}.svg"),auto`;
     }
   };

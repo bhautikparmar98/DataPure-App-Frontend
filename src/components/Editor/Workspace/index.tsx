@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/editor/editor.actions';
+import { Layer as LayerType } from 'src/constants/layers';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_HEIGHT = 60;
@@ -39,8 +40,10 @@ const Workspace: any = () => {
     handleMouseMove,
     rects: newRects,
     eraserLines,
+    lines,
     handleMouseEnter,
     handleMouseLeave,
+    hideShapeTemporarily,
   } = useDraw(
     selectedLayerId,
     layers[selectedLayerId].color,
@@ -52,19 +55,8 @@ const Workspace: any = () => {
 
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
     if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      // console.log({ newAttrs, selectedLayerId });
       dispatch(updateShape(selectedLayerId, newAttrs));
     }
-  };
-
-  const hideShapeTemporarily = (e) => {
-    console.log(e.target.attrs.fill, layers[selectedLayerId].color);
-    e.target.attrs.fill =
-      e.target.attrs.fill === 'rgba(0,0,0,0)'
-        ? layers[selectedLayerId].color
-            .replace(')', ', 0.3)')
-            .replace('rgb', 'rgba')
-        : 'rgba(0,0,0,0)';
   };
 
   return (
@@ -87,7 +79,7 @@ const Workspace: any = () => {
         onTouchStart={checkDeselect}
       >
         <Layer name="Background Layer">
-          <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.png" />
+          <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
         </Layer>
 
         <Layer name="Temp Layer">
@@ -97,7 +89,7 @@ const Workspace: any = () => {
           ))}
         </Layer>
 
-        {layers.map((layer, i) => (
+        {layers.map((layer: LayerType, i) => (
           <Layer name={layer.title} key={`layer-${i}`} visible={layer.visible}>
             {layer.instances.map((instance) =>
               instance.shapes?.map((group, m) => (
@@ -108,21 +100,17 @@ const Workspace: any = () => {
                   draggable={currentTool === TOOLS.SELECT}
                 >
                   {group.map((shape, l) =>
-                    shape.type === TOOLS.ERASER ? (
+                    shape.type === TOOLS.ERASER || shape.type === TOOLS.LINE ? (
                       <Line
                         {...shape}
                         key={`line-${m}-${l}`}
                         // listening={false}
                         listening={false}
-                        strokeWidth={25}
-                        tension={0.5}
-                        lineCap={'round'}
-                        lineJoin={'round'}
-                        draggable={false}
+                        draggable={shape.type === TOOLS.LINE}
                       />
                     ) : (
                       <Rectangle
-                        key={`${instance.id}-${m}-rect`}
+                        key={`${instance.id}-${m}-${l}-rect`}
                         shapeProps={shape}
                         isSelected={shape.id === selectedId}
                         onSelect={() => {
@@ -141,15 +129,19 @@ const Workspace: any = () => {
               ))
             )}
             {/* Temporary lines */}
-            {eraserLines.map((options, m) => (
+            {eraserLines.map((options, e) => (
               <Line
                 {...options}
-                key={'temp-rect' + m}
+                key={'temp-eraser-line' + e}
                 listening={false}
-                strokeWidth={25}
-                tension={0.5}
-                lineCap={'round'}
-                lineJoin={'round'}
+                draggable={false}
+              />
+            ))}
+            {lines.map((options, l) => (
+              <Line
+                {...options}
+                key={'temp-line' + l}
+                listening={false}
                 draggable={false}
               />
             ))}

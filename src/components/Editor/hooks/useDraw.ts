@@ -8,8 +8,7 @@ import {
   endDrawing,
   startDrawing,
 } from 'src/redux/slices/editor/editor.actions';
-
-// const DEBOUNCE_WAIT = 300;
+import useLine from './useLine';
 
 const useDraw = (
   selectedLayerId: number,
@@ -19,10 +18,13 @@ const useDraw = (
 ) => {
   const dispatch = useAppDispatch();
 
-  const isDrawing = useAppSelector(({ editor }) => editor.isDrawing);
+  const { isDrawing, layers } = useAppSelector(({ editor }) => editor);
 
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
     useRect(selectedLayerId, selectedLayerColor, workspaceRef);
+
+  const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
+    useLine(selectedLayerId, selectedLayerColor);
 
   const {
     eraseHandleMouseDown,
@@ -33,20 +35,40 @@ const useDraw = (
 
   const { setCursorStyle } = useTool(workspaceRef);
 
-  let handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {};
-  let handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {};
-  let handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {};
+  const handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {
+    if (currentTool === TOOLS.RECTANGLE) {
+      return rectHandleMouseDown(e);
+    }
+    if (currentTool === TOOLS.ERASER) {
+      return eraseHandleMouseDown(e);
+    }
+    if (currentTool === TOOLS.LINE) {
+      return lineHandleMouseDown(e);
+    }
+  };
 
-  // !TODO: Enhance this part
-  if (currentTool === TOOLS.RECTANGLE) {
-    handleMouseDown = (e) => rectHandleMouseDown(e);
-    handleMouseUp = (e) => rectHandleMouseUp(e);
-    handleMouseMove = (e) => rectHandleMouseMove(e);
-  } else if (currentTool === TOOLS.ERASER) {
-    handleMouseDown = (e) => eraseHandleMouseDown(e);
-    handleMouseUp = (e) => eraseHandleMouseUp(e);
-    handleMouseMove = (e) => eraseHandleMouseMove(e);
-  }
+  const handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {
+    if (currentTool === TOOLS.RECTANGLE) {
+      return rectHandleMouseUp(e);
+    }
+    if (currentTool === TOOLS.ERASER) {
+      return eraseHandleMouseUp(e);
+    }
+    if (currentTool === TOOLS.LINE) {
+      return lineHandleMouseUp(e);
+    }
+  };
+  const handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {
+    if (currentTool === TOOLS.RECTANGLE) {
+      return rectHandleMouseMove(e);
+    }
+    if (currentTool === TOOLS.ERASER) {
+      return eraseHandleMouseMove(e);
+    }
+    if (currentTool === TOOLS.LINE) {
+      return lineHandleMouseMove(e);
+    }
+  };
 
   const handleMouseEnter = () => {
     if (rects.length === 0 && currentTool === TOOLS.SELECT) {
@@ -61,15 +83,27 @@ const useDraw = (
     }
   };
 
+  const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
+    if (e.target.attrs?.fill) {
+      e.target.attrs.fill =
+        e.target.attrs.fill === 'rgba(0,0,0,0)'
+          ? layers[selectedLayerId].color
+              .replace(')', ', 0.3)')
+              .replace('rgb', 'rgba')
+          : 'rgba(0,0,0,0)';
+    }
+  };
+
   return {
     rects,
     eraserLines,
+    lines,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-
     handleMouseEnter,
     handleMouseLeave,
+    hideShapeTemporarily,
   };
 };
 

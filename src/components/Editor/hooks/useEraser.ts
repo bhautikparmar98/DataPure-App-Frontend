@@ -1,8 +1,8 @@
 import Konva from 'konva';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { addEraserLines } from 'src/redux/slices/editor/editor.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { useAppDispatch } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 
 /* 
@@ -12,7 +12,6 @@ import { TOOLS } from 'src/constants';
 */
 
 const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
-  const { tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
 
   const rectId = useRef('');
@@ -22,22 +21,10 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
     type: TOOLS.ERASER,
     opacity: 1,
     stroke: selectedLayerColor,
+    strokeWidth: 25,
+
     globalCompositeOperation: 'destination-out', //for erasing effect
   } as const;
-
-  const memoisedFunc = useCallback(() => {}, []);
-
-  // !Enhance this part instead of calling memoised function
-  if (tool !== TOOLS.ERASER) {
-    return {
-      eraseHandleDragStart: memoisedFunc,
-      eraseHandleDragEnd: memoisedFunc,
-      eraseHandleMouseDown: memoisedFunc,
-      eraseHandleMouseUp: memoisedFunc,
-      eraseHandleMouseMove: memoisedFunc,
-      eraserLines: [],
-    };
-  }
 
   const eraseHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     if (event.target.attrs?.id?.length > 0 && rectId.current === '') {
@@ -71,7 +58,6 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
     if (lines.length > 0) {
       //just store lines in redux store when mouse click ends
       if (rectId.current?.length > 0) {
-        console.log(selectedLayerId, rectId.current, lines);
         dispatch(addEraserLines(selectedLayerId, rectId.current, lines));
         rectId.current = '';
       }

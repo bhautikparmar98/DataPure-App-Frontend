@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import _ from 'underscore';
-import { Tool, TOOLS } from './tools';
+import { Tool } from './tools';
 
 // shapes are array and each array element will represent Konva.Group. This is done to so if there are erased parts, they will be grouped together with their rectangle/polygon and when the shape is dragged, the erased part is dragged too
 export type Instance = {
@@ -17,7 +17,7 @@ export type Layer = {
 };
 
 const mockRects = () =>
-  [...Array(1)].map((_, i) => ({
+  [...Array(5)].map((_, i) => ({
     id: (Math.random() * 10).toString(),
     x: Math.random() * 600,
     y: Math.random() * 300,

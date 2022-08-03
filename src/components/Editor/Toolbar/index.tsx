@@ -38,6 +38,7 @@ const Drawer = styled(MuiDrawer, {
 
 const ICONS = {
   [TOOLS.PEN]: 'la:pen',
+  [TOOLS.LINE]: 'ci:line-xl',
   [TOOLS.RECTANGLE]: 'bx:rectangle',
   [TOOLS.ERASER]: 'clarity:eraser-line',
   [TOOLS.BRUSH]: 'bi:brush',
@@ -81,12 +82,16 @@ function Toolbar() {
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
+                    color: text === currentTool ? 'royalblue' : 'inherit',
                   }}
                 >
                   <Icon
                     icon={ICONS[text]}
                     width="30"
-                    color={text === currentTool ? 'royalblue' : 'inherit'}
+                    style={{
+                      transform:
+                        text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)',
+                    }}
                     onClick={(e) => handleToolClick(text)}
                   />
                 </ListItemIcon>
