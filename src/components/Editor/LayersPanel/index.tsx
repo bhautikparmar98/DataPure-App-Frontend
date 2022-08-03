@@ -5,48 +5,38 @@ import useLayers from '../hooks/useLayers';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { Container } from '@mui/material';
 
-import { type Mask } from '@constants';
+const LayersPanel = () => {
+  const { setSelectedLayer, selectedLayerId, layers } = useLayers();
 
-type MasksPanelProps = {
-  masks: Mask[];
-  setSelectedMask: (a: any) => void;
-  selectedMaskId: number;
-};
-
-const MasksPanel = ({
-  masks,
-  setSelectedMask,
-  selectedMaskId,
-}: MasksPanelProps) => {
   return (
     <Container sx={{ marginTop: 2 }}>
       <FormControl sx={{ width: 500 }}>
         <InputLabel variant="standard" htmlFor="uncontrolled-native">
-          Masks
+          Classes
         </InputLabel>
 
         <Brightness1Icon
           sx={{
-            color: masks[selectedMaskId].color,
+            color: layers[selectedLayerId]?.color,
             marginLeft: 'calc(100% - 20px)',
           }}
         />
 
         <NativeSelect
-          defaultValue={selectedMaskId}
+          defaultValue={selectedLayerId}
           inputProps={{
-            name: 'mask-selection',
+            name: 'layer-selection',
             id: 'uncontrolled-native',
           }}
-          onChange={setSelectedMask}
+          onChange={setSelectedLayer}
         >
-          {masks.map((mask, i) => (
+          {layers.map((layer, i) => (
             <option
               value={i}
-              key={`mask-opt-${i}`}
-              style={{ color: mask.color }}
+              key={`layer-opt-${i}`}
+              style={{ color: layer.color }}
             >
-              {mask.title}
+              {layer.title}
             </option>
           ))}
         </NativeSelect>
@@ -54,4 +44,4 @@ const MasksPanel = ({
     </Container>
   );
 };
-export default MasksPanel;
+export default LayersPanel;

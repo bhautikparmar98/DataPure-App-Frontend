@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 // MUI
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -12,9 +11,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 // Icons
 import { Icon } from '@iconify/react';
 // Constants
-import { TOOLS, type Tool } from '@constants';
-import { setTool } from 'redux/slices/editor';
-import { useAppDispatch, useAppSelector } from 'redux/store';
+import { TOOLS, type Tool } from 'src/constants';
+import { setTool } from 'src/redux/slices/editor';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 
 const drawerWidth = 240;
 
@@ -37,8 +36,18 @@ const Drawer = styled(MuiDrawer, {
   boxSizing: 'border-box',
 }));
 
+const ICONS = {
+  [TOOLS.PEN]: 'la:pen',
+  [TOOLS.LINE]: 'ci:line-xl',
+  [TOOLS.RECTANGLE]: 'bx:rectangle',
+  [TOOLS.ERASER]: 'clarity:eraser-line',
+  [TOOLS.BRUSH]: 'bi:brush',
+  [TOOLS.PEN_TOOL]: 'bi:vector-pen',
+  [TOOLS.SELECT]: 'la:mouse-pointer',
+};
+
 function Toolbar() {
-  const [open, setOpen] = React.useState(false);
+  const open = false;
   const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
 
   const dispatch = useAppDispatch();
@@ -73,44 +82,18 @@ function Toolbar() {
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
+                    color: text === currentTool ? 'royalblue' : 'inherit',
                   }}
                 >
-                  {text === TOOLS.PEN ? (
-                    <Icon
-                      icon="la:pen"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.RECTANGLE ? (
-                    <Icon
-                      icon="bx:rectangle"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.BRUSH ? (
-                    <Icon
-                      icon="bi:brush"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : text === TOOLS.PEN_TOOL ? (
-                    <Icon
-                      icon="bi:vector-pen"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  ) : (
-                    <Icon
-                      icon="clarity:eraser-line"
-                      width="30"
-                      color={text === currentTool ? 'royalblue' : 'inherit'}
-                      onClick={(e) => handleToolClick(text)}
-                    />
-                  )}
+                  <Icon
+                    icon={ICONS[text]}
+                    width="30"
+                    style={{
+                      transform:
+                        text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)',
+                    }}
+                    onClick={(e) => handleToolClick(text)}
+                  />
                 </ListItemIcon>
               </ListItemButton>
             </ListItem>

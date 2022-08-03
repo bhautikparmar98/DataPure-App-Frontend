@@ -1,6 +1,6 @@
 import axios from '../utils/axios';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 type SetOCR = ({}) => void;
 
@@ -35,7 +35,7 @@ const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
       console.error(err);
     }
   }, [imgSnippet]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return;
 };
 export default useOCR;

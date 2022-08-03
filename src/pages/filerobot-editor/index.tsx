@@ -3,11 +3,10 @@ const Editor = dynamic(() => import('../../components/FilerobotEditor'), {
   ssr: false,
 });
 
-const ImageEditor = () => {
-  return (
-    <div>
-      <Editor></Editor>
-    </div>
-  );
-};
+const ImageEditor = () => (
+  <div>
+    <Editor></Editor>
+  </div>
+);
+
 export default ImageEditor;

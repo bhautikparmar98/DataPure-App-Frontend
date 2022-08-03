@@ -6,19 +6,17 @@ import { editorReducer } from './slices/editor';
 
 const isClient = typeof window !== 'undefined';
 
-const createNoopStorage = () => {
-  return {
-    getItem(_key: any) {
-      return Promise.resolve(null);
-    },
-    setItem(_key: any, value: any) {
-      return Promise.resolve(value);
-    },
-    removeItem(_key: any) {
-      return Promise.resolve();
-    },
-  };
-};
+const createNoopStorage = () => ({
+  getItem(_key: any) {
+    return Promise.resolve(null);
+  },
+  setItem(_key: any, value: any) {
+    return Promise.resolve(value);
+  },
+  removeItem(_key: any) {
+    return Promise.resolve();
+  },
+});
 
 // avoiding localStorage setup for Next.js server
 const storage = isClient ? createWebStorage('local') : createNoopStorage();
@@ -27,7 +25,7 @@ const rootPersistConfig = {
   key: 'root',
   keyPrefix: 'redux-',
   storage,
-  whitelist: [],
+  // whitelist: ['redux-editor', 'editor'],
 };
 
 const editorPersistConfig = {
@@ -37,7 +35,9 @@ const editorPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  editor: persistReducer(editorPersistConfig, editorReducer),
+  editor: editorReducer,
+  // !comment the next line for debugging purposes
+  // editor: persistReducer(editorPersistConfig, editorReducer),
 });
 
 export { rootPersistConfig, rootReducer };

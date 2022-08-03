@@ -1,14 +1,15 @@
-import Toolbar from './children/Toolbar';
-import Workspace from './children/Workspace';
+import LayersPanel from './LayersPanel';
+import Toolbar from './Toolbar';
+import Workspace from './Workspace';
 
-const Editor = () => {
-  return (
+const Editor = () => (
+  <div style={{ marginLeft: 70 }}>
+    <LayersPanel />
+    <Toolbar />
     <div>
-      <Toolbar />
-      <div style={{ marginLeft: 70 }}>
-        <Workspace />
-      </div>
+      <Workspace />
     </div>
-  );
-};
+  </div>
+);
+
 export default Editor;
