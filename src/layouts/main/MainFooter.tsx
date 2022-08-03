@@ -2,9 +2,16 @@
 import NextLink from 'next/link';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Grid, Link, Divider, Container, Typography, Stack } from '@mui/material';
+import {
+  Grid,
+  Link,
+  Divider,
+  Container,
+  Typography,
+  Stack,
+} from '@mui/material';
 // routes
-import { PATH_PAGE } from 'src/routes/client/paths';
+
 // components
 import Logo from 'src/components/Shared/Logo';
 import SocialsButton from 'src/components/Shared/SocialsButton';
@@ -15,8 +22,8 @@ const LINKS = [
   {
     headline: 'Minimal',
     children: [
-      { name: 'About us', href: PATH_PAGE.about },
-      { name: 'Contact us', href: PATH_PAGE.contact },
+      { name: 'About us', href: '#' },
+      { name: 'Contact us', href: '#' },
       // { name: 'FAQs', href: PATH_PAGE.faqs },
     ],
   },
@@ -58,8 +65,9 @@ export default function MainFooter() {
           </Grid>
           <Grid item xs={8} md={3}>
             <Typography variant="body2" sx={{ pr: { md: 5 } }}>
-              The starting point for your next project with Minimal UI Kit, built on the newest
-              version of Material-UI ©, ready to be customized to your style.
+              The starting point for your next project with Minimal UI Kit,
+              built on the newest version of Material-UI ©, ready to be
+              customized to your style.
             </Typography>
 
             <Stack
@@ -84,7 +92,11 @@ export default function MainFooter() {
                   </Typography>
                   {list.children.map((link) => (
                     <NextLink key={link.name} href={link.href} passHref>
-                      <Link color="inherit" variant="body2" sx={{ display: 'block' }}>
+                      <Link
+                        color="inherit"
+                        variant="body2"
+                        sx={{ display: 'block' }}
+                      >
                         {link.name}
                       </Link>
                     </NextLink>

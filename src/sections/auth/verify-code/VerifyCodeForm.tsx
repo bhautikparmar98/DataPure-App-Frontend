@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup/dist/yup';
 import { OutlinedInput, Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // routes
-import { PATH_DASHBOARD } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 
 // ----------------------------------------------------------------------
 
@@ -85,11 +85,14 @@ export default function VerifyCodeForm() {
 
     data = data.split('');
 
-    [].forEach.call(document.querySelectorAll('#field-code'), (node: any, index) => {
-      node.value = data[index];
-      const fieldIndex = `code${index + 1}`;
-      setValue(fieldIndex as ValueNames, data[index]);
-    });
+    [].forEach.call(
+      document.querySelectorAll('#field-code'),
+      (node: any, index) => {
+        node.value = data[index];
+        const fieldIndex = `code${index + 1}`;
+        setValue(fieldIndex as ValueNames, data[index]);
+      }
+    );
   };
 
   const handleChangeWithNextField = (
@@ -103,7 +106,9 @@ export default function VerifyCodeForm() {
 
     if (value.length >= maxLength) {
       if (fieldIntIndex < 6) {
-        const nextfield = document.querySelector(`input[name=code${fieldIntIndex + 1}]`);
+        const nextfield = document.querySelector(
+          `input[name=code${fieldIntIndex + 1}]`
+        );
 
         if (nextfield !== null) {
           (nextfield as HTMLElement).focus();

@@ -1,6 +1,9 @@
 // @mui
+import { Box, Link, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Box, Link, Typography, Avatar } from '@mui/material';
+import BackgroundLetterAvatars from 'src/components/Shared/BackgroundLetterAvatars';
+import { ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +25,7 @@ type Props = {
 };
 
 export default function NavbarAccount({ isCollapse }: Props) {
+  const { role, user } = useAuth();
   return (
     <Link underline="none" color="inherit">
       <RootStyle
@@ -31,10 +35,7 @@ export default function NavbarAccount({ isCollapse }: Props) {
           }),
         }}
       >
-        <Avatar
-          src="https://minimal-assets-api.vercel.app/assets/images/avatars/avatar_5.jpg"
-          alt="Rayan Moran"
-        />
+        <BackgroundLetterAvatars name={user?.fullName || 'A'} />
 
         <Box
           sx={{
@@ -50,10 +51,10 @@ export default function NavbarAccount({ isCollapse }: Props) {
           }}
         >
           <Typography variant="subtitle2" noWrap>
-            Rayan Moran
+            {user?.fullName}
           </Typography>
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            user
+            {ROLES[role].label}
           </Typography>
         </Box>
       </RootStyle>

@@ -1,6 +1,6 @@
 import { SettingsValueProps } from 'src/components/Shared/settings/type';
 // routes
-import { PATH_DASHBOARD } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 import { PATH_AUTH } from 'src/routes/auth/paths';
 
 // API
@@ -32,7 +32,7 @@ export const AUTH0_API = {
 export const MAPBOX_API = process.env.MAPBOX;
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
-export const PATH_AFTER_LOGIN = PATH_DASHBOARD.general.dashboard; // as '/dashboard'
+export const PATH_AFTER_LOGIN = PATH_DASHBOARD.general.app; // as '/dashboard'
 export const PATH_LOGIN = PATH_AUTH.login; // as '/'
 
 // LAYOUT

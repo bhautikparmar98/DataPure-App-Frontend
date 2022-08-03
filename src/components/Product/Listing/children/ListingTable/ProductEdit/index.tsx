@@ -2,15 +2,22 @@ import { paramCase } from 'change-case';
 // next
 import NextLink from 'next/link';
 // routes
-import { PATH_DASHBOARD } from 'src/routes/client/paths';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 // components
 import Iconify from 'src/components/Shared/Iconify';
 import { ProductEditProps } from './interfaces';
 // ----------------------------------------------------------------------
 
-export default function ProductEdit({ onDelete, productName }: ProductEditProps) {
+export default function ProductEdit({
+  onDelete,
+  productName,
+}: ProductEditProps) {
   return (
-    <NextLink href={`${PATH_DASHBOARD.general.listings}/product/edit/${paramCase(productName)}`}>
+    <NextLink
+      href={`${PATH_DASHBOARD.general.listings}/product/edit/${paramCase(
+        productName
+      )}`}
+    >
       <a>
         <Iconify
           icon="akar-icons:pencil"

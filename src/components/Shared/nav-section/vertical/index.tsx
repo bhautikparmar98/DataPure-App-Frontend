@@ -32,14 +32,11 @@ export default function NavSectionVertical({
   const { role } = useAuth();
 
   const navAccessible = navConfig.map((group: any) => {
-    if (group && group.subheader === 'management') {
-      group.items = group.items.map((item: NavListProps) => ({
-        ...item,
-        children: item.children
-          ? item.children.filter((child: any) => (child.roles ? child.roles.includes(role) : false))
-          : null,
-      }));
-    }
+    group.items = group.items.filter((item: NavListProps) => {
+      if (item.roles && !item.roles?.includes(role)) return false;
+      else return true;
+    });
+
     return group;
   });
 

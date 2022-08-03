@@ -44,7 +44,7 @@ export default function MainLayout({ children }: Props) {
             <Typography variant="caption" component="p">
               © All rights reserved
               <br /> made by &nbsp;
-              <Link href="https://minimals.cc/">Hammoq.inc</Link>
+              <Link href="https://datapure.co/">DatePure</Link>
             </Typography>
           </Container>
         </Box>

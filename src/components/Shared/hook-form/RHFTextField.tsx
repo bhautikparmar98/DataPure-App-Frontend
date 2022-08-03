@@ -48,14 +48,14 @@ export default function RHFTextField({
             <SvgIcon
               color="primary"
               sx={{ cursor: 'pointer' }}
-              style={{ width: 16, height: 16, marginRight: 5 }}
+              // style={{ width: 16, height: 16, marginRight: 5 }}
             >
               <Iconify icon={'mdi:robot-outline'} />
             </SvgIcon>
           </Tooltip>
         )}
         {upperLabel && (
-          <Typography gutterBottom variant="body2" style={{ margin: 0 }}>
+          <Typography gutterBottom variant="body2">
             {upperLabel}
           </Typography>
         )}
@@ -69,7 +69,7 @@ export default function RHFTextField({
             {...field}
             fullWidth
             error={!!error}
-            inputProps={{ style: { height: other.rows ? '' : '10px' } }}
+            // inputProps={{ style: { height: other.rows ? '' : '10px' } }}
             helperText={error?.message}
             {...other}
           />

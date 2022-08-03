@@ -16,16 +16,18 @@ interface Props extends BoxProps {
   title: string;
 }
 
-const Page = forwardRef<HTMLDivElement, Props>(({ children, title = '', meta, ...other }, ref) => (
-  <>
-    <Head>
-      <title>{`${title} | Hammoq | List it, Forget it`}</title>
-      {/* {meta} */}
-    </Head>
-    <StyledBox ref={ref} {...other}>
-      {children}
-    </StyledBox>
-  </>
-));
+const Page = forwardRef<HTMLDivElement, Props>(
+  ({ children, title = '', meta, ...other }, ref) => (
+    <>
+      <Head>
+        <title>{`${title} | DatePure`}</title>
+        {/* {meta} */}
+      </Head>
+      <StyledBox ref={ref} {...other}>
+        {children}
+      </StyledBox>
+    </>
+  )
+);
 
 export default Page;

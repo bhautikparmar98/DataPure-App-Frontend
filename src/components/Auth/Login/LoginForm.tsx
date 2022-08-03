@@ -7,7 +7,11 @@ import NextLink from 'next/link';
 import { useState } from 'react';
 // form
 import { useForm } from 'react-hook-form';
-import { FormProvider, RHFCheckbox, RHFTextField } from 'src/components/Shared/hook-form';
+import {
+  FormProvider,
+  RHFCheckbox,
+  RHFTextField,
+} from 'src/components/Shared/hook-form';
 // components
 import Iconify from 'src/components/Shared/Iconify';
 // routes
@@ -22,33 +26,19 @@ import { ROLES } from 'src/constants';
 
 interface LoginFormProps {
   onSubmit: (values: FormValuesProps) => void;
-  tab: string;
-  isAdminLogin: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, tab, isAdminLogin }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   //schema for clients and admins
-  const DefaultSchema = Yup.object().shape({
-    username: Yup.string().required('Username is required'),
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string().email().required('Email is required'),
     password: Yup.string().required('Password is required'),
   });
-
-  const ClientSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required(),
-    password: Yup.string().required('Password is required'),
-  });
-
-  const LoginSchema = ROLES.CLIENT.value === tab ? ClientSchema : DefaultSchema;
-
-  if (isAdminLogin) {
-    tab = ROLES.ADMIN.value;
-  }
 
   const defaultValues = {
     email: '',
-    username: '',
     password: '',
     remember: true,
   };
@@ -80,13 +70,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, tab, isAdminLogin }) =>
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={3}>
-        {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
-
-        {tab === ROLES.CLIENT.value ? (
-          <RHFTextField key="emailAddressForLogin" name="email" label="Username" />
-        ) : (
-          <RHFTextField key="usernameForLogin" name="username" label="Username" />
+        {!!errors.afterSubmit && (
+          <Alert severity="error">{errors.afterSubmit.message}</Alert>
         )}
+
+        <RHFTextField key="emailAddressForLogin" name="email" label="Email" />
 
         <RHFTextField
           name="password"
@@ -95,8 +83,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, tab, isAdminLogin }) =>
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  <Iconify
+                    icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'}
+                  />
                 </IconButton>
               </InputAdornment>
             ),
@@ -104,8 +97,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, tab, isAdminLogin }) =>
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <RHFCheckbox name="remember" label="Remember me" color="text.secondary" />
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ my: 2 }}
+      >
+        <RHFCheckbox
+          name="remember"
+          label="Remember me"
+          color="text.secondary"
+        />
         <NextLink href={PATH_AUTH.resetPassword} passHref>
           <Link variant="subtitle2" color="text.secondary">
             Forgot password?

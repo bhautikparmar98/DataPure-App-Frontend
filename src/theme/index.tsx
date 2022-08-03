@@ -3,7 +3,7 @@ import { useMemo, ReactNode } from 'react';
 import { CssBaseline } from '@mui/material';
 import { createTheme, ThemeOptions, ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 // hooks
-import useSettings from 'src/hooks/useSettings';
+import useSettings from '../hooks/useSettings';
 //
 import palette from './palette';
 import typography from './typography';
