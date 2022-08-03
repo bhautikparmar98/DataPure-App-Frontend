@@ -9,15 +9,6 @@ const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || '',
 });
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // logout
-    }
-  }
-);
-
 export const AxiosInterceptor: React.FC<{ children: any }> = ({ children }) => {
   const { logout } = useAuth();
 
@@ -25,8 +16,6 @@ export const AxiosInterceptor: React.FC<{ children: any }> = ({ children }) => {
     const resInterceptor = (response: any): any => response;
 
     const errInterceptor = (error: any) => {
-      console.log('there is an error ', error);
-
       if (error.response.status === 401) {
         logout();
       }

@@ -100,8 +100,9 @@ const UserListComponent = () => {
         [id]: { value: password },
       }));
     } catch (error) {
-      console.log('error');
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
+      console.log('error', error);
+      if (error?.message) enqueueSnackbar(error.message, { variant: 'error' });
+      else enqueueSnackbar('Something went wrong', { variant: 'error' });
     }
   };
 

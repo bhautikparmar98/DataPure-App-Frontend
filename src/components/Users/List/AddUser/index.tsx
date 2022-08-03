@@ -22,6 +22,7 @@ const AddUserDialog: React.FC<AddUserProps> = ({ open, onClose }) => {
         firstName: data.firstName,
         lastName: data.lastName,
         company: data.company,
+        role: data.role,
       };
 
       const response = await axiosInstance.post('/user/invite', payload);
@@ -37,7 +38,7 @@ const AddUserDialog: React.FC<AddUserProps> = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={() => onClose(null)}>
       <DialogTitle>Add User</DialogTitle>
       <DialogContent>
         <RegisterForm loading={loading} onSubmit={submitHandler} />

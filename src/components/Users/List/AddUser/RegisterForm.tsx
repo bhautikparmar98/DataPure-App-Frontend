@@ -84,11 +84,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
           spacing={2}
         >
           <RHFSelect name="role">
-            {Object.keys(ROLES).map((key) => (
-              <MenuItem key={key} value={ROLES[key]?.value}>
-                {ROLES[key]?.label}
-              </MenuItem>
-            ))}
+            {Object.keys(ROLES)
+              .filter((key) => key !== ROLES.SUPER_ADMIN.value)
+              .map((key) => (
+                <MenuItem key={key} value={ROLES[key]?.value}>
+                  {ROLES[key]?.label}
+                </MenuItem>
+              ))}
           </RHFSelect>
         </Stack>
       </Stack>
