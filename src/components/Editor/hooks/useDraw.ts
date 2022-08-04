@@ -55,7 +55,7 @@ const useDraw = (
       return eraseHandleMouseUp(e);
     }
     if (currentTool === TOOLS.LINE) {
-      return lineHandleMouseUp(e);
+      return lineHandleMouseUp();
     }
   };
   const handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {

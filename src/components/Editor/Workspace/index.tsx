@@ -105,8 +105,7 @@ const Workspace: any = () => {
                       <Line
                         {...shape}
                         key={`line-${m}-${l}`}
-                        // listening={false}
-                        listening={false}
+                        listening={shape.type === TOOLS.LINE}
                         draggable={shape.type === TOOLS.LINE}
                       />
                     ) : (
