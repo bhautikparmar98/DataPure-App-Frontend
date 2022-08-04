@@ -3,9 +3,9 @@ export const TOOLS = {
   LINE: 'Line',
   RECTANGLE: 'Rectangle',
   ERASER: 'Eraser',
-  PEN: 'Pen',
-  PEN_TOOL: 'Pentool',
-  BRUSH: 'Brush',
+  // PEN: 'Pen',
+  // PEN_TOOL: 'Pentool',
+  // BRUSH: 'Brush',
 } as const;
 
 type Keys = keyof typeof TOOLS;

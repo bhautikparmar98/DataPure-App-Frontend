@@ -29,7 +29,7 @@ const useZoom = () => {
     };
 
     const newScale =
-      e.evt.deltaY > 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+      e.evt.deltaY < 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
 
     setStageScale({
       stageScale: newScale,

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Stage, Layer, Rect, Line, Group } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
@@ -23,7 +23,7 @@ const Workspace: any = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
-  const [selectedId, selectShape] = React.useState('');
+  const [selectedId, selectShape] = useState('');
   const dispatch = useAppDispatch();
 
   const checkDeselect = (e: any) => {
@@ -53,6 +53,7 @@ const Workspace: any = () => {
 
   const { stageScale, handleWheel } = useZoom();
 
+  // For Rectangle transformation (size & rotation)
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
     if (newAttrs?.id && newAttrs?.id?.length > 0) {
       dispatch(updateShape(selectedLayerId, newAttrs));
@@ -152,4 +153,4 @@ const Workspace: any = () => {
   );
 };
 
-export default React.memo(Workspace);
+export default Workspace;
