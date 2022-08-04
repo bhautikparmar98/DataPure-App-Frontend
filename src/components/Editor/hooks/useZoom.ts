@@ -3,6 +3,8 @@ import { useState } from 'react';
 
 // const MAX_ZOOM = 200;
 const SCALE_BY = 1.2;
+const MIN_SCALE = 0.1;
+const MAX_SCALE = 10;
 
 const useZoom = () => {
   const [stageScale, setStageScale] = useState({
@@ -30,6 +32,8 @@ const useZoom = () => {
 
     const newScale =
       e.evt.deltaY < 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
+
+    if (newScale < MIN_SCALE || newScale > MAX_SCALE) return;
 
     setStageScale({
       stageScale: newScale,
