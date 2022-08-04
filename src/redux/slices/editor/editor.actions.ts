@@ -84,3 +84,11 @@ export function endDrawing() {
       type: EditorActionTypes.End_DRAWING,
     });
 }
+
+export function setPreview({ src }: { src: string }) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.SET_PREVIEW,
+      payload: { src },
+    });
+}

@@ -3,18 +3,12 @@ import { useCallback, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { addInstance } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import useTool from './useTool';
 import { TOOLS } from 'src/constants';
 import _ from 'underscore';
 
-const useRect = (
-  selectedLayerId: number,
-  selectedLayerColor: string,
-  workspaceRef: React.RefObject<HTMLDivElement>
-) => {
+const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
   const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
-  const { setCursorStyle } = useTool(workspaceRef);
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 

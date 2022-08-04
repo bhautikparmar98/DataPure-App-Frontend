@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { TOOLS } from 'src/constants';
 import { useAppSelector } from 'src/redux/store';
 
-const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
+const useCursor = (workspaceRef: React.RefObject<HTMLDivElement>) => {
   const currentTool = useAppSelector((state) => state.editor.tool);
 
   const toolName =
@@ -25,4 +25,4 @@ const useTool = (workspaceRef: React.RefObject<HTMLDivElement>) => {
   return { setCursorStyle };
 };
 
-export default useTool;
+export default useCursor;

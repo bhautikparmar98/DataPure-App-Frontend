@@ -11,14 +11,16 @@ import { updateShape } from 'src/redux/slices/editor/editor.actions';
 import { Layer as LayerType } from 'src/constants/layers';
 
 const TOOLBAR_WIDTH = 70;
-const LAYERS_PANEL_HEIGHT = 60;
-const WIDTH = window.innerWidth - TOOLBAR_WIDTH;
-const HEIGHT = window.innerHeight - LAYERS_PANEL_HEIGHT;
+const LAYERS_PANEL_WIDTH = 300;
+const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
+const HEIGHT = window.innerHeight;
 
 const Workspace: any = () => {
-  const [layers, selectedLayerId, currentTool] = useAppSelector(
-    ({ editor }) => [editor.layers, editor.selectedLayerId, editor.tool]
-  );
+  const {
+    layers,
+    selectedLayerId = 0,
+    tool: currentTool,
+  } = useAppSelector(({ editor }) => editor);
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -46,8 +48,9 @@ const Workspace: any = () => {
     hideShapeTemporarily,
   } = useDraw(
     selectedLayerId,
-    layers[selectedLayerId].color,
+    layers[selectedLayerId]?.color,
     workspaceRef,
+    stageRef,
     currentTool
   );
 
@@ -61,7 +64,7 @@ const Workspace: any = () => {
   };
 
   return (
-    <div ref={workspaceRef}>
+    <div ref={workspaceRef} style={{ backgroundColor: '#C6C6C6' }}>
       <Stage
         width={WIDTH}
         height={HEIGHT}

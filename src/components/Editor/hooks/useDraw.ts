@@ -1,31 +1,43 @@
 import { Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
 import useRect from './useRect';
-import useTool from './useTool';
+import useCursor from './useCursor';
 import useEraser from './useEraser';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import {
   endDrawing,
+  setPreview,
   startDrawing,
 } from 'src/redux/slices/editor/editor.actions';
 import useLine from './useLine';
+import Konva from 'konva';
+import { useCallback, useRef } from 'react';
 
 const useDraw = (
   selectedLayerId: number,
   selectedLayerColor: string,
   workspaceRef: React.RefObject<HTMLDivElement>,
+  stageRef: React.RefObject<Konva.Stage>,
   currentTool: Tool
 ) => {
   const dispatch = useAppDispatch();
+  const updateCount = useRef(0);
 
+  // State
   const { isDrawing, layers } = useAppSelector(({ editor }) => editor);
 
-  const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedLayerId, selectedLayerColor, workspaceRef);
+  // Cursor
+  const { setCursorStyle } = useCursor(workspaceRef);
 
+  // Rectangle
+  const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
+    useRect(selectedLayerId, selectedLayerColor);
+
+  // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
     useLine(selectedLayerId, selectedLayerColor);
 
+  // Eraser
   const {
     eraseHandleMouseDown,
     eraseHandleMouseUp,
@@ -33,7 +45,21 @@ const useDraw = (
     eraserLines,
   } = useEraser(selectedLayerId, selectedLayerColor);
 
-  const { setCursorStyle } = useTool(workspaceRef);
+  // Update workspace preview
+  const updatePreview = (forceUpdate: boolean) => {
+    if (forceUpdate || updateCount.current === 0) {
+      updateCount.current = updateCount.current + 1;
+      const SCALE = 1 / 4;
+      const src = stageRef?.current?.toDataURL({ pixelRatio: SCALE });
+      if (src) dispatch(setPreview({ src }));
+    }
+  };
+
+  updatePreview(false);
+
+  /* 
+      >>> Workspace events handlers
+  */
 
   const handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {
     if (currentTool === TOOLS.RECTANGLE) {
@@ -48,6 +74,8 @@ const useDraw = (
   };
 
   const handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {
+    updatePreview(true);
+
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseUp(e);
     }

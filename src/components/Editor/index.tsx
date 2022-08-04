@@ -3,12 +3,12 @@ import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 
 const Editor = () => (
-  <div style={{ marginLeft: 70 }}>
-    <LayersPanel />
+  <div>
     <Toolbar />
-    <div>
+    <div style={{ marginLeft: 70 }}>
       <Workspace />
     </div>
+    <LayersPanel />
   </div>
 );
 

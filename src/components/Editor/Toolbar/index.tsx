@@ -37,13 +37,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const ICONS = {
-  [TOOLS.PEN]: 'la:pen',
   [TOOLS.LINE]: 'ci:line-xl',
   [TOOLS.RECTANGLE]: 'bx:rectangle',
   [TOOLS.ERASER]: 'clarity:eraser-line',
-  [TOOLS.BRUSH]: 'bi:brush',
-  [TOOLS.PEN_TOOL]: 'bi:vector-pen',
   [TOOLS.SELECT]: 'la:mouse-pointer',
+  // [TOOLS.PEN]: 'la:pen',
+  // [TOOLS.BRUSH]: 'bi:brush',
+  // [TOOLS.PEN_TOOL]: 'bi:vector-pen',
 };
 
 function Toolbar() {

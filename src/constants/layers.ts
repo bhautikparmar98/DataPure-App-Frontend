@@ -17,7 +17,7 @@ export type Layer = {
 };
 
 const mockRects = () =>
-  [...Array(5)].map((_, i) => ({
+  [...Array(1)].map((_, i) => ({
     id: (Math.random() * 10).toString(),
     x: Math.random() * 600,
     y: Math.random() * 300,
@@ -40,7 +40,7 @@ export const layers: Layer[] = [
       {
         visible: true,
         id: _.uniqueId(),
-        shapes: [[...mockRects()]],
+        shapes: [[]],
       },
       {
         visible: true,

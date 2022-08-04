@@ -8,14 +8,16 @@ type State = {
   selectedLayerId: number;
   isDrawing: boolean;
   currentInstanceId: number | null;
+  preview: string;
 };
 
 const initialState: State = {
-  tool: TOOLS.PEN as Tool,
+  tool: TOOLS.RECTANGLE as Tool,
   layers,
   selectedLayerId: 0,
   isDrawing: true,
   currentInstanceId: 0, //!Unset this value later
+  preview: '',
 };
 
 export const editorReducer = (state = initialState, action: any) => {
@@ -123,6 +125,15 @@ export const editorReducer = (state = initialState, action: any) => {
       return {
         ...state,
         layers,
+      };
+    }
+
+    case EditorActionTypes.SET_PREVIEW: {
+      const { src } = action.payload;
+      state.preview = src;
+      return {
+        ...state,
+        preview: src,
       };
     }
 
