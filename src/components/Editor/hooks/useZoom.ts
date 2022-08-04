@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { setPreview } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch } from 'src/redux/store';
 import _ from 'underscore';
