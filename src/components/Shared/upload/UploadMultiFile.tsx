@@ -8,6 +8,7 @@ import { UploadMultiFileProps } from './type';
 import BlockContent from './BlockContent';
 import RejectionFiles from './RejectionFiles';
 import MultiFilePreview from './MultiFilePreview';
+import UploadingProgress from './UploadingProgress';
 
 // ----------------------------------------------------------------------
 
@@ -31,9 +32,19 @@ export default function UploadMultiFile({
   helperText,
   sx,
   blockContent,
+  minHeight,
+  uploading,
+  progress,
+  buffer,
   ...other
 }: UploadMultiFileProps) {
-  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    fileRejections,
+  } = useDropzone({
     ...other,
   });
 
@@ -52,18 +63,18 @@ export default function UploadMultiFile({
       >
         <input {...getInputProps()} />
 
-        {blockContent ? (
-          <BlockContent
-            icon={blockContent.icon || 'carbon-add'}
-            textUpload={blockContent.textUpload || 'Upload'}
-            textHint={blockContent.textHint || 'browse your machine'}
-          />
-        ) : (
-          false
-        )}
+        <input {...getInputProps()} />
+
+        <BlockContent minHeight={minHeight} />
       </DropZoneStyle>
 
-      {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
+      {uploading && progress && buffer && (
+        <UploadingProgress buffer={buffer} progress={progress} />
+      )}
+
+      {fileRejections.length > 0 && (
+        <RejectionFiles fileRejections={fileRejections} />
+      )}
 
       <MultiFilePreview
         files={files}

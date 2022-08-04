@@ -78,9 +78,14 @@ export function RHFUploadSingleFile({ name, ...other }: Props) {
 
 interface RHFUploadMultiFileProps extends Omit<UploadMultiFileProps, 'files'> {
   name: string;
+  minHeight?: number;
 }
 
-export function RHFUploadMultiFile({ name, ...other }: RHFUploadMultiFileProps) {
+export function RHFUploadMultiFile({
+  name,
+  minHeight,
+  ...other
+}: RHFUploadMultiFileProps) {
   const { control } = useFormContext();
 
   return (
@@ -95,6 +100,7 @@ export function RHFUploadMultiFile({ name, ...other }: RHFUploadMultiFileProps) 
             accept="image/*"
             files={field.value}
             error={checkError}
+            minHeight={minHeight}
             helperText={
               checkError && (
                 <FormHelperText error sx={{ px: 2 }}>

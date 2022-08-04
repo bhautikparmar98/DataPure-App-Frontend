@@ -12,7 +12,8 @@ export const PATH_DASHBOARD = {
     // listings: path(ROOTS_DASHBOARD, 'listings'),
     // product: path(ROOTS_DASHBOARD, 'product'),
   },
-  general: {
-    app: path(ROOTS_DASHBOARD, 'app'),
+  project: {
+    root: '/project',
+    list: path(ROOTS_DASHBOARD, 'project/list'),
   },
 };

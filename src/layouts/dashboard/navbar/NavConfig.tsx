@@ -14,6 +14,7 @@ const ICONS = {
   ecommerce: getIcon('ic_ecommerce'),
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
+  projects: getIcon('bi:boxes'),
 };
 
 const sidebarConfig = [
@@ -22,9 +23,9 @@ const sidebarConfig = [
   {
     items: [
       {
-        title: 'Dashboard',
-        path: PATH_DASHBOARD.general.app,
-        icon: ICONS.dashboard,
+        title: 'Projects',
+        path: PATH_DASHBOARD.project.list,
+        icon: ICONS.projects,
       },
       {
         title: 'Users',

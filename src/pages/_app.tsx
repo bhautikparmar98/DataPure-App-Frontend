@@ -36,6 +36,8 @@ import Head from 'next/head';
 //
 import { Provider as ReduxProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // @mui
 // redux
 import { persistor, store } from 'src/redux/store';
@@ -95,10 +97,14 @@ export default function MyApp(props: MyAppProps) {
                         <ThemeColorPresets>
                           <ThemeLocalization>
                             <RtlLayout>
-                              <ChartStyle />
-                              <Settings />
-                              <ProgressBar />
-                              {getLayout(<Component {...pageProps} />)}
+                              <LocalizationProvider
+                                dateAdapter={AdapterDateFns}
+                              >
+                                <ChartStyle />
+                                <Settings />
+                                <ProgressBar />
+                                {getLayout(<Component {...pageProps} />)}
+                              </LocalizationProvider>
                             </RtlLayout>
                           </ThemeLocalization>
                         </ThemeColorPresets>
