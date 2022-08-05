@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import _ from 'underscore';
+import uniqid from 'uniqid';
 import { Tool } from './tools';
 
 // shapes are array and each array element will represent Konva.Group. This is done to so if there are erased parts, they will be grouped together with their rectangle/polygon and when the shape is dragged, the erased part is dragged too
@@ -39,17 +39,17 @@ export const layers: Layer[] = [
     instances: [
       {
         visible: true,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
       {
         visible: true,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
       {
         visible: false,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
     ],
@@ -61,17 +61,17 @@ export const layers: Layer[] = [
     instances: [
       {
         visible: true,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
       {
         visible: true,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
       {
         visible: false,
-        id: _.uniqueId(),
+        id: uniqid(),
         shapes: [[]],
       },
     ],

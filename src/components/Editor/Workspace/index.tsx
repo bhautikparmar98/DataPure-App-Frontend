@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Stage, Layer, Rect, Line, Group } from 'react-konva';
+import { Stage, Layer, Rect, Line, Group, Text } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -9,6 +9,8 @@ import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/editor/editor.actions';
 import { Layer as LayerType } from 'src/constants/layers';
+import { KonvaEventObject } from 'konva/lib/Node';
+import { SelectChangeEvent } from '@mui/material';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
@@ -24,6 +26,7 @@ const Workspace: any = () => {
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  const tooltipRef = useRef<Konva.Text>(null);
 
   const [selectedId, selectShape] = useState('');
   const dispatch = useAppDispatch();
@@ -43,8 +46,10 @@ const Workspace: any = () => {
     rects: newRects,
     eraserLines,
     lines,
+    tooltip,
     handleMouseEnter,
     handleMouseLeave,
+    showTooltip,
     hideShapeTemporarily,
   } = useDraw(
     selectedLayerId,
@@ -80,7 +85,7 @@ const Workspace: any = () => {
           checkDeselect(e);
           handleMouseDown(e);
         }}
-        onTouchStart={checkDeselect}
+        onClick={checkDeselect}
       >
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
@@ -93,15 +98,17 @@ const Workspace: any = () => {
           ))}
         </Layer>
 
-        {layers.map((layer: LayerType, i) => (
-          <Layer name={layer.title} key={`layer-${i}`} visible={layer.visible}>
-            {layer.instances.map((instance) =>
+        <Layer>
+          {layers.map((layer: LayerType, i) =>
+            layer.instances.map((instance) =>
               instance.shapes?.map((group, m) => (
                 <Group
                   key={`group-${m}-${i}`}
                   x={0}
                   y={0}
                   draggable={currentTool === TOOLS.SELECT}
+                  name={layer.title}
+                  visible={layer.visible}
                 >
                   {group.map((shape, l) =>
                     shape.type === TOOLS.ERASER || shape.type === TOOLS.LINE ? (
@@ -110,16 +117,20 @@ const Workspace: any = () => {
                         key={`line-${m}-${l}`}
                         listening={shape.type === TOOLS.LINE}
                         draggable={shape.type === TOOLS.LINE}
+                        onClick={showTooltip}
+                        layer={layer.title}
                       />
                     ) : (
                       <Rectangle
                         key={`${instance.id}-${m}-${l}-rect`}
                         shapeProps={shape}
+                        layer={layer.title}
                         isSelected={shape.id === selectedId}
-                        onSelect={() => {
+                        onSelect={(e: any) => {
                           if (shape.id) {
                             selectShape(shape.id);
                           }
+                          showTooltip(e);
                         }}
                         onChange={handleRectChange}
                         onMouseEnter={handleMouseEnter}
@@ -130,26 +141,46 @@ const Workspace: any = () => {
                   )}
                 </Group>
               ))
-            )}
-            {/* Temporary lines */}
-            {eraserLines.map((options, e) => (
-              <Line
-                {...options}
-                key={'temp-eraser-line' + e}
-                listening={false}
-                draggable={false}
+            )
+          )}
+          {/* Temporary shapes */}
+          {eraserLines.map((options, e) => (
+            <Line
+              {...options}
+              key={'temp-eraser-line' + e}
+              listening={false}
+              draggable={false}
+            />
+          ))}
+          {lines.map((options, l) => (
+            <Line
+              {...options}
+              key={'temp-line' + l}
+              listening={false}
+              draggable={false}
+            />
+          ))}
+          {tooltip.text.length > 0 && (
+            <Group draggable>
+              <Rect
+                x={tooltip.x - 8}
+                y={tooltip.y - 5}
+                width={tooltip.rectWidth}
+                height={24}
+                stroke={'rgba(0,0,0,0.4)'}
+                strokeWidth={2}
+                fill={'rgba(103,58,183, 0.8)'}
+                shadowColor="rgba(0,0,0,.3)"
+                shadowBlur={2}
+                shadowOffsetX={10}
+                shadowOffsetY={10}
+                shadowOpacity={0.2}
+                cornerRadius={5}
               />
-            ))}
-            {lines.map((options, l) => (
-              <Line
-                {...options}
-                key={'temp-line' + l}
-                listening={false}
-                draggable={false}
-              />
-            ))}
-          </Layer>
-        ))}
+              <Text {...tooltip} ref={tooltipRef} />
+            </Group>
+          )}
+        </Layer>
       </Stage>
     </div>
   );

@@ -4,7 +4,7 @@ import { KonvaEventObject } from 'konva/lib/Node';
 import { addInstance } from 'src/redux/slices/editor/editor.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
-import _ from 'underscore';
+import uniqid from 'uniqid';
 
 const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
   const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
@@ -75,12 +75,12 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
           width: x - sx,
           height: y - sy,
           ...config,
-          id: _.uniqueId(),
+          id: uniqid(),
         };
         dispatch(
           addInstance(selectedLayerId, {
             visible: true,
-            id: _.uniqueId(),
+            id: uniqid(),
             shapes: [[{ ...annotationToAdd }]],
           })
         );

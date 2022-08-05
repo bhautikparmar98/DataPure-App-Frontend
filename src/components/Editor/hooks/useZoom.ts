@@ -18,10 +18,10 @@ const useZoom = () => {
 
   const dispatch = useAppDispatch();
 
-  const updatePreview = _.debounce((stage: Konva.Stage) => {
+  const updatePreview = (stage: Konva.Stage) => {
     const src = stage.toDataURL({ pixelRatio: PREVIEW_SCALE });
     dispatch(setPreview({ src }));
-  }, 300);
+  };
 
   // We may need to debounce this method for big number of shapes drawn
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
