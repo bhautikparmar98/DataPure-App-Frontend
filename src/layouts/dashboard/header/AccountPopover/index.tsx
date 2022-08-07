@@ -91,8 +91,6 @@ export default function AccountPopover() {
     }
   };
 
-  console.log('user', user);
-
   return (
     <>
       <IconButtonWithNoHover

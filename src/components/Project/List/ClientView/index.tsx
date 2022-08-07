@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Alert, AlertTitle, Box } from '@mui/material';
 import { Container } from '@mui/system';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
@@ -47,6 +47,13 @@ const ClientProjectsComponent = () => {
       <ProjectListHeader />
 
       <Box sx={{ mt: 4 }}>
+        {!loading && projects.length === 0 && (
+          <Alert severity="info">
+            <AlertTitle>No Projects</AlertTitle>
+            You don't have any projects yet, please create one.
+          </Alert>
+        )}
+
         <ProjectBodyList
           projects={projects}
           onDownloadOutput={downloadOutputHandler}

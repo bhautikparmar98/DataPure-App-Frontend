@@ -38,6 +38,7 @@ import ClassItem from './ClassItem';
 import Scrollbar from 'src/components/Shared/Scrollbar';
 import { LoadingButton } from '@mui/lab';
 import axiosInstance from 'src/utils/axios';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -117,9 +118,38 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentProject]);
 
+  const uploadHandler = async (
+    urls: { url: string; presignedURL: string }[],
+    files
+  ) => {
+    setUploading(true);
+
+    // [[] , [] , []]
+    let index = 0;
+    const chunks: any[] = [];
+    for (let i = 0; i < urls.length; i++) {
+      if (!chunks[index]) chunks[index] = [];
+      chunks[index].push(axiosInstance.put(urls[i].presignedURL, files[i]));
+
+      if (chunks[index].length >= 5) index++;
+    }
+
+    let requests = 0;
+    for (let i = 0; i < chunks.length; i++) {
+      const promise = chunks[i];
+      const response = await Promise.all(promise);
+
+      requests += promise.length;
+
+      setProgress(Math.round((requests / urls.length) * 100));
+    }
+
+    setUploading(false);
+  };
+
   const onSubmit = async (data: FormValuesProps) => {
     setLoading(true);
-    setUploading(true);
+
     try {
       const imageList = data.images.map((i) => i.name);
 
@@ -127,12 +157,20 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
         files: imageList,
       });
       const { files } = response.data;
-      console.log('files', files);
 
-      console.log('data', data);
+      await uploadHandler(files, data.images);
+
+      const projectResponse = await axiosInstance.post('/project', {
+        name: data.name,
+        dueAt: data.dueAt,
+        type: data.type,
+        images: files.map((f: any) => ({ url: f.url, fileName: f.fileName })),
+        classes,
+      });
+
       reset();
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      // push(PATH_DASHBOARD.eCommerce.list);
+      push(PATH_DASHBOARD.project.list);
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Something went wrong.', { variant: 'error' });

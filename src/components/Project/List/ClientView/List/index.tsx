@@ -1,4 +1,5 @@
 import { Grid } from '@mui/material';
+import { useRouter } from 'next/router';
 import React from 'react';
 import useSettings from 'src/hooks/useSettings';
 import MinimizedProjectCard from '../../Shared/MinimizedProjectCard';
@@ -16,12 +17,14 @@ const ProjectBodyList: React.FC<ProjectBodyListProps> = ({
   onDownloadOutput,
 }) => {
   const { themeStretch } = useSettings();
+  const router = useRouter();
+
   const viewDataSetHandler = (id: string) => {
-    // TODO: go to the dataset view page
+    router.push(`/project/${id}/dataset`);
   };
 
   const reviewHandler = (id: string) => {
-    // TODO: go the review page
+    router.push(`/project/${id}/review`);
   };
 
   return (

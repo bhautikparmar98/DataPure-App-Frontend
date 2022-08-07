@@ -1,4 +1,4 @@
-import { LinearProgress } from '@mui/material';
+import { Box, LinearProgress, Typography } from '@mui/material';
 import React from 'react';
 
 const UploadingProgress = ({
@@ -8,12 +8,17 @@ const UploadingProgress = ({
   progress: number;
   buffer: number;
 }) => (
-  <LinearProgress
-    variant="buffer"
-    value={progress}
-    valueBuffer={buffer ? buffer : undefined}
-    color="primary"
-  />
+  <Box sx={{ my: 4 }}>
+    <Box display="flex" justifyContent="flex-end">
+      <Typography variant="subtitle2">{progress}</Typography>
+    </Box>
+    <LinearProgress
+      variant="buffer"
+      value={progress}
+      valueBuffer={buffer}
+      color="primary"
+    />
+  </Box>
 );
 
 export default UploadingProgress;

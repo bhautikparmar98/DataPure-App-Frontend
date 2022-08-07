@@ -48,6 +48,9 @@ export default function UploadMultiFile({
     ...other,
   });
 
+  console.log('uploading && progress', uploading);
+  console.log('uploading && progress', progress);
+
   return (
     <Box sx={{ width: '100%', ...sx }}>
       <DropZoneStyle
@@ -68,20 +71,23 @@ export default function UploadMultiFile({
         <BlockContent minHeight={minHeight} />
       </DropZoneStyle>
 
-      {uploading && progress && buffer && (
-        <UploadingProgress buffer={buffer} progress={progress} />
+      {uploading && (
+        <UploadingProgress
+          buffer={buffer ? buffer : progress! + 5}
+          progress={progress || 0}
+        />
       )}
 
       {fileRejections.length > 0 && (
         <RejectionFiles fileRejections={fileRejections} />
       )}
 
-      <MultiFilePreview
+      {/* <MultiFilePreview
         files={files}
         showPreview={showPreview}
         onRemove={onRemove}
         onRemoveAll={onRemoveAll}
-      />
+      /> */}
 
       {helperText && helperText}
     </Box>
