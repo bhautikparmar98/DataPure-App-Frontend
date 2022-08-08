@@ -13,6 +13,9 @@ export interface IProject {
   qaCount: number;
   clientReviewCount: number;
   doneCount: number;
+
+  // admins
+  adminId: number;
 }
 
 export interface IProjectClass {

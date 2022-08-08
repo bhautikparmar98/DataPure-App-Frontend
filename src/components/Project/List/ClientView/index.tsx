@@ -6,11 +6,13 @@ import useAuth from 'src/hooks/useAuth';
 import useSettings from 'src/hooks/useSettings';
 import axiosInstance from 'src/utils/axios';
 import ProjectListHeader from './Header';
-import ProjectBodyList from './List';
+import ProjectGrid from '../Shared/ProjectGrid';
 import { IProject } from '../types/project';
+import { useRouter } from 'next/router';
 
 const ClientProjectsComponent = () => {
   const { themeStretch } = useSettings();
+  const router = useRouter();
   const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -19,6 +21,14 @@ const ClientProjectsComponent = () => {
 
   const downloadOutputHandler = (id: string) => {
     // TODO: download Output file
+  };
+
+  const viewDataSetHandler = (id: string) => {
+    router.push(`/project/${id}/dataset`);
+  };
+
+  const reviewHandler = (id: string) => {
+    router.push(`/project/${id}/review`);
   };
 
   useEffect(() => {
@@ -54,9 +64,28 @@ const ClientProjectsComponent = () => {
           </Alert>
         )}
 
-        <ProjectBodyList
+        <ProjectGrid
           projects={projects}
           onDownloadOutput={downloadOutputHandler}
+          actions={[
+            {
+              label: '',
+              action: (project: IProject) =>
+                downloadOutputHandler(project._id!),
+              variant: 'icon',
+              icon: 'ant-design:download-outlined',
+            },
+            {
+              label: 'View Dataset',
+              action: (project: IProject) => viewDataSetHandler(project._id!),
+              variant: 'outlined',
+            },
+            {
+              label: 'Review',
+              action: (project: IProject) => reviewHandler(project._id!),
+              variant: 'contained',
+            },
+          ]}
         />
       </Box>
     </Container>

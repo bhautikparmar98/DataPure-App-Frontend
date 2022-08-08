@@ -16,16 +16,20 @@ import Iconify from 'src/components/Shared/Iconify';
 
 interface MinimizedProjectCardProps {
   project: IProject;
-  onDownloadOutput: (id: string) => void;
-  onViewDataSet: (id: string) => void;
-  onReviewProject: (id: string) => void;
+
+  renderStatistics?: (project: IProject) => React.ReactNode;
+  actions: {
+    label: string;
+    action: (p: IProject) => void;
+    variant: 'contained' | 'icon' | 'outlined';
+    icon?: string;
+  }[];
 }
 
 const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   project,
-  onDownloadOutput,
-  onViewDataSet,
-  onReviewProject,
+  renderStatistics,
+  actions,
 }) => {
   const theme = useTheme();
 
@@ -79,6 +83,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
             color="secondary"
           />
         </Box>
+        {renderStatistics && renderStatistics(project)}
 
         <Box
           display="flex"
@@ -86,29 +91,31 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
           alignItems="center"
           mt={2}
         >
-          <IconButton
-            color="primary"
-            edge="end"
-            onClick={() => onDownloadOutput(project._id)}
-          >
-            <Iconify icon={'ant-design:download-outlined'} />
-          </IconButton>
+          {actions.map((a, index) => {
+            if (a.variant === 'icon') {
+              return (
+                <IconButton
+                  color="primary"
+                  edge="end"
+                  key={index}
+                  onClick={() => a.action(project)}
+                >
+                  <Iconify icon={a.icon as any} />
+                </IconButton>
+              );
+            }
 
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => onViewDataSet(project._id)}
-          >
-            View Dataset
-          </Button>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => onReviewProject(project._id)}
-          >
-            Review
-          </Button>
+            return (
+              <Button
+                key={index}
+                variant={a.variant as any}
+                color="primary"
+                onClick={() => a.action(project)}
+              >
+                {a.label}
+              </Button>
+            );
+          })}
         </Box>
       </CardContent>
     </Card>

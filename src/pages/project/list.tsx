@@ -12,9 +12,9 @@ import AuthGuard from 'src/guards/AuthGuard';
 
 // ----------------------------------------------------------------------
 
-UserList.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+// UserList.getLayout = function getLayout(page: React.ReactElement) {
+//   return <Layout >{page}</Layout>;
+// };
 
 // ----------------------------------------------------------------------
 

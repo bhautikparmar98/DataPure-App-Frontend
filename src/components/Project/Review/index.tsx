@@ -70,7 +70,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
       <HeaderBreadcrumbs
-        heading="Product List"
+        heading="Project List"
         links={[
           { name: 'Projects', href: PATH_DASHBOARD.project.list },
           {
