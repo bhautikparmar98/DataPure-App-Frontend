@@ -8,7 +8,7 @@ interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
   layer: string;
-  onSelect: (e: KonvaEventObject<Event>) => void;
+  onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
   onMouseEnter: (e: KonvaEventObject<MouseEvent>) => void;
   onMouseLeave: (e: KonvaEventObject<MouseEvent>) => void;
@@ -18,7 +18,7 @@ interface IRectangle {
 const Rectangle = ({
   shapeProps,
   isSelected,
-  onSelect,
+  onClick,
   onChange,
   onMouseEnter,
   onMouseLeave,
@@ -70,8 +70,8 @@ const Rectangle = ({
   return (
     <>
       <Rect
-        onClick={onSelect}
-        onTap={onSelect}
+        onClick={onClick}
+        onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
         layer={layer}

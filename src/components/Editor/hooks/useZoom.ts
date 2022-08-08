@@ -1,13 +1,12 @@
 import Konva from 'konva';
 import { useState } from 'react';
-import { setPreview } from 'src/redux/slices/editor/editor.actions';
-import { useAppDispatch } from 'src/redux/store';
-import _ from 'underscore';
+// import { setPreview } from 'src/redux/slices/editor/editor.actions';
+// import { useAppDispatch } from 'src/redux/store';
 
-const SCALE_BY = 1.2;
+const SCALE_BY = 1.3;
 const MIN_SCALE = 0.05;
 const MAX_SCALE = 1 / MIN_SCALE;
-const PREVIEW_SCALE = 1 / 4;
+// const PREVIEW_SCALE = 1 / 4;
 
 const useZoom = () => {
   const [stageScale, setStageScale] = useState({
@@ -16,11 +15,11 @@ const useZoom = () => {
     stageY: 0,
   });
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const updatePreview = (stage: Konva.Stage) => {
-    const src = stage.toDataURL({ pixelRatio: PREVIEW_SCALE });
-    dispatch(setPreview({ src }));
+    // const src = stage.toDataURL({ pixelRatio: PREVIEW_SCALE });
+    // dispatch(setPreview({ src }));
   };
 
   // We may need to debounce this method for big number of shapes drawn

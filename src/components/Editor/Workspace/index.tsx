@@ -9,8 +9,7 @@ import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/editor/editor.actions';
 import { Layer as LayerType } from 'src/constants/layers';
-import { KonvaEventObject } from 'konva/lib/Node';
-import { SelectChangeEvent } from '@mui/material';
+import useStageDrag from '../hooks/useStageDrag';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
@@ -26,9 +25,10 @@ const Workspace: any = () => {
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
-  const tooltipRef = useRef<Konva.Text>(null);
+  // const tooltipRef = useRef<Konva.Text>(null);
 
   const [selectedId, selectShape] = useState('');
+
   const dispatch = useAppDispatch();
 
   const checkDeselect = (e: any) => {
@@ -44,13 +44,15 @@ const Workspace: any = () => {
     handleMouseUp,
     handleMouseMove,
     rects: newRects,
-    eraserLines,
     lines,
-    tooltip,
+    newTooltip,
     handleMouseEnter,
     handleMouseLeave,
     showTooltip,
+    hideTooltip,
+    // hideTooltipeDrag,
     hideShapeTemporarily,
+    // eraserLines,
   } = useDraw(
     selectedLayerId,
     layers[selectedLayerId]?.color,
@@ -58,6 +60,9 @@ const Workspace: any = () => {
     stageRef,
     currentTool
   );
+
+  const { handleKeyDown, handleKeyUp, stageDragging } =
+    useStageDrag(workspaceRef);
 
   const { stageScale, handleWheel } = useZoom();
 
@@ -69,7 +74,13 @@ const Workspace: any = () => {
   };
 
   return (
-    <div ref={workspaceRef} style={{ backgroundColor: '#C6C6C6' }}>
+    <div
+      ref={workspaceRef}
+      style={{ backgroundColor: '#C6C6C6' }}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      tabIndex={0}
+    >
       <Stage
         width={WIDTH}
         height={HEIGHT}
@@ -82,10 +93,16 @@ const Workspace: any = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseDown={(e: any) => {
-          checkDeselect(e);
+          // check Deselect(e);
+          if (stageDragging) return;
           handleMouseDown(e);
         }}
-        onClick={checkDeselect}
+        onClick={(e) => {
+          checkDeselect(e);
+          // hideTooltip();
+          // e.cancelBubble = true;
+        }}
+        draggable={stageDragging}
       >
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
@@ -98,7 +115,7 @@ const Workspace: any = () => {
           ))}
         </Layer>
 
-        <Layer>
+        <Layer width={WIDTH} height={HEIGHT}>
           {layers.map((layer: LayerType, i) =>
             layer.instances.map((instance) =>
               instance.shapes?.map((group, m) => (
@@ -106,19 +123,21 @@ const Workspace: any = () => {
                   key={`group-${m}-${i}`}
                   x={0}
                   y={0}
-                  draggable={currentTool === TOOLS.SELECT}
+                  draggable={currentTool === TOOLS.SELECT && !stageDragging}
                   name={layer.title}
                   visible={layer.visible}
+                  // onClick={showTooltip}
+                  onDragStart={hideTooltip}
                 >
                   {group.map((shape, l) =>
-                    shape.type === TOOLS.ERASER || shape.type === TOOLS.LINE ? (
+                    shape.type === TOOLS.LINE ? (
                       <Line
                         {...shape}
                         key={`line-${m}-${l}`}
                         listening={shape.type === TOOLS.LINE}
                         draggable={shape.type === TOOLS.LINE}
-                        onClick={showTooltip}
                         layer={layer.title}
+                        onClick={showTooltip}
                       />
                     ) : (
                       <Rectangle
@@ -126,7 +145,7 @@ const Workspace: any = () => {
                         shapeProps={shape}
                         layer={layer.title}
                         isSelected={shape.id === selectedId}
-                        onSelect={(e: any) => {
+                        onClick={(e: any) => {
                           if (shape.id) {
                             selectShape(shape.id);
                           }
@@ -144,14 +163,14 @@ const Workspace: any = () => {
             )
           )}
           {/* Temporary shapes */}
-          {eraserLines.map((options, e) => (
+          {/* {eraserLines.map((options, e) => (
             <Line
               {...options}
               key={'temp-eraser-line' + e}
               listening={false}
               draggable={false}
             />
-          ))}
+          ))} */}
           {lines.map((options, l) => (
             <Line
               {...options}
@@ -160,12 +179,12 @@ const Workspace: any = () => {
               draggable={false}
             />
           ))}
-          {tooltip.text.length > 0 && (
-            <Group draggable>
+          {newTooltip.text.length > 0 && (
+            <>
               <Rect
-                x={tooltip.x - 8}
-                y={tooltip.y - 5}
-                width={tooltip.rectWidth}
+                x={newTooltip.x - 8}
+                y={newTooltip.y - 5}
+                width={newTooltip.rectWidth}
                 height={24}
                 stroke={'rgba(0,0,0,0.4)'}
                 strokeWidth={2}
@@ -173,12 +192,12 @@ const Workspace: any = () => {
                 shadowColor="rgba(0,0,0,.3)"
                 shadowBlur={2}
                 shadowOffsetX={10}
-                shadowOffsetY={10}
+                shadowOffsetY={0}
                 shadowOpacity={0.2}
                 cornerRadius={5}
               />
-              <Text {...tooltip} ref={tooltipRef} />
-            </Group>
+              <Text {...newTooltip} />
+            </>
           )}
         </Layer>
       </Stage>

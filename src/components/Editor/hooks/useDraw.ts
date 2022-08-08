@@ -2,7 +2,7 @@ import { Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
 import useRect from './useRect';
 import useCursor from './useCursor';
-import useEraser from './useEraser';
+// import useEraser from './useEraser';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import {
   endDrawing,
@@ -12,7 +12,6 @@ import {
 import useLine from './useLine';
 import Konva from 'konva';
 import { useRef, useState } from 'react';
-import { SelectChangeEvent } from '@mui/material';
 
 const useDraw = (
   selectedLayerId: number,
@@ -23,7 +22,7 @@ const useDraw = (
 ) => {
   const dispatch = useAppDispatch();
   const updateCount = useRef(0);
-  const [tooltip, setTooltip] = useState({
+  const [newTooltip, setTooltip] = useState({
     x: 0,
     y: 0,
     text: '',
@@ -48,12 +47,12 @@ const useDraw = (
     useLine(selectedLayerId, selectedLayerColor);
 
   // Eraser
-  const {
-    eraseHandleMouseDown,
-    eraseHandleMouseUp,
-    eraseHandleMouseMove,
-    eraserLines,
-  } = useEraser(selectedLayerId, selectedLayerColor);
+  // const {
+  //   eraseHandleMouseDown,
+  //   eraseHandleMouseUp,
+  //   eraseHandleMouseMove,
+  //   eraserLines,
+  // } = useEraser(selectedLayerId, selectedLayerColor);
 
   // Update workspace preview
   const updatePreview = (forceUpdate: boolean) => {
@@ -75,9 +74,9 @@ const useDraw = (
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseDown(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseDown(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseDown(e);
+    // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseDown(e);
     }
@@ -89,9 +88,9 @@ const useDraw = (
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseUp(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseUp(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseUp(e);
+    // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseUp();
     }
@@ -100,9 +99,9 @@ const useDraw = (
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseMove(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseMove(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseMove(e);
+    // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseMove(e);
     }
@@ -123,15 +122,14 @@ const useDraw = (
 
   const showTooltip = (e: any) => {
     const layerTitle: string = e.target?.attrs?.layer;
-    const { x, y, type, points, stroke, fill } = e.target.attrs;
-
+    const { x, y, type, points } = e.target.attrs;
     if (
       typeof layerTitle === 'string' &&
       typeof x === 'number' &&
       typeof y === 'number'
     ) {
       let actualX = x;
-      let actualY = y;
+      let actualY = y - 25;
       if (type === TOOLS.LINE) {
         //points odd indexes are the x values and the even ones are for the y ones
         const xArr: number[] = [];
@@ -149,8 +147,8 @@ const useDraw = (
         const correspondXIndex = xArr.indexOf(correspondX);
         //we want x that is correspondent to minY
         actualX = points[correspondXIndex + minYIndex];
-        actualX = actualX + x;
-        actualY = minY + y;
+        actualX = actualX + x + 10;
+        actualY = minY + y - 20;
       }
 
       const rectWidth =
@@ -161,15 +159,38 @@ const useDraw = (
       setTooltip((prev) => ({
         ...prev,
         x: actualX,
-        y: actualY - 30,
+        y: actualY,
         text: layerTitle,
-        fill: 'rgba(255,255,255,1)',
+        fill: '#fff',
         rectWidth,
       }));
-    } else {
-      setTooltip((prev) => ({ ...prev, text: '' }));
     }
   };
+
+  const hideTooltip = () => {
+    setTooltip({
+      x: 0,
+      y: 0,
+      text: '',
+      fontSize: 14,
+      fill: 'rgba(0,0,0,1)',
+      fontFamily: 'Calibri',
+      rectWidth: 40,
+    });
+  };
+
+  // const hideTooltipeDrag = (e) => {
+  //   const { x, y } = e.target.children[0].attrs;
+
+  //   const xDisp = e?.target?.x() || 0;
+  //   const yDisp = e?.target?.y() || 0;
+
+  //   setTooltip((prev) => ({
+  //     ...prev,
+  //     x: xDisp + x,
+  //     y: yDisp + y - 25,
+  //   }));
+  // };
 
   const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
     if (e.target.attrs?.fill) {
@@ -184,15 +205,17 @@ const useDraw = (
 
   return {
     rects,
-    eraserLines,
+    // eraserLines,
     lines,
-    tooltip,
+    newTooltip,
+    // hideTooltipeDrag,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
     handleMouseEnter,
     handleMouseLeave,
     showTooltip,
+    hideTooltip,
     hideShapeTemporarily,
   };
 };
