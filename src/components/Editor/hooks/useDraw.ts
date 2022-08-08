@@ -11,7 +11,7 @@ import {
 } from 'src/redux/slices/editor/editor.actions';
 import useLine from './useLine';
 import Konva from 'konva';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const useDraw = (
   selectedLayerId: number,
@@ -22,15 +22,6 @@ const useDraw = (
 ) => {
   const dispatch = useAppDispatch();
   const updateCount = useRef(0);
-  const [newTooltip, setTooltip] = useState({
-    x: 0,
-    y: 0,
-    text: '',
-    fontSize: 14,
-    fill: 'rgba(0,0,0,1)',
-    fontFamily: 'Calibri',
-    rectWidth: 40,
-  });
 
   // State
   const { isDrawing, layers } = useAppSelector(({ editor }) => editor);
@@ -120,78 +111,6 @@ const useDraw = (
     }
   };
 
-  const showTooltip = (e: any) => {
-    const layerTitle: string = e.target?.attrs?.layer;
-    const { x, y, type, points } = e.target.attrs;
-    if (
-      typeof layerTitle === 'string' &&
-      typeof x === 'number' &&
-      typeof y === 'number'
-    ) {
-      let actualX = x;
-      let actualY = y - 25;
-      if (type === TOOLS.LINE) {
-        //points odd indexes are the x values and the even ones are for the y ones
-        const xArr: number[] = [];
-        const yArr: number[] = [];
-        points.forEach((point: number, i: number) => {
-          if (i % 2 === 0) return xArr.push(point);
-          yArr.push(point);
-        });
-
-        // when line moves, the points values will be the same, but the displacement will be represented in `x` and `y` values
-        // actualX = Math.min(...xArr) + x;
-        const minY = Math.min(...yArr);
-        const minYIndex = yArr.indexOf(minY);
-        const correspondX = xArr[minYIndex];
-        const correspondXIndex = xArr.indexOf(correspondX);
-        //we want x that is correspondent to minY
-        actualX = points[correspondXIndex + minYIndex];
-        actualX = actualX + x + 10;
-        actualY = minY + y - 20;
-      }
-
-      const rectWidth =
-        e.evt?.srcElement?.getContext('2d')?.measureText(layerTitle)?.width *
-          1.4 +
-          10 || 40;
-
-      setTooltip((prev) => ({
-        ...prev,
-        x: actualX,
-        y: actualY,
-        text: layerTitle,
-        fill: '#fff',
-        rectWidth,
-      }));
-    }
-  };
-
-  const hideTooltip = () => {
-    setTooltip({
-      x: 0,
-      y: 0,
-      text: '',
-      fontSize: 14,
-      fill: 'rgba(0,0,0,1)',
-      fontFamily: 'Calibri',
-      rectWidth: 40,
-    });
-  };
-
-  // const hideTooltipeDrag = (e) => {
-  //   const { x, y } = e.target.children[0].attrs;
-
-  //   const xDisp = e?.target?.x() || 0;
-  //   const yDisp = e?.target?.y() || 0;
-
-  //   setTooltip((prev) => ({
-  //     ...prev,
-  //     x: xDisp + x,
-  //     y: yDisp + y - 25,
-  //   }));
-  // };
-
   const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
     if (e.target.attrs?.fill) {
       e.target.attrs.fill =
@@ -207,15 +126,12 @@ const useDraw = (
     rects,
     // eraserLines,
     lines,
-    newTooltip,
-    // hideTooltipeDrag,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
     handleMouseEnter,
     handleMouseLeave,
-    showTooltip,
-    hideTooltip,
+
     hideShapeTemporarily,
   };
 };

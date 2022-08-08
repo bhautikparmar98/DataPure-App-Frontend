@@ -10,6 +10,7 @@ import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/editor/editor.actions';
 import { Layer as LayerType } from 'src/constants/layers';
 import useStageDrag from '../hooks/useStageDrag';
+import useTooltip from '../hooks/useTooltip';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
@@ -45,11 +46,10 @@ const Workspace: any = () => {
     handleMouseMove,
     rects: newRects,
     lines,
-    newTooltip,
+
     handleMouseEnter,
     handleMouseLeave,
-    showTooltip,
-    hideTooltip,
+
     // hideTooltipeDrag,
     hideShapeTemporarily,
     // eraserLines,
@@ -60,6 +60,8 @@ const Workspace: any = () => {
     stageRef,
     currentTool
   );
+
+  const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
   const { handleKeyDown, handleKeyUp, stageDragging } =
     useStageDrag(workspaceRef);
@@ -179,12 +181,12 @@ const Workspace: any = () => {
               draggable={false}
             />
           ))}
-          {newTooltip.text.length > 0 && (
+          {tooltip.text.length > 0 && (
             <>
               <Rect
-                x={newTooltip.x - 8}
-                y={newTooltip.y - 5}
-                width={newTooltip.rectWidth}
+                x={tooltip.x - 8}
+                y={tooltip.y - 5}
+                width={tooltip.rectWidth}
                 height={24}
                 stroke={'rgba(0,0,0,0.4)'}
                 strokeWidth={2}
@@ -196,7 +198,7 @@ const Workspace: any = () => {
                 shadowOpacity={0.2}
                 cornerRadius={5}
               />
-              <Text {...newTooltip} />
+              <Text {...tooltip} />
             </>
           )}
         </Layer>
