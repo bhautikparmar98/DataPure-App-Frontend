@@ -1,8 +1,4 @@
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import NativeSelect from '@mui/material/NativeSelect';
 import useLayers from '../hooks/useLayers';
-import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { Container } from '@mui/material';
 import Preview from './Preview';
 import Filters from './Filters';
@@ -22,7 +18,7 @@ const LayersPanel = () => {
     >
       <Preview />
       <Filters />
-      <Annotations />
+      <Annotations layers={layers} />
       {/* <FormControl sx={{ width: '100%', margin: 0 }}>
         <InputLabel variant="standard" htmlFor="uncontrolled-native">
           Classes

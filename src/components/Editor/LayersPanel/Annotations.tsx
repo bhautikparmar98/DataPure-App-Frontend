@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, memo } from 'react';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
@@ -7,13 +7,15 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Checkbox, Grid } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import { Icon } from '@iconify/react';
 
-import ListItemIcon from '@mui/material/ListItemIcon';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import styles from './annotations.module.css';
+import { Layer } from 'src/constants';
+import { Box } from '@mui/system';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -42,7 +44,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     transform: 'rotate(90deg)',
   },
   '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0),
   },
 }));
 
@@ -51,115 +53,53 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
-const Demo = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-}));
-
-function Annotations() {
+function Annotations({ layers }: { layers: Layer[] }) {
   return (
-    <div>
-      <Accordion>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography>
-            <Checkbox />
-            RC
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ margin: 0, backgroundColor: 'transparent' }}>
-          <Grid item xs={12} md={6}>
-            <Demo>
+    <div className={styles.list}>
+      {layers.length > 0 &&
+        layers.map((layer, l) => (
+          <Accordion key={`layer-accordion-${l}`}>
+            <AccordionSummary
+              aria-controls="panel1d-content"
+              id="panel1d-header"
+            >
+              <Box className={styles.layerTitle}>
+                <Checkbox />
+                <div
+                  className={styles.circle}
+                  style={{ background: layer.color }}
+                />
+                {layer.title}
+                {layer.instances.length > 0
+                  ? ' (' + layer.instances.length + ')'
+                  : ''}
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{ margin: 0, backgroundColor: 'transparent' }}
+            >
               <List dense={true}>
-                <ListItem sx={{ marginTop: -2 }}>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Single-line item" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="High Strength" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Place Holder" />
-                </ListItem>
+                {layer.instances.map((instance, i) => (
+                  <ListItem
+                    key={`instances-list-${l}-${i}`}
+                    sx={{ marginTop: -2 }}
+                  >
+                    <Checkbox />
+                    <ListItemText primary={`Instance ${i + 1}`} />
+                    {instance.visible ? (
+                      <Icon icon="majesticons:eye" className={styles.eyeIcon} />
+                    ) : (
+                      <Icon
+                        icon="eva:eye-off-fill"
+                        className={styles.eyeIcon}
+                      />
+                    )}
+                  </ListItem>
+                ))}
               </List>
-            </Demo>
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography>
-            <Checkbox />
-            RC
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ margin: 0, backgroundColor: 'transparent' }}>
-          <Grid item xs={12} md={6}>
-            <Demo>
-              <List dense={true}>
-                <ListItem sx={{ marginTop: -2 }}>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Single-line item" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="High Strength" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Place Holder" />
-                </ListItem>
-              </List>
-            </Demo>
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography>
-            <Checkbox />
-            RC
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ margin: 0, backgroundColor: 'transparent' }}>
-          <Grid item xs={12} md={6}>
-            <Demo>
-              <List dense={true}>
-                <ListItem sx={{ marginTop: -2 }}>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Single-line item" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="High Strength" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <RemoveRedEyeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Place Holder" />
-                </ListItem>
-              </List>
-            </Demo>
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
+            </AccordionDetails>
+          </Accordion>
+        ))}
     </div>
   );
 }

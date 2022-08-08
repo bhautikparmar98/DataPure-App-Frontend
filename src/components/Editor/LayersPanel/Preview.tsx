@@ -11,7 +11,7 @@ const Preview = () => {
   }, [preview]);
 
   return (
-    <div style={{ border: '5px solid yellow' }}>
+    <div style={{ border: '5px solid yellow', background: '#C6C6C6' }}>
       {src.length > 0 ? (
         <img src={src} alt="workspace preview" />
       ) : (
