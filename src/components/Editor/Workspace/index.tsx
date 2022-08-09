@@ -9,7 +9,7 @@ import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/editor/editor.actions';
 import { Layer as LayerType } from 'src/constants/layers';
-import useStageDrag from '../hooks/useStageDrag';
+import useKeyboard from '../hooks/useKeyboard';
 import useTooltip from '../hooks/useTooltip';
 
 const TOOLBAR_WIDTH = 70;
@@ -24,9 +24,10 @@ const Workspace: any = () => {
     tool: currentTool,
   } = useAppSelector(({ editor }) => editor);
 
+  console.log('workspace render');
+
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
-  // const tooltipRef = useRef<Konva.Text>(null);
 
   const [selectedId, selectShape] = useState('');
 
@@ -63,8 +64,10 @@ const Workspace: any = () => {
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
-  const { handleKeyDown, handleKeyUp, stageDragging } =
-    useStageDrag(workspaceRef);
+  const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
+    workspaceRef,
+    stageRef
+  );
 
   const { stageScale, handleWheel } = useZoom();
 
@@ -127,9 +130,10 @@ const Workspace: any = () => {
                   y={0}
                   draggable={currentTool === TOOLS.SELECT && !stageDragging}
                   name={layer.title}
-                  visible={layer.visible}
+                  visible={instance.visible}
                   // onClick={showTooltip}
                   onDragStart={hideTooltip}
+                  tabIndex={1}
                 >
                   {group.map((shape, l) =>
                     shape.type === TOOLS.LINE ? (

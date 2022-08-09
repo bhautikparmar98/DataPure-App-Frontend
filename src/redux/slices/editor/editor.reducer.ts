@@ -62,6 +62,24 @@ export const editorReducer = (state = initialState, action: any) => {
         layers,
       };
     }
+
+    case EditorActionTypes.UPDATE_INSTANCE: {
+      const { layers } = state;
+      const { layerId, instanceId, update } = action.payload;
+      const instances = layers[layerId]?.instances;
+      for (let i = 0; i < instances.length; i++) {
+        if (instances[i].id === instanceId) {
+          layers[layerId].instances[i] = {
+            ...instances[i],
+            ...update,
+          };
+        }
+      }
+      return {
+        ...state,
+        layers,
+      };
+    }
     case EditorActionTypes.START_DRAWING:
     case EditorActionTypes.End_DRAWING:
       return {

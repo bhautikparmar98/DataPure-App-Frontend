@@ -6,7 +6,6 @@ import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import { Checkbox } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -16,6 +15,8 @@ import { Icon } from '@iconify/react';
 import styles from './annotations.module.css';
 import { Layer } from 'src/constants';
 import { Box } from '@mui/system';
+import { useAppDispatch } from 'src/redux/store';
+import { updateInstance } from 'src/redux/slices/editor/editor.actions';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -54,11 +55,20 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 function Annotations({ layers }: { layers: Layer[] }) {
+  const dispatch = useAppDispatch();
+  const handleInstanceToggle = (
+    layerId: number,
+    instanceId: string,
+    visible: boolean
+  ) => {
+    dispatch(updateInstance(layerId, instanceId, { visible }));
+  };
+
   return (
     <div className={styles.list}>
       {layers.length > 0 &&
-        layers.map((layer, l) => (
-          <Accordion key={`layer-accordion-${l}`}>
+        layers.map((layer, layerId) => (
+          <Accordion key={`layer-accordion-${layerId}`}>
             <AccordionSummary
               aria-controls="panel1d-content"
               id="panel1d-header"
@@ -80,18 +90,24 @@ function Annotations({ layers }: { layers: Layer[] }) {
             >
               <List dense={true}>
                 {layer.instances.map((instance, i) => (
-                  <ListItem
-                    key={`instances-list-${l}-${i}`}
-                    sx={{ marginTop: -2 }}
-                  >
+                  <ListItem key={instance.id} sx={{ marginTop: -2 }}>
                     <Checkbox />
                     <ListItemText primary={`Instance ${i + 1}`} />
                     {instance.visible ? (
-                      <Icon icon="majesticons:eye" className={styles.eyeIcon} />
+                      <Icon
+                        icon="majesticons:eye"
+                        className={styles.eyeIcon}
+                        onClick={(e) =>
+                          handleInstanceToggle(layerId, instance.id, false)
+                        }
+                      />
                     ) : (
                       <Icon
                         icon="eva:eye-off-fill"
                         className={styles.eyeIcon}
+                        onClick={(e) =>
+                          handleInstanceToggle(layerId, instance.id, true)
+                        }
                       />
                     )}
                   </ListItem>
