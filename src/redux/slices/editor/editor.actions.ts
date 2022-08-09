@@ -2,7 +2,6 @@ import { EditorActionTypes } from './editor.types';
 
 import { Tool } from 'src/constants';
 import { dispatch } from 'src/redux/store';
-import Konva from 'konva';
 
 export function setTool(tool: Tool) {
   return () =>

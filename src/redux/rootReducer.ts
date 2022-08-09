@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { persistReducer } from 'redux-persist';
+// import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
 import { editorReducer } from './slices/editor';
@@ -29,11 +29,11 @@ const rootPersistConfig = {
   // whitelist: ['redux-editor', 'editor'],
 };
 
-const editorPersistConfig = {
-  key: 'editor',
-  storage,
-  keyPrefix: 'redux-',
-};
+// const editorPersistConfig = {
+//   key: 'editor',
+//   storage,
+//   keyPrefix: 'redux-',
+// };
 
 const rootReducer = combineReducers({
   editor: editorReducer,

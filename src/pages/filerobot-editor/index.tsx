@@ -5,7 +5,7 @@ const Editor = dynamic(() => import('../../components/FilerobotEditor'), {
 
 const ImageEditor = () => (
   <div>
-    <Editor></Editor>
+    <Editor />
   </div>
 );
 
