@@ -3,6 +3,7 @@ import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
 import { editorReducer } from './slices/editor';
+import { layersReducer } from './slices/layers';
 
 const isClient = typeof window !== 'undefined';
 
@@ -36,6 +37,7 @@ const editorPersistConfig = {
 
 const rootReducer = combineReducers({
   editor: editorReducer,
+  layers: layersReducer,
   // !comment the next line for debugging purposes
   // editor: persistReducer(editorPersistConfig, editorReducer),
 });

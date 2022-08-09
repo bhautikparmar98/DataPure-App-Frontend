@@ -1,11 +1,11 @@
-import useLayers from '../hooks/useLayers';
 import { Container } from '@mui/material';
 import Preview from './Preview';
 import Filters from './Filters';
 import Annotations from './Annotations';
+import { useAppSelector } from 'src/redux/store';
 
 const LayersPanel = () => {
-  const { selectedLayerId, layers } = useLayers();
+  const { layers, selectedLayerId } = useAppSelector(({ layers }) => layers);
 
   return (
     <Container
@@ -17,8 +17,8 @@ const LayersPanel = () => {
       }}
     >
       <Preview />
-      <Filters />
-      <Annotations layers={layers} />
+      <Filters selectedLayerId={selectedLayerId} layers={layers} />
+      <Annotations />
       {/* <FormControl sx={{ width: '100%', margin: 0 }}>
         <InputLabel variant="standard" htmlFor="uncontrolled-native">
           Classes

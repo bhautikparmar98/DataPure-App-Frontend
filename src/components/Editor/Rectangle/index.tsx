@@ -1,6 +1,5 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Stage } from 'konva/lib/Stage';
 import { useEffect, useRef } from 'react';
 import { Rect, Transformer } from 'react-konva';
 
@@ -10,8 +9,6 @@ interface IRectangle {
   layer: string;
   onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
-  onMouseEnter: (e: KonvaEventObject<MouseEvent>) => void;
-  onMouseLeave: (e: KonvaEventObject<MouseEvent>) => void;
   onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
 }
 
@@ -20,8 +17,6 @@ const Rectangle = ({
   isSelected,
   onClick,
   onChange,
-  onMouseEnter,
-  onMouseLeave,
   onDblClick,
   layer,
 }: IRectangle) => {
@@ -75,8 +70,6 @@ const Rectangle = ({
         ref={shapeRef}
         {...shapeProps}
         layer={layer}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
         onDblClick={onDblClick}
         onDragEnd={(e: any) => {
           onChange({

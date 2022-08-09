@@ -4,8 +4,8 @@ import { TOOLS } from 'src/constants';
 import useCursor from './useCursor';
 
 const useKeyboard = (
-  workspaceRef: React.RefObject<HTMLDivElement>,
-  stageRef: React.RefObject<Konva.Stage>
+  workspaceRef: React.RefObject<HTMLDivElement>
+  // stageRef: React.RefObject<Konva.Stage>
 ) => {
   const [stageDragging, setStageDragging] = useState(false);
   const { setCursorStyle } = useCursor(workspaceRef);
@@ -14,8 +14,6 @@ const useKeyboard = (
     if (e.code === 'Space') {
       setCursorStyle(`url("/tools/${TOOLS.PAN}.svg"),auto`);
       setStageDragging(true);
-    } else if (e.code === 'Delete') {
-      console.log(stageRef);
     }
   };
 

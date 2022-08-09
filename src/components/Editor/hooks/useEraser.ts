@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addEraserLines } from 'src/redux/slices/editor/editor.actions';
+import { addEraserLines } from 'src/redux/slices/layers/layers.actions';
 import { useAppDispatch } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 
@@ -18,7 +18,7 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
   const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
 
   const EraserConfig = {
-    type: TOOLS.ERASER,
+    type: TOOLS.ERASER || 'ERASER',
     opacity: 1,
     stroke: selectedLayerColor,
     strokeWidth: 25,

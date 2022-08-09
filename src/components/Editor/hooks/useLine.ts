@@ -1,13 +1,13 @@
 import Konva from 'konva';
 import { useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addShape } from 'src/redux/slices/editor/editor.actions';
+import { addShape } from 'src/redux/slices/layers/layers.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 
 const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
   const dispatch = useAppDispatch();
-  const { currentInstanceId } = useAppSelector(({ editor }) => editor);
+  const { currentInstanceId } = useAppSelector(({ layers }) => layers);
   const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
 
   const lineConfig = {

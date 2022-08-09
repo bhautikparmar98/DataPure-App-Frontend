@@ -7,9 +7,8 @@ import Konva from 'konva';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
-import { updateShape } from 'src/redux/slices/editor/editor.actions';
+import { updateShape } from 'src/redux/slices/layers/layers.actions';
 import { Layer as LayerType } from 'src/constants/layers';
-import useKeyboard from '../hooks/useKeyboard';
 import useTooltip from '../hooks/useTooltip';
 
 const TOOLBAR_WIDTH = 70;
@@ -17,21 +16,21 @@ const LAYERS_PANEL_WIDTH = 300;
 const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
 const HEIGHT = window.innerHeight;
 
-const Workspace: any = () => {
-  const {
-    layers,
-    selectedLayerId = 0,
-    tool: currentTool,
-  } = useAppSelector(({ editor }) => editor);
+interface Props {
+  stageDragging: boolean;
+}
 
-  console.log('workspace render');
+const Workspace: any = ({ stageDragging }: Props) => {
+  const currentTool = useAppSelector(({ editor }) => editor.tool);
+  const { layers, selectedLayerId = 0 } = useAppSelector(
+    ({ layers }) => layers
+  );
+  const dispatch = useAppDispatch();
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
   const [selectedId, selectShape] = useState('');
-
-  const dispatch = useAppDispatch();
 
   const checkDeselect = (e: any) => {
     // deselect when clicked on empty area
@@ -47,11 +46,6 @@ const Workspace: any = () => {
     handleMouseMove,
     rects: newRects,
     lines,
-
-    handleMouseEnter,
-    handleMouseLeave,
-
-    // hideTooltipeDrag,
     hideShapeTemporarily,
     // eraserLines,
   } = useDraw(
@@ -64,11 +58,6 @@ const Workspace: any = () => {
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
-  const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
-    workspaceRef,
-    stageRef
-  );
-
   const { stageScale, handleWheel } = useZoom();
 
   // For Rectangle transformation (size & rotation)
@@ -79,13 +68,7 @@ const Workspace: any = () => {
   };
 
   return (
-    <div
-      ref={workspaceRef}
-      style={{ backgroundColor: '#C6C6C6' }}
-      onKeyDown={handleKeyDown}
-      onKeyUp={handleKeyUp}
-      tabIndex={0}
-    >
+    <div ref={workspaceRef} style={{ backgroundColor: '#C6C6C6' }}>
       <Stage
         width={WIDTH}
         height={HEIGHT}
@@ -131,7 +114,6 @@ const Workspace: any = () => {
                   draggable={currentTool === TOOLS.SELECT && !stageDragging}
                   name={layer.title}
                   visible={instance.visible}
-                  // onClick={showTooltip}
                   onDragStart={hideTooltip}
                   tabIndex={1}
                 >
@@ -158,8 +140,6 @@ const Workspace: any = () => {
                           showTooltip(e);
                         }}
                         onChange={handleRectChange}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
                         onDblClick={hideShapeTemporarily}
                       />
                     )
@@ -186,7 +166,7 @@ const Workspace: any = () => {
             />
           ))}
           {tooltip.text.length > 0 && (
-            <>
+            <Group draggable>
               <Rect
                 x={tooltip.x - 8}
                 y={tooltip.y - 5}
@@ -203,7 +183,7 @@ const Workspace: any = () => {
                 cornerRadius={5}
               />
               <Text {...tooltip} />
-            </>
+            </Group>
           )}
         </Layer>
       </Stage>

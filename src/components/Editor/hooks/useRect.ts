@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { useCallback, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addInstance } from 'src/redux/slices/editor/editor.actions';
+import { addInstance } from 'src/redux/slices/layers/layers.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 import uniqid from 'uniqid';

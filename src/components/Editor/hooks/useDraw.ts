@@ -1,14 +1,9 @@
 import { Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
 import useRect from './useRect';
-import useCursor from './useCursor';
 // import useEraser from './useEraser';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import {
-  endDrawing,
-  setPreview,
-  startDrawing,
-} from 'src/redux/slices/editor/editor.actions';
+import { setPreview } from 'src/redux/slices/editor/editor.actions';
 import useLine from './useLine';
 import Konva from 'konva';
 import { useRef } from 'react';
@@ -24,10 +19,9 @@ const useDraw = (
   const updateCount = useRef(0);
 
   // State
-  const { isDrawing, layers } = useAppSelector(({ editor }) => editor);
+  const { layers } = useAppSelector(({ layers }) => layers);
 
   // Cursor
-  const { setCursorStyle } = useCursor(workspaceRef);
 
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
@@ -98,19 +92,6 @@ const useDraw = (
     }
   };
 
-  const handleMouseEnter = () => {
-    if (rects.length === 0 && currentTool === TOOLS.SELECT) {
-      dispatch(endDrawing());
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (rects.length === 0 && !isDrawing) {
-      setCursorStyle();
-      dispatch(startDrawing());
-    }
-  };
-
   const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
     if (e.target.attrs?.fill) {
       e.target.attrs.fill =
@@ -129,8 +110,6 @@ const useDraw = (
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    handleMouseEnter,
-    handleMouseLeave,
 
     hideShapeTemporarily,
   };

@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
@@ -15,8 +15,9 @@ import { Icon } from '@iconify/react';
 import styles from './annotations.module.css';
 import { Layer } from 'src/constants';
 import { Box } from '@mui/system';
-import { useAppDispatch } from 'src/redux/store';
-import { updateInstance } from 'src/redux/slices/editor/editor.actions';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { updateInstance } from 'src/redux/slices/layers/layers.actions';
+import _ from 'lodash';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -54,8 +55,20 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
-function Annotations({ layers }: { layers: Layer[] }) {
+function Annotations() {
   const dispatch = useAppDispatch();
+  const { layers } = useAppSelector(({ layers }) => layers);
+
+  const [memoisedLayers, setMemoisedLayers] = useState<Layer[] | []>([]);
+
+  const handleLayers = _.debounce(() => {
+    setMemoisedLayers(layers);
+  }, 2000);
+
+  useEffect(() => {
+    handleLayers();
+  }, [layers]);
+
   const handleInstanceToggle = (
     layerId: number,
     instanceId: string,
@@ -66,8 +79,8 @@ function Annotations({ layers }: { layers: Layer[] }) {
 
   return (
     <div className={styles.list}>
-      {layers.length > 0 &&
-        layers.map((layer, layerId) => (
+      {memoisedLayers.length > 0 &&
+        memoisedLayers.map((layer, layerId) => (
           <Accordion key={`layer-accordion-${layerId}`}>
             <AccordionSummary
               aria-controls="panel1d-content"

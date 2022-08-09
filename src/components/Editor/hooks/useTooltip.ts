@@ -45,10 +45,9 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         //we want x that is correspondent to minY
         actualX = points[correspondXIndex + minYIndex];
 
-        const { x, y } = e.target.attrs;
+        const { x = 0, y = 0 } = e.target.attrs;
         actualX = actualX + x + 10;
         actualY = minY + y - 20;
-        console.log({ actualX, actualY });
       }
 
       const rectWidth =

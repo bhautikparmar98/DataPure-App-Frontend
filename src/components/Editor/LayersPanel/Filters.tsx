@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { selectLayer } from 'src/redux/slices/editor/editor.actions';
-
+import { useAppDispatch } from 'src/redux/store';
+import { selectLayer } from 'src/redux/slices/layers/layers.actions';
+import { Layer } from 'src/constants';
 import styles from './filters.module.css';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { FormGroup, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 // const StyledAutoComplete = styled(Autocomplete)({});
 
@@ -20,9 +19,13 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-const Filters = () => {
+interface Props {
+  layers: Layer[];
+  selectedLayerId: number;
+}
+
+const Filters = ({ layers, selectedLayerId }: Props) => {
   const dispatch = useAppDispatch();
-  const { layers, selectedLayerId } = useAppSelector(({ editor }) => editor);
 
   const layersFilters = layers.map((layer, i) => ({
     label: layer.title,
@@ -120,4 +123,4 @@ const Filters = () => {
     </Box>
   );
 };
-export default Filters;
+export default React.memo(Filters);

@@ -1,0 +1,9 @@
+export enum EditorActionTypes {
+  SELECT_LAYER = '@editor/SELECT_LAYER',
+  DELETE_INSTANCE = '@editor/DELETE_INSTANCE',
+  ADD_INSTANCE = '@editor/ADD_INSTANCE',
+  UPDATE_INSTANCE = '@editor/UPDATE_INSTANCE',
+  ADD_SHAPE = '@editor/ADD_SHAPE',
+  UPDATE_SHAPE = '@editor/UPDATE_SHAPE',
+  ADD_ERASER_LINES = '@editor/ADD_ERASER_LINES',
+}
