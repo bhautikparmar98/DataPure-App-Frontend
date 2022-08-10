@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Stage, Layer, Rect, Line, Group, Text } from 'react-konva';
+import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva';
 import useDraw from '../hooks/useDraw';
 import BackgroundImage from './BackgroundImage';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -11,6 +11,8 @@ import { updateShape } from 'src/redux/slices/layers/layers.actions';
 import { Layer as LayerType } from 'src/constants/layers';
 import useTooltip from '../hooks/useTooltip';
 import useKeyboard from '../hooks/useKeyboard';
+import useImage from 'use-image';
+import useCursor from '../hooks/useCursor';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
@@ -20,11 +22,12 @@ const HEIGHT = window.innerHeight;
 interface Layers {
   layers: LayerType[];
   selectedLayerId: number;
+  comments: { text: string; x: number; y: number }[];
 }
 
 const Workspace: any = () => {
   const currentTool = useAppSelector(({ editor }) => editor.tool);
-  const { layers, selectedLayerId = 0 } = useAppSelector<Layers>(
+  const { layers = [], selectedLayerId = 0 } = useAppSelector<Layers>(
     ({ layers }) => layers
   );
 
@@ -56,6 +59,8 @@ const Workspace: any = () => {
     rects: newRects,
     lines,
     hideShapeTemporarily,
+    comments,
+    handleCommentClick,
     // eraserLines,
   } = useDraw(
     selectedLayerId,
@@ -64,10 +69,13 @@ const Workspace: any = () => {
     stageRef,
     currentTool
   );
+  const { setCursorStyle } = useCursor(workspaceRef);
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
   const { stageScale, handleWheel } = useZoom();
+
+  const [image] = useImage(`/tools/${TOOLS.COMMENT}.svg`);
 
   // For Rectangle transformation (size & rotation)
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
@@ -211,6 +219,23 @@ const Workspace: any = () => {
               <Text {...tooltip} />
             </Group>
           )}
+          {currentTool === TOOLS.COMMENT &&
+            comments.map((comment, commendIndex) => (
+              <Image
+                x={comment.x}
+                y={comment.y}
+                key={`comment-${commendIndex}`}
+                image={image}
+                alt="Comment"
+                type="Comment"
+                draggable
+                onClick={(e) =>
+                  handleCommentClick(e, comment.text, commendIndex)
+                }
+                onMouseEnter={(_) => setCursorStyle('pointer')}
+                onMouseLeave={(_) => setCursorStyle()}
+              />
+            ))}
         </Layer>
       </Stage>
     </div>

@@ -39,10 +39,10 @@ const Drawer = styled(MuiDrawer, {
 const ICONS = {
   [TOOLS.LINE]: 'ci:line-xl',
   [TOOLS.RECTANGLE]: 'bx:rectangle',
-  // [TOOLS.ERASER]: 'clarity:eraser-line',
   [TOOLS.SELECT]: 'la:mouse-pointer',
+  [TOOLS.COMMENT]: 'cil:comment-bubble',
   [TOOLS.PAN]: '',
-  // [TOOLS.PEN]: 'la:pen',
+  // [TOOLS.ERASER]: 'clarity:eraser-line',
   // [TOOLS.BRUSH]: 'bi:brush',
   // [TOOLS.PEN_TOOL]: 'bi:vector-pen',
 };
@@ -66,7 +66,7 @@ function Toolbar() {
         </DrawerHeader>
         <List>
           {Object.values(TOOLS)
-            .slice(0, 3)
+            .slice(0, 4)
             .map((text, index) => (
               <ListItem
                 key={`${text}-${index}`}

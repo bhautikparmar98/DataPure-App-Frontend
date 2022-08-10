@@ -2,6 +2,7 @@ export const TOOLS = {
   SELECT: 'Select',
   LINE: 'Line',
   RECTANGLE: 'Rectangle',
+  COMMENT: 'Comment',
   PAN: 'Pan',
   // ERASER: 'Eraser',
   // PEN: 'Pen',

@@ -6,4 +6,5 @@ export enum EditorActionTypes {
   ADD_SHAPE = '@editor/ADD_SHAPE',
   UPDATE_SHAPE = '@editor/UPDATE_SHAPE',
   ADD_ERASER_LINES = '@editor/ADD_ERASER_LINES',
+  SET_COMMENTS = '@editor/SET_COMMENTS',
 }

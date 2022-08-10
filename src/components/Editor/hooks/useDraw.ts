@@ -1,10 +1,11 @@
 import { Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
-import useRect from './useRect';
-// import useEraser from './useEraser';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { setPreview } from 'src/redux/slices/editor/editor.actions';
+import useRect from './useRect';
 import useLine from './useLine';
+import useComment from './useComment';
+// import useEraser from './useEraser';
 import Konva from 'konva';
 import { useRef } from 'react';
 
@@ -28,6 +29,11 @@ const useDraw = (
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
     useLine(selectedLayerId, selectedLayerColor);
+
+  const { handleComment, handleCommentClick, comments } = useComment(
+    stageRef,
+    currentTool
+  );
 
   // Eraser
   // const {
@@ -62,6 +68,9 @@ const useDraw = (
     // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseDown(e);
+    }
+    if (currentTool === TOOLS.COMMENT) {
+      return handleComment(e);
     }
   };
 
@@ -108,8 +117,9 @@ const useDraw = (
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-
     hideShapeTemporarily,
+    comments,
+    handleCommentClick,
   };
 };
 

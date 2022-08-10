@@ -75,3 +75,14 @@ export function addEraserLines(
     });
   };
 }
+
+export function setComments(
+  comments: { text: string; x: number; y: number }[]
+) {
+  return () => {
+    dispatch({
+      type: EditorActionTypes.SET_COMMENTS,
+      payload: { comments },
+    });
+  };
+}

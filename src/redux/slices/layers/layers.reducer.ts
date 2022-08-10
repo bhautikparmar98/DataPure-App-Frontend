@@ -6,12 +6,14 @@ type State = {
   layers: Layer[];
   selectedLayerId: number;
   currentInstanceId: number | null;
+  comments: { text: string; x: number; y: number }[];
 };
 
 const initialState: State = {
   layers,
   selectedLayerId: 0,
   currentInstanceId: 0, //!Unset this value later
+  comments: [],
 };
 
 export const layersReducer = (state = initialState, action: any) => {
@@ -129,6 +131,11 @@ export const layersReducer = (state = initialState, action: any) => {
         layers,
       };
     }
+
+    case EditorActionTypes.SET_COMMENTS:
+      const { comments } = action.payload;
+      if (comments?.length >= 0) state.comments = comments;
+      return state;
 
     default:
       return state;
