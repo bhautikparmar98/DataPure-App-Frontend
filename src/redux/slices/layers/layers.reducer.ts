@@ -70,15 +70,16 @@ export const layersReducer = (state = initialState, action: any) => {
       };
     }
 
-    case EditorActionTypes.ADD_SHAPE: {
-      const { layerId, instanceId, shape } = action.payload;
-      const layer = state.layers[layerId];
-      const instance = layer?.instances[instanceId];
-      instance.shapes.push([shape]);
-
-      state.layers[layerId].instances[instanceId] = instance;
-      return state;
-    }
+    // case EditorActionTypes.ADD_SHAPE: {
+    //   const { layerId, shape } = action.payload;
+    //   shape.id = uniqid();
+    //   state.layers[layerId]?.instances.push({
+    //     visible: true,
+    //     id: uniqid(),
+    //     shapes: [[shape]],
+    //   });
+    //   return state;
+    // }
 
     case EditorActionTypes.UPDATE_SHAPE: {
       const { layers } = state;

@@ -10,27 +10,36 @@ import Rectangle from '../Rectangle';
 import { updateShape } from 'src/redux/slices/layers/layers.actions';
 import { Layer as LayerType } from 'src/constants/layers';
 import useTooltip from '../hooks/useTooltip';
+import useKeyboard from '../hooks/useKeyboard';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
 const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
 const HEIGHT = window.innerHeight;
 
-interface Props {
-  stageDragging: boolean;
+interface Layers {
+  layers: LayerType[];
+  selectedLayerId: number;
 }
 
-const Workspace: any = ({ stageDragging }: Props) => {
+const Workspace: any = () => {
   const currentTool = useAppSelector(({ editor }) => editor.tool);
-  const { layers, selectedLayerId = 0 } = useAppSelector(
+  const { layers, selectedLayerId = 0 } = useAppSelector<Layers>(
     ({ layers }) => layers
   );
+
   const dispatch = useAppDispatch();
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
   const [selectedId, selectShape] = useState('');
+
+  const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
+    workspaceRef,
+    stageRef,
+    selectedId
+  );
 
   const checkDeselect = (e: any) => {
     // deselect when clicked on empty area
@@ -68,7 +77,16 @@ const Workspace: any = ({ stageDragging }: Props) => {
   };
 
   return (
-    <div ref={workspaceRef} style={{ backgroundColor: '#C6C6C6' }}>
+    <div
+      ref={workspaceRef}
+      style={{ backgroundColor: '#C6C6C6' }}
+      onKeyDown={(e) => {
+        hideTooltip();
+        handleKeyDown(e);
+      }}
+      tabIndex={0}
+      onKeyUp={handleKeyUp}
+    >
       <Stage
         width={WIDTH}
         height={HEIGHT}
@@ -103,7 +121,7 @@ const Workspace: any = ({ stageDragging }: Props) => {
           ))}
         </Layer>
 
-        <Layer width={WIDTH} height={HEIGHT}>
+        <Layer>
           {layers.map((layer: LayerType, i) =>
             layer.instances.map((instance) =>
               instance.shapes?.map((group, m) => (
@@ -116,6 +134,8 @@ const Workspace: any = ({ stageDragging }: Props) => {
                   visible={instance.visible}
                   onDragStart={hideTooltip}
                   tabIndex={1}
+                  layerId={i}
+                  instanceId={instance.id}
                 >
                   {group.map((shape, l) =>
                     shape.type === TOOLS.LINE ? (
@@ -125,7 +145,13 @@ const Workspace: any = ({ stageDragging }: Props) => {
                         listening={shape.type === TOOLS.LINE}
                         draggable={shape.type === TOOLS.LINE}
                         layer={layer.title}
-                        onClick={showTooltip}
+                        isSelected={shape.id === selectedId}
+                        onClick={(e: any) => {
+                          if (shape.id) {
+                            selectShape(shape.id);
+                          }
+                          showTooltip(e);
+                        }}
                       />
                     ) : (
                       <Rectangle

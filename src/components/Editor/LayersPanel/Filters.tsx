@@ -3,9 +3,8 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useAppDispatch } from 'src/redux/store';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { selectLayer } from 'src/redux/slices/layers/layers.actions';
-import { Layer } from 'src/constants';
 import styles from './filters.module.css';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -19,12 +18,8 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-interface Props {
-  layers: Layer[];
-  selectedLayerId: number;
-}
-
-const Filters = ({ layers, selectedLayerId }: Props) => {
+const Filters = () => {
+  const { layers, selectedLayerId } = useAppSelector(({ layers }) => layers);
   const dispatch = useAppDispatch();
 
   const layersFilters = layers.map((layer, i) => ({
@@ -33,7 +28,7 @@ const Filters = ({ layers, selectedLayerId }: Props) => {
   }));
 
   const handleLayerSelect = (
-    e: any,
+    _: any,
     layer: { label: string; layerId: number } | null
   ) => {
     if (layer) {
@@ -65,6 +60,7 @@ const Filters = ({ layers, selectedLayerId }: Props) => {
         onChange={handleLayerSelect}
         fullWidth
         renderInput={(params) => <StyledTextField {...params} />}
+        isOptionEqualToValue={(option, value) => option.label === value.label}
       />
 
       <Box

@@ -21,8 +21,6 @@ const useDraw = (
   // State
   const { layers } = useAppSelector(({ layers }) => layers);
 
-  // Cursor
-
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
     useRect(selectedLayerId, selectedLayerColor);

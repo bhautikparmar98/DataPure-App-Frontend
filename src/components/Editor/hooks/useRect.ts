@@ -77,13 +77,17 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
           ...config,
           id: uniqid(),
         };
-        dispatch(
-          addInstance(selectedLayerId, {
-            visible: true,
-            id: uniqid(),
-            shapes: [[{ ...annotationToAdd }]],
-          })
-        );
+
+        //min width & height
+        if (x - sx > 5 && y - sy > 5) {
+          dispatch(
+            addInstance(selectedLayerId, {
+              visible: true,
+              id: uniqid(),
+              shapes: [[{ ...annotationToAdd }]],
+            })
+          );
+        }
 
         setNewAnnotation([]);
         setAnnotations([]);
