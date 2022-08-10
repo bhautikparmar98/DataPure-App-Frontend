@@ -21,12 +21,12 @@ const SuperAdminProjectStatistics: React.FC<
 
       <Typography variant="caption">
         <strong>QA:</strong>
-        {'   '}
+        {project.assignedQAs.length}
       </Typography>
 
       <Typography variant="caption">
         <strong>Annotators:</strong>
-        {'   '}
+        {project.assignedAnnotators.length}
       </Typography>
     </Stack>
   );

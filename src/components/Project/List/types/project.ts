@@ -16,6 +16,9 @@ export interface IProject {
 
   // admins
   adminId: number;
+
+  assignedAnnotators: number[];
+  assignedQAs: number[];
 }
 
 export interface IProjectClass {

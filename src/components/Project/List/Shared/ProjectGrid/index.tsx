@@ -9,7 +9,6 @@ import { IProject } from '../../types/project';
 interface ProjectBodyListProps {
   projects: IProject[];
 
-  onDownloadOutput: (id: string) => void;
   renderStatistics?: (project: IProject) => React.ReactNode;
   actions: {
     label: string;
@@ -17,10 +16,12 @@ interface ProjectBodyListProps {
     variant: 'contained' | 'icon' | 'outlined';
     icon?: string;
   }[];
+  removeProgress?: boolean;
 }
 const ProjectGrid: React.FC<ProjectBodyListProps> = ({
   projects,
   renderStatistics,
+  removeProgress,
   actions,
 }) => {
   const { themeStretch } = useSettings();
@@ -39,6 +40,7 @@ const ProjectGrid: React.FC<ProjectBodyListProps> = ({
         >
           <MinimizedProjectCard
             project={p}
+            removeProgress
             renderStatistics={renderStatistics}
             actions={actions}
           />

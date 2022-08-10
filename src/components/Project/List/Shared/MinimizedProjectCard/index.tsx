@@ -24,12 +24,14 @@ interface MinimizedProjectCardProps {
     variant: 'contained' | 'icon' | 'outlined';
     icon?: string;
   }[];
+  removeProgress?: boolean;
 }
 
 const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   project,
   renderStatistics,
   actions,
+  removeProgress,
 }) => {
   const theme = useTheme();
 
@@ -39,7 +41,6 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
         <Typography variant="h6" color={theme.palette.primary.main}>
           {project.name}
         </Typography>
-
         <Box my={1}>
           <Typography variant="body2">
             <strong>Due By: </strong>
@@ -56,35 +57,44 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
             </span>
           </Typography>
         </Box>
+        {!removeProgress && (
+          <Box my={1}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Box>
+                <Typography
+                  variant="body2"
+                  color={theme.palette.secondary.main}
+                >
+                  <strong>Progress</strong>
+                </Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="body2"
+                  color={theme.palette.secondary.main}
+                >
+                  <strong>
+                    {Math.round(
+                      (project.doneCount / project.imagesCount) * 100
+                    )}
+                    %
+                  </strong>
+                </Typography>
+              </Box>
+            </Box>
 
-        <Box my={1}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography variant="body2" color={theme.palette.secondary.main}>
-                <strong>Progress</strong>
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" color={theme.palette.secondary.main}>
-                <strong>
-                  {Math.round((project.doneCount / project.imagesCount) * 100)}%
-                </strong>
-              </Typography>
-            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={(project.doneCount / project.imagesCount) * 100}
+              color="secondary"
+            />
           </Box>
-
-          <LinearProgress
-            variant="determinate"
-            value={(project.doneCount / project.imagesCount) * 100}
-            color="secondary"
-          />
-        </Box>
+        )}{' '}
         {renderStatistics && renderStatistics(project)}
-
         <Box
           display="flex"
           justifyContent="space-between"

@@ -41,7 +41,7 @@ const AssignAdminModal: React.FC<AssignAdminModalProps> = ({
     try {
       setLoading(true);
 
-      await axiosInstance.put(`/project/${selectedProject._id}/assign`, {
+      await axiosInstance.put(`/project/${selectedProject._id}/assign/admin`, {
         adminId: admin.id,
       });
 

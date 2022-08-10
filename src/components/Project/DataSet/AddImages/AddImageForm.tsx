@@ -79,7 +79,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId }) => {
         src: files[index].url,
         fileName: files[index].fileName,
         createdAt: new Date(),
-        status: IMAGE_STATUS.ANNOTATION.value,
+        status: IMAGE_STATUS.PENDING_ANNOTATION.value,
       }));
 
       await onSubmit(results);
