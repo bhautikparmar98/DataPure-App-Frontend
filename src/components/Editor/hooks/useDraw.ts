@@ -125,15 +125,24 @@ const useDraw = (
     instanceId: string
   ) => {
     if (stageRef.current) {
-      const { x, y } = e.target.children[0].getClientRect({
-        relativeTo: e.target,
-      });
-      const { x: shapeX, y: shapeY } = e.target.attrs;
       const shape = _.cloneDeep(group[0]);
+      if (shape.type === TOOLS.LINE) {
+        let { points } = e.target.attrs;
+        const { x = 0, y = 0 } = e.target.attrs;
+        points = points.map((point: number, i: number) => {
+          if (i % 2 === 0) return point + x;
+          return point + y;
+        });
+        shape.points = points;
+      } else {
+        const { x, y } = e.target.children[0].getClientRect({
+          relativeTo: e.target,
+        });
+        const { x: shapeX, y: shapeY } = e.target.attrs;
 
-      shape.x = shapeX + x;
-      shape.y = shapeY + y;
-
+        shape.x = shapeX + x;
+        shape.y = shapeY + y;
+      }
       dispatch(updateInstance(layerId, instanceId, shape));
     }
   };

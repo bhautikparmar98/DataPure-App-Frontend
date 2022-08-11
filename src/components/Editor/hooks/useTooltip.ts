@@ -14,6 +14,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
   });
 
   const showTooltip = (e: Konva.KonvaEventObject<DragEvent>) => {
+    if (!stageRef.current) return;
     const layerTitle: string = e.target?.attrs?.layer;
     const { type, points } = e.target.attrs;
     const { x, y } = e.target.getClientRect({
@@ -50,6 +51,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         actualY = minY + y - 20;
       }
 
+      // !FIX: srcElements is deprecated, change it
       const rectWidth =
         e.evt?.srcElement?.getContext('2d')?.measureText(layerTitle)?.width *
           1.4 +
