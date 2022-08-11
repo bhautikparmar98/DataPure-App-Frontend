@@ -17,12 +17,16 @@ interface ProjectBodyListProps {
     icon?: string;
   }[];
   removeProgress?: boolean;
+  calcProgress?: (p: IProject) => number;
+  getProgressLabel?: (p: IProject) => string;
 }
 const ProjectGrid: React.FC<ProjectBodyListProps> = ({
   projects,
   renderStatistics,
   removeProgress,
   actions,
+  calcProgress,
+  getProgressLabel,
 }) => {
   const { themeStretch } = useSettings();
 
@@ -40,9 +44,11 @@ const ProjectGrid: React.FC<ProjectBodyListProps> = ({
         >
           <MinimizedProjectCard
             project={p}
-            removeProgress
+            removeProgress={removeProgress}
+            calcProgress={calcProgress}
             renderStatistics={renderStatistics}
             actions={actions}
+            getProgressLabel={getProgressLabel}
           />
         </Grid>
       ))}

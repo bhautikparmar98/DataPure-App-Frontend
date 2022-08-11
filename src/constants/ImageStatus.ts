@@ -1,7 +1,7 @@
 export const IMAGE_STATUS = {
   PENDING_ANNOTATION: {
     value: 'PENDING_ANNOTATION',
-    label: 'Pending InProgress',
+    label: 'Ready for Annotation',
     color: 'default',
   },
   ANNOTATION_INPROGRESS: {
@@ -11,17 +11,17 @@ export const IMAGE_STATUS = {
   },
   PENDING_QA: {
     value: 'PENDING_QA',
-    label: 'Pending QA',
+    label: 'Ready for QA',
     color: 'primary',
   },
   PENDING_REDO: {
     value: 'PENDING_REDO',
-    label: 'Pending Redo',
+    label: 'Ready for Re-Work',
     color: 'error',
   },
   PENDING_CLIENT_REVIEW: {
     value: 'PENDING_CLIENT_REVIEW',
-    label: 'Pending Client Review',
+    label: 'Ready for Client Review',
     color: 'info',
   },
   DONE: {

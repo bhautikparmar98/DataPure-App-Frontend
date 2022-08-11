@@ -93,6 +93,7 @@ export default function DashboardLayout({
               xs: `${HEADER.MOBILE_HEIGHT + 24}px`,
               lg: `${HEADER.DASHBOARD_DESKTOP_HEIGHT + 24}px`,
             },
+            height: '100%',
           }}
         >
           {children}
@@ -107,14 +108,14 @@ export default function DashboardLayout({
         display: { lg: 'flex' },
         minHeight: { lg: 1 },
         background: theme.palette.gradients.secondary,
+        // height: '100%',
       }}
     >
-      {!noHeader && (
-        <DashboardHeader
-          isCollapse={isCollapse}
-          onOpenSidebar={() => setOpen(true)}
-        />
-      )}
+      <DashboardHeader
+        isCollapse={isCollapse}
+        onOpenSidebar={() => setOpen(true)}
+        noHeader={noHeader}
+      />
 
       <NavbarVertical
         isOpenSidebar={open}
@@ -123,7 +124,7 @@ export default function DashboardLayout({
 
       <MainStyle
         collapseClick={collapseClick}
-        style={{ padding: noPadding ? '0 0' : undefined }}
+        style={{ padding: noPadding && isDesktop ? '0 0' : undefined }}
       >
         {children}
       </MainStyle>

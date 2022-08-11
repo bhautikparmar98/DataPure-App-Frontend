@@ -25,6 +25,8 @@ interface MinimizedProjectCardProps {
     icon?: string;
   }[];
   removeProgress?: boolean;
+  calcProgress?: (p: IProject) => number;
+  getProgressLabel?: (p: IProject) => string;
 }
 
 const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
@@ -32,8 +34,16 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   renderStatistics,
   actions,
   removeProgress,
+  calcProgress,
+  getProgressLabel,
 }) => {
   const theme = useTheme();
+
+  let progress = Math.round(
+    ((project.doneCount + project.clientReviewCount) / project.imagesCount) *
+      100
+  );
+  if (calcProgress) progress = calcProgress(project);
 
   return (
     <Card>
@@ -67,9 +77,12 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
               <Box>
                 <Typography
                   variant="body2"
+                  fontSize={12}
                   color={theme.palette.secondary.main}
                 >
-                  <strong>Progress</strong>
+                  <strong>
+                    {getProgressLabel ? getProgressLabel(project) : 'Progress'}
+                  </strong>
                 </Typography>
               </Box>
               <Box>
@@ -77,19 +90,14 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                   variant="body2"
                   color={theme.palette.secondary.main}
                 >
-                  <strong>
-                    {Math.round(
-                      (project.doneCount / project.imagesCount) * 100
-                    )}
-                    %
-                  </strong>
+                  <strong>{progress}%</strong>
                 </Typography>
               </Box>
             </Box>
 
             <LinearProgress
               variant="determinate"
-              value={(project.doneCount / project.imagesCount) * 100}
+              value={progress}
               color="secondary"
             />
           </Box>

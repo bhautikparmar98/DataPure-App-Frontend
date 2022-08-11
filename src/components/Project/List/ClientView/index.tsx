@@ -66,7 +66,6 @@ const ClientProjectsComponent = () => {
 
         <ProjectGrid
           projects={projects}
-          onDownloadOutput={downloadOutputHandler}
           actions={[
             {
               label: '',

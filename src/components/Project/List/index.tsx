@@ -2,6 +2,7 @@ import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import Layout from 'src/layouts';
 import AdminProjectsComponents from './AdminView';
+import AnnotatorProjectsComponents from './AnnotatorView';
 import ClientProjectsComponent from './ClientView';
 import QAProjectsComponents from './QAView';
 import SuperAdminProjectsComponents from './SuperAdminView';
@@ -25,6 +26,12 @@ const ProjectsComponent = () => {
     return (
       <Layout>
         <QAProjectsComponents />
+      </Layout>
+    );
+  else if (role === ROLES.ANNOTATOR.value)
+    return (
+      <Layout>
+        <AnnotatorProjectsComponents />
       </Layout>
     );
   return (

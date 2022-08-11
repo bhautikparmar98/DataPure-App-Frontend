@@ -174,7 +174,13 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
                           </Label>
                         </TableCell>
                         <TableCell align="center" color="default">
-                          <Button variant="text" onClick={reviewHandler}>
+                          <Button
+                            disabled={
+                              status !== IMAGE_STATUS.PENDING_REDO.value
+                            }
+                            variant="text"
+                            onClick={reviewHandler}
+                          >
                             Review
                           </Button>
                         </TableCell>

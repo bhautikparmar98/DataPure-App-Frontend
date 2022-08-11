@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import axiosInstance from 'src/utils/axios';
 import { IProject } from '../types/project';
 
-const useQALogic = () => {
+const useAnnotatorLogic = () => {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
 
@@ -16,15 +16,19 @@ const useQALogic = () => {
     //TODO: move to the editor
   };
 
+  const redoHandler = (project: IProject) => {
+    // TODO: handle redo in the edit
+  };
+
   useEffect(() => {
-    const getQAProjects = async () => {
+    const getAnnotatorProjects = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(`/user/qa/project`);
-        const { projects, QACounts } = response.data;
+        const response = await axiosInstance.get(`/user/annotator/project`);
+        const { projects, annotatorCounts } = response.data;
 
         const updatedCounts = {};
-        QACounts.forEach((count: any) => {
+        annotatorCounts.forEach((count: any) => {
           updatedCounts[count.projectId as any] = count;
         });
 
@@ -32,13 +36,13 @@ const useQALogic = () => {
 
         setProjects(projects);
       } catch (error) {
-        console.log('error getting qa projects', error);
+        console.log('error getting annotator projects', error);
         enqueueSnackbar('Something went wrong.', { variant: 'error' });
       }
       setLoading(false);
     };
 
-    getQAProjects();
+    getAnnotatorProjects();
   }, []);
 
   return {
@@ -46,7 +50,8 @@ const useQALogic = () => {
     loading,
     startHandler,
     counts,
+    redoHandler,
   };
 };
 
-export default useQALogic;
+export default useAnnotatorLogic;

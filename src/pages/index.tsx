@@ -1,13 +1,16 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 import styles from '../styles/Home.module.css';
 import OCR from './ocr';
 
 const Home: NextPage = () => {
   const [img, setImg] = useState<File>();
   const [showOcr, setShowOCr] = useState(false);
+  const { pathname, push } = useRouter();
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -24,6 +27,16 @@ const Home: NextPage = () => {
     let image = e.target.files[0];
     setImg(image);
   };
+
+  useEffect(() => {
+    if (pathname === PATH_DASHBOARD.root) {
+      // got to the projects page
+      push(PATH_DASHBOARD.project.list);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  return null;
 
   return showOcr && img ? (
     <OCR img={img} />
