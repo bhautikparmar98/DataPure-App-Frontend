@@ -2,7 +2,14 @@ import isString from 'lodash/isString';
 import { m, AnimatePresence } from 'framer-motion';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { List, Stack, Button, IconButton, ListItemText, ListItem } from '@mui/material';
+import {
+  List,
+  Stack,
+  Button,
+  IconButton,
+  ListItemText,
+  ListItem,
+} from '@mui/material';
 // utils
 import { fData } from 'src/utils/formatNumber';
 // type
@@ -42,11 +49,19 @@ export default function MultiFilePreview({
     <>
       <List
         disablePadding
-        sx={{ ...(hasFile && { my: 3, textAlign: 'center', justifyContent: 'center' }) }}
+        sx={{
+          ...(hasFile && {
+            my: 3,
+            textAlign: 'center',
+            justifyContent: 'center',
+          }),
+        }}
       >
         <AnimatePresence>
-          {files.map((file) => {
-            const { key, name, size, preview } = getFileData(file as CustomFile);
+          {files.slice(0, 5).map((file) => {
+            const { key, name, size, preview } = getFileData(
+              file as CustomFile
+            );
 
             if (showPreview) {
               return (
@@ -66,7 +81,11 @@ export default function MultiFilePreview({
                     border: (theme) => `solid 1px ${theme.palette.divider}`,
                   }}
                 >
-                  <Image alt="preview" src={isString(file) ? file : preview} ratio="1/1" />
+                  <Image
+                    alt="preview"
+                    src={isString(file) ? file : preview}
+                    ratio="1/1"
+                  />
                   <IconButton
                     size="small"
                     onClick={() => onRemove(file)}
@@ -78,7 +97,8 @@ export default function MultiFilePreview({
                       color: 'common.white',
                       bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
                       '&:hover': {
-                        bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
+                        bgcolor: (theme) =>
+                          alpha(theme.palette.grey[900], 0.48),
                       },
                     }}
                   >
@@ -113,7 +133,11 @@ export default function MultiFilePreview({
                   secondaryTypographyProps={{ variant: 'caption' }}
                 />
 
-                <IconButton edge="end" size="small" onClick={() => onRemove(file)}>
+                <IconButton
+                  edge="end"
+                  size="small"
+                  onClick={() => onRemove(file)}
+                >
                   <Iconify icon={'eva:close-fill'} />
                 </IconButton>
               </ListItem>
@@ -127,7 +151,11 @@ export default function MultiFilePreview({
           <Button color="inherit" size="small" onClick={onRemoveAll}>
             Remove all
           </Button>
-          <Button size="small" variant="contained" sx={{ borderRadius: 3, boxShadow: 'none' }}>
+          <Button
+            size="small"
+            variant="contained"
+            sx={{ borderRadius: 3, boxShadow: 'none' }}
+          >
             Upload files
           </Button>
         </Stack>

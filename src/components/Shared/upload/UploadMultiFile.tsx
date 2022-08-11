@@ -8,6 +8,7 @@ import { UploadMultiFileProps } from './type';
 import BlockContent from './BlockContent';
 import RejectionFiles from './RejectionFiles';
 import MultiFilePreview from './MultiFilePreview';
+import UploadingProgress from './UploadingProgress';
 
 // ----------------------------------------------------------------------
 
@@ -31,11 +32,24 @@ export default function UploadMultiFile({
   helperText,
   sx,
   blockContent,
+  minHeight,
+  uploading,
+  progress,
+  buffer,
   ...other
 }: UploadMultiFileProps) {
-  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    fileRejections,
+  } = useDropzone({
     ...other,
   });
+
+  console.log('uploading && progress', uploading);
+  console.log('uploading && progress', progress);
 
   return (
     <Box sx={{ width: '100%', ...sx }}>
@@ -52,25 +66,28 @@ export default function UploadMultiFile({
       >
         <input {...getInputProps()} />
 
-        {blockContent ? (
-          <BlockContent
-            icon={blockContent.icon || 'carbon-add'}
-            textUpload={blockContent.textUpload || 'Upload'}
-            textHint={blockContent.textHint || 'browse your machine'}
-          />
-        ) : (
-          false
-        )}
+        <input {...getInputProps()} />
+
+        <BlockContent minHeight={minHeight} />
       </DropZoneStyle>
 
-      {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
+      {uploading && (
+        <UploadingProgress
+          buffer={buffer ? buffer : progress! + 5}
+          progress={progress || 0}
+        />
+      )}
 
-      <MultiFilePreview
+      {fileRejections.length > 0 && (
+        <RejectionFiles fileRejections={fileRejections} />
+      )}
+
+      {/* <MultiFilePreview
         files={files}
         showPreview={showPreview}
         onRemove={onRemove}
         onRemoveAll={onRemoveAll}
-      />
+      /> */}
 
       {helperText && helperText}
     </Box>

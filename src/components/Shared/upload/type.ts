@@ -26,5 +26,9 @@ export interface UploadMultiFileProps extends DropzoneOptions {
   onRemoveAll: VoidFunction;
   sx?: SxProps<Theme>;
   helperText?: ReactNode;
+  minHeight?: number;
   blockContent?: { icon: string; textUpload: string; textHint: string };
+  uploading?: boolean;
+  progress?: number;
+  buffer?: number;
 }

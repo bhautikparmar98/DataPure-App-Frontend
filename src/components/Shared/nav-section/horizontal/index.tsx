@@ -5,6 +5,7 @@ import { Stack } from '@mui/material';
 import { NavSectionProps } from '../type';
 //
 import { NavListRoot } from './NavList';
+import useAuth from 'src/hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -18,6 +19,8 @@ const hideScrollbar = {
 } as const;
 
 function NavSectionHorizontal({ navConfig }: NavSectionProps) {
+  const { role } = useAuth();
+
   const navAccessible = navConfig.map((group: any) => {
     group.items = group.items.filter((item: NavListProps) => {
       if (item.roles && !item.roles?.includes(role)) return false;

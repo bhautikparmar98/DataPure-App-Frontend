@@ -1,37 +1,39 @@
 // @mui
 import { Box, Typography, Stack } from '@mui/material';
-import Iconify from 'src/components/Shared/Iconify';
+// assets
+import { UploadIllustration } from 'src/assets';
 
 // ----------------------------------------------------------------------
 
-export default function BlockContent({ icon, textUpload, textHint }: any) {
+export default function BlockContent({ minHeight }: { minHeight?: number }) {
   return (
-    <>
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        direction={{ xs: 'column' }}
-        sx={{ width: 1, textAlign: { xs: 'center' } }}
-      >
-        <Iconify icon={icon} color="#688BB1" width={40} height={40} />
+    <Stack
+      spacing={2}
+      alignItems="center"
+      justifyContent="center"
+      minHeight={minHeight}
+      direction={{ xs: 'column', md: 'row' }}
+      sx={{ width: 1, textAlign: { xs: 'center', md: 'left' } }}
+    >
+      <UploadIllustration sx={{ width: 220 }} />
 
-        <Box>
-          <Typography variant="h5" component="span">
-            {textUpload}
+      <Box sx={{ p: 3 }}>
+        <Typography gutterBottom variant="h5">
+          Drop or Select file
+        </Typography>
+
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Drop files here or click&nbsp;
+          <Typography
+            variant="body2"
+            component="span"
+            sx={{ color: 'primary.main', textDecoration: 'underline' }}
+          >
+            browse
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {textHint}&nbsp;
-            <Typography
-              variant="body2"
-              component="span"
-              sx={{ color: 'primary.main', textDecoration: 'underline' }}
-            >
-              browse
-            </Typography>
-            &nbsp;your machine
-          </Typography>
-        </Box>
-      </Stack>
-    </>
+          &nbsp;thorough your machine
+        </Typography>
+      </Box>
+    </Stack>
   );
 }

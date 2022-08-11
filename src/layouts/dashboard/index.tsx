@@ -44,9 +44,15 @@ const MainStyle = styled('main', {
 
 type Props = {
   children: ReactNode;
+  noHeader?: boolean;
+  noPadding?: boolean;
 };
 
-export default function DashboardLayout({ children }: Props) {
+export default function DashboardLayout({
+  children,
+  noHeader,
+  noPadding,
+}: Props) {
   const { collapseClick, isCollapse } = useCollapseDrawer();
 
   const { themeLayout } = useSettings();
@@ -61,12 +67,18 @@ export default function DashboardLayout({ children }: Props) {
   if (verticalLayout) {
     return (
       <>
-        <DashboardHeader onOpenSidebar={() => setOpen(true)} verticalLayout={verticalLayout} />
+        <DashboardHeader
+          onOpenSidebar={() => setOpen(true)}
+          verticalLayout={verticalLayout}
+        />
 
         {isDesktop ? (
           <NavbarHorizontal />
         ) : (
-          <NavbarVertical isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+          <NavbarVertical
+            isOpenSidebar={open}
+            onCloseSidebar={() => setOpen(false)}
+          />
         )}
 
         <Box
@@ -81,6 +93,7 @@ export default function DashboardLayout({ children }: Props) {
               xs: `${HEADER.MOBILE_HEIGHT + 24}px`,
               lg: `${HEADER.DASHBOARD_DESKTOP_HEIGHT + 24}px`,
             },
+            height: '100%',
           }}
         >
           {children}
@@ -95,13 +108,26 @@ export default function DashboardLayout({ children }: Props) {
         display: { lg: 'flex' },
         minHeight: { lg: 1 },
         background: theme.palette.gradients.secondary,
+        // height: '100%',
       }}
     >
-      <DashboardHeader isCollapse={isCollapse} onOpenSidebar={() => setOpen(true)} />
+      <DashboardHeader
+        isCollapse={isCollapse}
+        onOpenSidebar={() => setOpen(true)}
+        noHeader={noHeader}
+      />
 
-      <NavbarVertical isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+      <NavbarVertical
+        isOpenSidebar={open}
+        onCloseSidebar={() => setOpen(false)}
+      />
 
-      <MainStyle collapseClick={collapseClick}>{children}</MainStyle>
+      <MainStyle
+        collapseClick={collapseClick}
+        style={{ padding: noPadding && isDesktop ? '0 0' : undefined }}
+      >
+        {children}
+      </MainStyle>
     </Box>
   );
 }

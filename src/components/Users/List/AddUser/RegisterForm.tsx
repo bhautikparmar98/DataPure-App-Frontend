@@ -83,7 +83,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
           sx={{ mt: 2, pl: 2 }}
           spacing={2}
         >
-          <RHFSelect name="role">
+          <RHFSelect name="role" label="Role">
             {Object.keys(ROLES)
               .filter((key) => key !== ROLES.SUPER_ADMIN.value)
               .map((key) => (

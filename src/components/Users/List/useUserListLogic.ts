@@ -106,7 +106,7 @@ const useUserListLogic = () => {
         setUsersTotalCount(totalCount);
       } catch (error) {
         console.log('error', error);
-        enqueueSnackbar('Something went wrong.');
+        enqueueSnackbar('Something went wrong.', { variant: 'error' });
       }
       setLoading(false);
     };

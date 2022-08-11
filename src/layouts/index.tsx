@@ -11,9 +11,16 @@ import LogoOnlyLayout from './LogoOnlyLayout';
 type Props = {
   children: ReactNode;
   variant?: 'main' | 'dashboard' | 'logoOnly';
+  noHeader?: boolean;
+  noPadding?: boolean;
 };
 
-export default function Layout({ variant = 'dashboard', children }: Props) {
+export default function Layout({
+  variant = 'dashboard',
+  children,
+  noHeader,
+  noPadding,
+}: Props) {
   if (variant === 'logoOnly') {
     return <LogoOnlyLayout> {children} </LogoOnlyLayout>;
   }
@@ -24,7 +31,9 @@ export default function Layout({ variant = 'dashboard', children }: Props) {
 
   return (
     <AuthGuard>
-      <DashboardLayout> {children} </DashboardLayout>
+      <DashboardLayout noHeader={noHeader} noPadding={noPadding}>
+        {children}
+      </DashboardLayout>
     </AuthGuard>
   );
 }

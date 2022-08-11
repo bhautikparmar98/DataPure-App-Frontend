@@ -62,19 +62,27 @@ type Props = {
   onOpenSidebar: VoidFunction;
   isCollapse?: boolean;
   verticalLayout?: boolean;
+  noHeader?: boolean;
 };
 
 export default function DashboardHeader({
   onOpenSidebar,
   isCollapse = false,
   verticalLayout = false,
+  noHeader,
 }: Props) {
-  const isOffset = useOffSetTop(HEADER.DASHBOARD_DESKTOP_HEIGHT) && !verticalLayout;
+  const isOffset =
+    useOffSetTop(HEADER.DASHBOARD_DESKTOP_HEIGHT) && !verticalLayout;
 
   const isDesktop = useResponsive('up', 'lg');
 
   return (
-    <RootStyle isCollapse={isCollapse} isOffset={isOffset} verticalLayout={verticalLayout}>
+    <RootStyle
+      isCollapse={isCollapse}
+      isOffset={isOffset}
+      verticalLayout={verticalLayout}
+      style={{ display: noHeader && isDesktop ? 'none' : undefined }}
+    >
       <Toolbar
         sx={{
           minHeight: '100% !important',
@@ -84,7 +92,10 @@ export default function DashboardHeader({
         {isDesktop && verticalLayout && <Logo sx={{ mr: 2.5 }} />}
 
         {!isDesktop && (
-          <IconButtonAnimate onClick={onOpenSidebar} sx={{ mr: 1, color: 'text.primary' }}>
+          <IconButtonAnimate
+            onClick={onOpenSidebar}
+            sx={{ mr: 1, color: 'text.primary' }}
+          >
             <Iconify icon="eva:menu-2-fill" />
           </IconButtonAnimate>
         )}
@@ -92,7 +103,11 @@ export default function DashboardHeader({
         <Searchbar />
         <Box sx={{ flexGrow: 1 }} />
 
-        <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={{ xs: 0.5, sm: 1.5 }}
+        >
           {/* <LanguagePopover />
           <NotificationsPopover />
           <ContactsPopover /> */}

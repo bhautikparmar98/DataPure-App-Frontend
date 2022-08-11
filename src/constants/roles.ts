@@ -11,9 +11,9 @@ export const ROLES = {
     value: 'CLIENT',
     label: 'Client',
   },
-  ANNATATOR: {
-    value: 'ANNATATOR',
-    label: 'Annatator',
+  ANNOTATOR: {
+    value: 'ANNOTATOR',
+    label: 'Annotator',
   },
   QA: {
     value: 'QA',

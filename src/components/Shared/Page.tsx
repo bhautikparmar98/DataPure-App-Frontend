@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   background: theme.palette.gradients.secondary,
+  height: '100%',
 }));
 
 // ----------------------------------------------------------------------
