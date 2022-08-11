@@ -61,6 +61,7 @@ const Workspace: any = () => {
     hideShapeTemporarily,
     comments,
     handleCommentClick,
+    handleShapeMove,
     // eraserLines,
   } = useDraw(
     selectedLayerId,
@@ -117,6 +118,7 @@ const Workspace: any = () => {
           // e.cancelBubble = true;
         }}
         draggable={stageDragging}
+        // onDragEnd={() => {}}
       >
         <Layer name="Background Layer">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
@@ -132,7 +134,7 @@ const Workspace: any = () => {
         <Layer>
           {layers.map((layer: LayerType, i) =>
             layer.instances.map((instance) =>
-              instance.shapes?.map((group, m) => (
+              instance.shapes?.map((shape, m) => (
                 <Group
                   key={`group-${m}-${i}`}
                   x={0}
@@ -144,8 +146,9 @@ const Workspace: any = () => {
                   tabIndex={1}
                   layerId={i}
                   instanceId={instance.id}
+                  onDragEnd={(e) => handleShapeMove(e, i, shape, instance.id)}
                 >
-                  {group.map((shape, l) =>
+                  {shape.map((shape, l) =>
                     shape.type === TOOLS.LINE ? (
                       <Line
                         {...shape}

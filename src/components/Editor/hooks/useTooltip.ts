@@ -13,7 +13,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
     rectWidth: 40,
   });
 
-  const showTooltip = (e: any) => {
+  const showTooltip = (e: Konva.KonvaEventObject<DragEvent>) => {
     const layerTitle: string = e.target?.attrs?.layer;
     const { type, points } = e.target.attrs;
     const { x, y } = e.target.getClientRect({

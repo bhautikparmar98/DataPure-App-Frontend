@@ -10,6 +10,7 @@ interface IRectangle {
   onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
   onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
+  otherProps?: any;
 }
 
 const Rectangle = ({
@@ -19,6 +20,7 @@ const Rectangle = ({
   onChange,
   onDblClick,
   layer,
+  ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
   const trRef = useRef<Konva.Transformer>(null);
@@ -79,6 +81,8 @@ const Rectangle = ({
           });
         }}
         onTransformEnd={handleTransformEnd}
+        {...otherProps}
+        draggable={false}
       />
       {isSelected && (
         <Transformer

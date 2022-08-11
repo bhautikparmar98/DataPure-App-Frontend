@@ -21,7 +21,9 @@ const useComment = (
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setCommentsAction(comments));
+    if (comments.length > 0) {
+      dispatch(setCommentsAction(comments));
+    }
     return () => document.querySelector('.editor-comment-popup')?.remove();
   }, [dispatch, comments]);
 

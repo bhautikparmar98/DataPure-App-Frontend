@@ -1,13 +1,21 @@
-import { Tool, TOOLS } from 'src/constants';
+import { Instance, Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { setPreview } from 'src/redux/slices/editor/editor.actions';
 import useRect from './useRect';
 import useLine from './useLine';
 import useComment from './useComment';
+import uniqid from 'uniqid';
 // import useEraser from './useEraser';
 import Konva from 'konva';
 import { useRef } from 'react';
+import {
+  addInstance,
+  deleteInstance,
+  updateInstance,
+  updateShape,
+} from 'src/redux/slices/layers/layers.actions';
+import _ from 'lodash';
 
 const useDraw = (
   selectedLayerId: number,
@@ -110,6 +118,26 @@ const useDraw = (
     }
   };
 
+  const handleShapeMove = (
+    e: any,
+    layerId: number,
+    group: any,
+    instanceId: string
+  ) => {
+    if (stageRef.current) {
+      const { x, y } = e.target.children[0].getClientRect({
+        relativeTo: e.target,
+      });
+      const { x: shapeX, y: shapeY } = e.target.attrs;
+      const shape = _.cloneDeep(group[0]);
+
+      shape.x = shapeX + x;
+      shape.y = shapeY + y;
+
+      dispatch(updateInstance(layerId, instanceId, shape));
+    }
+  };
+
   return {
     rects,
     // eraserLines,
@@ -120,6 +148,7 @@ const useDraw = (
     hideShapeTemporarily,
     comments,
     handleCommentClick,
+    handleShapeMove,
   };
 };
 

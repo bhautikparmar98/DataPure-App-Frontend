@@ -18,7 +18,7 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
   const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
 
   const EraserConfig = {
-    type: TOOLS.ERASER || 'ERASER',
+    type: 'ERASER',
     opacity: 1,
     stroke: selectedLayerColor,
     strokeWidth: 25,

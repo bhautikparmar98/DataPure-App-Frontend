@@ -79,7 +79,7 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
         };
 
         //min width & height
-        if (x - sx > 5 && y - sy > 5) {
+        if (Math.abs(x - sx) > 5 && Math.abs(y - sy) > 5) {
           dispatch(
             addInstance(selectedLayerId, {
               visible: true,
