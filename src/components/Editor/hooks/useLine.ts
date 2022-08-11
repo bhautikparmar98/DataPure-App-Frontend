@@ -1,13 +1,14 @@
 import Konva from 'konva';
 import { useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addShape } from 'src/redux/slices/editor/editor.actions';
+import { addInstance } from 'src/redux/slices/layers/layers.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
+import uniqid from 'uniqid';
 
 const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
   const dispatch = useAppDispatch();
-  const { currentInstanceId } = useAppSelector(({ editor }) => editor);
+  const { currentInstanceId } = useAppSelector(({ layers }) => layers);
   const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
 
   const lineConfig = {
@@ -47,10 +48,16 @@ const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
 
   const lineHandleMouseUp = () => {
     if (lines.length > 0 && typeof currentInstanceId === 'number') {
-      //just store lines in redux store when mouse click ends
-      dispatch(
-        addShape(selectedLayerId, currentInstanceId, lines[lines.length - 1])
-      );
+      // checks that it's not a dot, but a line
+      if (lines[0]?.points?.length > 2) {
+        dispatch(
+          addInstance(selectedLayerId, {
+            visible: true,
+            id: uniqid(),
+            shapes: [[{ ...lines[lines.length - 1], id: uniqid() }]],
+          })
+        );
+      }
 
       //remove temp lines
       setLines([]);

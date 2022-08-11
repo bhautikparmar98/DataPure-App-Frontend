@@ -2058,6 +2058,11 @@
   "resolved" "https://registry.npmjs.org/@types/underscore/-/underscore-1.11.4.tgz"
   "version" "1.11.4"
 
+"@types/uniqid@^5.3.2":
+  "integrity" "sha512-/NYoaZpWsnAJDsGYeMNDeG3p3fuUb4AiC7MfKxi5VSu18tXd08w6Ch0fKW94T4FeLXXZwZPoFgHA1O0rDYKyMQ=="
+  "resolved" "https://registry.npmjs.org/@types/uniqid/-/uniqid-5.3.2.tgz"
+  "version" "5.3.2"
+
 "@types/unist@*", "@types/unist@^2.0.0":
   "integrity" "sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ=="
   "resolved" "https://registry.npmjs.org/@types/unist/-/unist-2.0.6.tgz"
@@ -6910,6 +6915,11 @@
     "is-plain-obj" "^4.0.0"
     "trough" "^2.0.0"
     "vfile" "^5.0.0"
+
+"uniqid@^5.4.0":
+  "integrity" "sha512-38JRbJ4Fj94VmnC7G/J/5n5SC7Ab46OM5iNtSstB/ko3l1b5g7ALt4qzHFgGciFkyiRNtDXtLNb+VsxtMSE77A=="
+  "resolved" "https://registry.npmjs.org/uniqid/-/uniqid-5.4.0.tgz"
+  "version" "5.4.0"
 
 "unist-builder@^3.0.0":
   "integrity" "sha512-GFxmfEAa0vi9i5sd0R2kcrI9ks0r82NasRq5QHh2ysGngrc6GiqD5CDf1FjPenY4vApmFASBIIlk/jj5J5YbmQ=="

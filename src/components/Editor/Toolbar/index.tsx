@@ -37,13 +37,14 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const ICONS = {
-  [TOOLS.PEN]: 'la:pen',
   [TOOLS.LINE]: 'ci:line-xl',
   [TOOLS.RECTANGLE]: 'bx:rectangle',
-  [TOOLS.ERASER]: 'clarity:eraser-line',
-  [TOOLS.BRUSH]: 'bi:brush',
-  [TOOLS.PEN_TOOL]: 'bi:vector-pen',
   [TOOLS.SELECT]: 'la:mouse-pointer',
+  [TOOLS.COMMENT]: 'cil:comment-bubble',
+  [TOOLS.PAN]: '',
+  // [TOOLS.ERASER]: 'clarity:eraser-line',
+  // [TOOLS.BRUSH]: 'bi:brush',
+  // [TOOLS.PEN_TOOL]: 'bi:vector-pen',
 };
 
 function Toolbar() {
@@ -64,40 +65,44 @@ function Toolbar() {
           <FormatShapesIcon />
         </DrawerHeader>
         <List>
-          {Object.values(TOOLS).map((text, index) => (
-            <ListItem
-              key={`${text}-${index}`}
-              disablePadding
-              sx={{ display: 'block' }}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
+          {Object.values(TOOLS)
+            .slice(0, 4)
+            .map((text, index) => (
+              <ListItem
+                key={`${text}-${index}`}
+                disablePadding
+                sx={{ display: 'block' }}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                    color: text === currentTool ? 'royalblue' : 'inherit',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
                   }}
                 >
-                  <Icon
-                    icon={ICONS[text]}
-                    width="30"
-                    style={{
-                      transform:
-                        text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)',
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color: text === currentTool ? 'royalblue' : 'inherit',
                     }}
-                    onClick={(e) => handleToolClick(text)}
-                  />
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
-          ))}
+                  >
+                    <Icon
+                      icon={ICONS[text]}
+                      width="30"
+                      style={{
+                        transform:
+                          text === TOOLS.LINE
+                            ? 'rotate(45deg)'
+                            : 'rotate(0deg)',
+                      }}
+                      onClick={(e) => handleToolClick(text)}
+                    />
+                  </ListItemIcon>
+                </ListItemButton>
+              </ListItem>
+            ))}
         </List>
       </Drawer>
     </Box>

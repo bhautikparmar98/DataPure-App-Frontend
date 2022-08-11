@@ -1,20 +1,31 @@
 import Konva from 'konva';
+import { KonvaEventObject } from 'konva/lib/Node';
 import { useEffect, useRef } from 'react';
 import { Rect, Transformer } from 'react-konva';
+
+interface IRectangle {
+  shapeProps: Konva.ShapeConfig;
+  isSelected: boolean;
+  layer: string;
+  onClick: (e: KonvaEventObject<Event>) => void;
+  onChange: (e: Konva.ShapeConfig) => void;
+  onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
+  otherProps?: any;
+}
 
 const Rectangle = ({
   shapeProps,
   isSelected,
-  onSelect,
+  onClick,
   onChange,
-  onMouseEnter,
-  onMouseLeave,
   onDblClick,
-}) => {
-  const shapeRef = useRef<Konva.Rect>();
-  const trRef = useRef<Konva.Transformer>();
+  layer,
+  ...otherProps
+}: IRectangle) => {
+  const shapeRef = useRef<Konva.Rect>(null);
+  const trRef = useRef<Konva.Transformer>(null);
 
-  const handleTransformEnd = (e) => {
+  const handleTransformEnd = (e: KonvaEventObject<Event>) => {
     // transformer is changing scale of the node
     // and NOT its width or height
     // but in the store we have only width and height
@@ -56,14 +67,13 @@ const Rectangle = ({
   return (
     <>
       <Rect
-        onClick={onSelect}
-        onTap={onSelect}
+        onClick={onClick}
+        onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        layer={layer}
         onDblClick={onDblClick}
-        onDragEnd={(e) => {
+        onDragEnd={(e: any) => {
           onChange({
             ...shapeProps,
             x: e.target.x(),
@@ -71,6 +81,8 @@ const Rectangle = ({
           });
         }}
         onTransformEnd={handleTransformEnd}
+        {...otherProps}
+        draggable={false}
       />
       {isSelected && (
         <Transformer

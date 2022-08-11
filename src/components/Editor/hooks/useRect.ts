@@ -1,20 +1,14 @@
 import Konva from 'konva';
 import { useCallback, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addInstance } from 'src/redux/slices/editor/editor.actions';
+import { addInstance } from 'src/redux/slices/layers/layers.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import useTool from './useTool';
 import { TOOLS } from 'src/constants';
-import _ from 'underscore';
+import uniqid from 'uniqid';
 
-const useRect = (
-  selectedLayerId: number,
-  selectedLayerColor: string,
-  workspaceRef: React.RefObject<HTMLDivElement>
-) => {
+const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
   const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
-  const { setCursorStyle } = useTool(workspaceRef);
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 
@@ -81,15 +75,19 @@ const useRect = (
           width: x - sx,
           height: y - sy,
           ...config,
-          id: _.uniqueId(),
+          id: uniqid(),
         };
-        dispatch(
-          addInstance(selectedLayerId, {
-            visible: true,
-            id: _.uniqueId(),
-            shapes: [[{ ...annotationToAdd }]],
-          })
-        );
+
+        //min width & height
+        if (Math.abs(x - sx) > 5 && Math.abs(y - sy) > 5) {
+          dispatch(
+            addInstance(selectedLayerId, {
+              visible: true,
+              id: uniqid(),
+              shapes: [[{ ...annotationToAdd }]],
+            })
+          );
+        }
 
         setNewAnnotation([]);
         setAnnotations([]);

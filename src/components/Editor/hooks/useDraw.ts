@@ -1,85 +1,109 @@
-import { Tool, TOOLS } from 'src/constants';
+import { Instance, Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
-import useRect from './useRect';
-import useTool from './useTool';
-import useEraser from './useEraser';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import {
-  endDrawing,
-  startDrawing,
-} from 'src/redux/slices/editor/editor.actions';
+import { setPreview } from 'src/redux/slices/editor/editor.actions';
+import useRect from './useRect';
 import useLine from './useLine';
+import useComment from './useComment';
+import uniqid from 'uniqid';
+// import useEraser from './useEraser';
+import Konva from 'konva';
+import { useRef } from 'react';
+import {
+  addInstance,
+  deleteInstance,
+  updateInstance,
+  updateShape,
+} from 'src/redux/slices/layers/layers.actions';
+import _ from 'lodash';
 
 const useDraw = (
   selectedLayerId: number,
   selectedLayerColor: string,
   workspaceRef: React.RefObject<HTMLDivElement>,
+  stageRef: React.RefObject<Konva.Stage>,
   currentTool: Tool
 ) => {
   const dispatch = useAppDispatch();
+  const updateCount = useRef(0);
 
-  const { isDrawing, layers } = useAppSelector(({ editor }) => editor);
+  // State
+  const { layers } = useAppSelector(({ layers }) => layers);
 
+  // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedLayerId, selectedLayerColor, workspaceRef);
+    useRect(selectedLayerId, selectedLayerColor);
 
+  // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
     useLine(selectedLayerId, selectedLayerColor);
 
-  const {
-    eraseHandleMouseDown,
-    eraseHandleMouseUp,
-    eraseHandleMouseMove,
-    eraserLines,
-  } = useEraser(selectedLayerId, selectedLayerColor);
+  const { handleComment, handleCommentClick, comments } = useComment(
+    stageRef,
+    currentTool
+  );
 
-  const { setCursorStyle } = useTool(workspaceRef);
+  // Eraser
+  // const {
+  //   eraseHandleMouseDown,
+  //   eraseHandleMouseUp,
+  //   eraseHandleMouseMove,
+  //   eraserLines,
+  // } = useEraser(selectedLayerId, selectedLayerColor);
+
+  // Update workspace preview
+  const updatePreview = (forceUpdate: boolean) => {
+    if (forceUpdate || updateCount.current === 0) {
+      updateCount.current = updateCount.current + 1;
+      const SCALE = 1 / 4;
+      const src = stageRef?.current?.toDataURL({ pixelRatio: SCALE });
+      if (src) dispatch(setPreview({ src }));
+    }
+  };
+
+  updatePreview(false);
+
+  /* 
+      >>> Workspace events handlers
+  */
 
   const handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseDown(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseDown(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseDown(e);
+    // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseDown(e);
+    }
+    if (currentTool === TOOLS.COMMENT) {
+      return handleComment(e);
     }
   };
 
   const handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {
+    updatePreview(true);
+
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseUp(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseUp(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseUp(e);
+    // }
     if (currentTool === TOOLS.LINE) {
-      return lineHandleMouseUp(e);
+      return lineHandleMouseUp();
     }
   };
   const handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {
     if (currentTool === TOOLS.RECTANGLE) {
       return rectHandleMouseMove(e);
     }
-    if (currentTool === TOOLS.ERASER) {
-      return eraseHandleMouseMove(e);
-    }
+    // if (currentTool === TOOLS.ERASER) {
+    //   return eraseHandleMouseMove(e);
+    // }
     if (currentTool === TOOLS.LINE) {
       return lineHandleMouseMove(e);
-    }
-  };
-
-  const handleMouseEnter = () => {
-    if (rects.length === 0 && currentTool === TOOLS.SELECT) {
-      dispatch(endDrawing());
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (rects.length === 0 && !isDrawing) {
-      setCursorStyle();
-      dispatch(startDrawing());
     }
   };
 
@@ -94,16 +118,37 @@ const useDraw = (
     }
   };
 
+  const handleShapeMove = (
+    e: any,
+    layerId: number,
+    group: any,
+    instanceId: string
+  ) => {
+    if (stageRef.current) {
+      const { x, y } = e.target.children[0].getClientRect({
+        relativeTo: e.target,
+      });
+      const { x: shapeX, y: shapeY } = e.target.attrs;
+      const shape = _.cloneDeep(group[0]);
+
+      shape.x = shapeX + x;
+      shape.y = shapeY + y;
+
+      dispatch(updateInstance(layerId, instanceId, shape));
+    }
+  };
+
   return {
     rects,
-    eraserLines,
+    // eraserLines,
     lines,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    handleMouseEnter,
-    handleMouseLeave,
     hideShapeTemporarily,
+    comments,
+    handleCommentClick,
+    handleShapeMove,
   };
 };
 

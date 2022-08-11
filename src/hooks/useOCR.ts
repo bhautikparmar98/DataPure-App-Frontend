@@ -34,8 +34,8 @@ const useOCR = async (imgSnippet: File, setOcr: SetOCR) => {
       console.error('Axios error');
       console.error(err);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgSnippet]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return;
 };
 export default useOCR;
