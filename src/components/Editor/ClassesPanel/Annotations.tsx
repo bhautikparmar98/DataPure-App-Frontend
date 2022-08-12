@@ -13,10 +13,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { Icon } from '@iconify/react';
 
 import styles from './annotations.module.css';
-import { Layer } from 'src/constants';
+import { Class } from 'src/constants';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { updateInstance } from 'src/redux/slices/layers/layers.actions';
+import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
 import _ from 'lodash';
 
 const Accordion = styled((props: AccordionProps) => (
@@ -57,44 +57,45 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 function Annotations() {
   const dispatch = useAppDispatch();
-  const { layers } = useAppSelector(({ layers }) => layers);
+  const { classes } = useAppSelector(({ classes }) => classes);
 
-  const [memoisedLayers, setMemoisedLayers] = useState<Layer[] | []>([]);
+  const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
 
-  const handleLayers = _.debounce(() => {
-    setMemoisedLayers(layers);
+  const handleClasses = _.debounce(() => {
+    setMemoisedClass(classes);
   }, 2000);
 
   useEffect(() => {
-    handleLayers();
-  }, [layers]);
+    handleClasses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classes]);
 
-  const handleInstanceToggle = (
-    layerId: number,
-    instanceId: string,
+  const handleAnnotationToggle = (
+    classId: number,
+    annotationId: string,
     visible: boolean
   ) => {
-    dispatch(updateInstance(layerId, instanceId, { visible }));
+    dispatch(updateAnnotation(classId, annotationId, { visible }));
   };
 
   return (
     <div className={styles.list}>
-      {memoisedLayers.length > 0 &&
-        memoisedLayers.map((layer, layerId) => (
-          <Accordion key={`layer-accordion-${layerId}`}>
+      {memoisedClass.length > 0 &&
+        memoisedClass.map((classItem, classId) => (
+          <Accordion key={`class-accordion-${classId}`}>
             <AccordionSummary
               aria-controls="panel1d-content"
               id="panel1d-header"
             >
-              <Box className={styles.layerTitle}>
+              <Box className={styles.classTitle}>
                 <Checkbox />
                 <div
                   className={styles.circle}
-                  style={{ background: layer.color }}
+                  style={{ background: classItem.color }}
                 />
-                {layer.title}
-                {layer.instances.length > 0
-                  ? ' (' + layer.instances.length + ')'
+                {classItem.name}
+                {classItem.annotations.length > 0
+                  ? ' (' + classItem.annotations.length + ')'
                   : ''}
               </Box>
             </AccordionSummary>
@@ -102,16 +103,16 @@ function Annotations() {
               sx={{ margin: 0, backgroundColor: 'transparent' }}
             >
               <List dense={true}>
-                {layer.instances.map((instance, i) => (
-                  <ListItem key={instance.id} sx={{ marginTop: -2 }}>
+                {classItem.annotations.map((annotation, i) => (
+                  <ListItem key={annotation.id} sx={{ marginTop: -2 }}>
                     <Checkbox />
-                    <ListItemText primary={`Instance ${i + 1}`} />
-                    {instance.visible ? (
+                    <ListItemText primary={`Annotation ${i + 1}`} />
+                    {annotation.visible ? (
                       <Icon
                         icon="majesticons:eye"
                         className={styles.eyeIcon}
                         onClick={(e) =>
-                          handleInstanceToggle(layerId, instance.id, false)
+                          handleAnnotationToggle(classId, annotation.id, false)
                         }
                       />
                     ) : (
@@ -119,7 +120,7 @@ function Annotations() {
                         icon="eva:eye-off-fill"
                         className={styles.eyeIcon}
                         onClick={(e) =>
-                          handleInstanceToggle(layerId, instance.id, true)
+                          handleAnnotationToggle(classId, annotation.id, true)
                         }
                       />
                     )}

@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { setComments as setCommentsAction } from 'src/redux/slices/layers/layers.actions';
+import { setComments as setCommentsAction } from 'src/redux/slices/classes/classes.actions';
 import { Tool } from 'src/constants';
 interface Comment {
   text: string;
@@ -13,7 +13,7 @@ const useComment = (
   stageRef: React.RefObject<Konva.Stage>,
   currentTool: Tool
 ) => {
-  const storedComments = useAppSelector(({ layers }) => layers.comments);
+  const storedComments = useAppSelector(({ classes }) => classes.comments);
   const [comments, setComments] = useState<Comment[]>(
     storedComments?.length > 0 ? storedComments : []
   );

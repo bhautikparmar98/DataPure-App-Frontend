@@ -1,4 +1,4 @@
-import LayersPanel from './LayersPanel';
+import ClassesPanel from './ClassesPanel';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 
@@ -8,7 +8,7 @@ const Editor = () => (
     <div style={{ marginLeft: 70 }}>
       <Workspace />
     </div>
-    <LayersPanel />
+    <ClassesPanel />
   </div>
 );
 export default Editor;

@@ -1,29 +1,26 @@
 import Konva from 'konva';
 import { useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addInstance } from 'src/redux/slices/layers/layers.actions';
+import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { TOOLS } from 'src/constants';
+import { TOOLS, type Line } from 'src/constants';
 import uniqid from 'uniqid';
 
-const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
+const useLine = (selectedClassId: number, selectedClassColor: string) => {
   const dispatch = useAppDispatch();
-  const { currentInstanceId } = useAppSelector(({ layers }) => layers);
-  const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);
+  const { currentAnnotationId } = useAppSelector(({ classes }) => classes);
+  const [lines, setLines] = useState<Line[]>([]);
 
   const lineConfig = {
     type: TOOLS.LINE,
-    opacity: 1,
-    stroke: selectedLayerColor,
-    strokeWidth: 5,
-    tension: 0.5,
-    lineCap: 'round',
+    id: uniqid(),
+    stroke: selectedClassColor,
   } as const;
 
   const lineHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-    setLines([...lines, { points: [x, y], ...lineConfig }]);
+    setLines([...lines, { ...lineConfig, points: [x, y] }]);
   };
 
   const lineHandleMouseMove = (event: KonvaEventObject<WheelEvent>) => {
@@ -35,7 +32,7 @@ const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
       // add point
 
       //make it a straight line
-      if (lastLine.points?.length >= 2) {
+      if (lastLine?.points?.length >= 2) {
         // const [lastX, lastY] = lastLine.points
         lastLine.points = lastLine.points.slice(0, 2).concat([x, y]);
       }
@@ -47,14 +44,14 @@ const useLine = (selectedLayerId: number, selectedLayerColor: string) => {
   };
 
   const lineHandleMouseUp = () => {
-    if (lines.length > 0 && typeof currentInstanceId === 'number') {
+    if (lines.length > 0 && typeof currentAnnotationId === 'number') {
       // checks that it's not a dot, but a line
       if (lines[0]?.points?.length > 2) {
         dispatch(
-          addInstance(selectedLayerId, {
+          addAnnotation(selectedClassId, {
             visible: true,
             id: uniqid(),
-            shapes: [[{ ...lines[lines.length - 1], id: uniqid() }]],
+            shapes: [{ ...lines[lines.length - 1] }],
           })
         );
       }

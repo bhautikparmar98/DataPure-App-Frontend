@@ -3,7 +3,7 @@ import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
 import { editorReducer } from './slices/editor';
-import { layersReducer } from './slices/layers';
+import { classesReducer } from './slices/classes';
 
 const isClient = typeof window !== 'undefined';
 
@@ -35,18 +35,18 @@ const editorPersistConfig = {
   keyPrefix: 'redux-',
 };
 
-const latyersPersistConfig = {
-  key: 'layers',
+const classesPersistConfig = {
+  key: 'classes',
   storage,
   keyPrefix: 'redux-',
 };
 
 const rootReducer = combineReducers({
   // editor: editorReducer,
-  // layers: layersReducer,
+  // classes: classesReducer,
   // !comment the next line for debugging purposes
   editor: persistReducer(editorPersistConfig, editorReducer),
-  layers: persistReducer(latyersPersistConfig, layersReducer),
+  classes: persistReducer(classesPersistConfig, classesReducer),
 });
 
 export { rootPersistConfig, rootReducer };

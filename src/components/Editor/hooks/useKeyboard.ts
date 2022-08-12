@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { useState } from 'react';
 import { TOOLS } from 'src/constants';
-import { deleteInstance } from 'src/redux/slices/layers/layers.actions';
+import { deleteAnnotation } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import useCursor from './useCursor';
 
@@ -38,10 +38,10 @@ const useKeyboard = (
 
   const handleShapeDeletion = () => {
     if (!stage) return;
-    const { layerId, instanceId } =
+    const { classId, annotationId } =
       stage.find('#' + selectedId)[0]?.parent?.attrs || {};
-    if (layerId >= 0 && instanceId?.length > 0) {
-      dispatch(deleteInstance(layerId, instanceId));
+    if (classId >= 0 && annotationId?.length > 0) {
+      dispatch(deleteAnnotation(classId, annotationId));
     }
   };
 

@@ -15,14 +15,14 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
 
   const showTooltip = (e: Konva.KonvaEventObject<DragEvent>) => {
     if (!stageRef.current) return;
-    const layerTitle: string = e.target?.attrs?.layer;
+    const classTitle: string = e.target?.attrs?.class;
     const { type, points } = e.target.attrs;
     const { x, y } = e.target.getClientRect({
       relativeTo: stageRef.current,
     });
 
     if (
-      typeof layerTitle === 'string' &&
+      typeof classTitle === 'string' &&
       typeof x === 'number' &&
       typeof y === 'number'
     ) {
@@ -53,7 +53,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
 
       // !FIX: srcElements is deprecated, change it
       const rectWidth =
-        e.evt?.srcElement?.getContext('2d')?.measureText(layerTitle)?.width *
+        e.evt?.srcElement?.getContext('2d')?.measureText(classTitle)?.width *
           1.4 +
           10 || 40;
 
@@ -61,7 +61,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         ...prev,
         x: actualX,
         y: actualY,
-        text: layerTitle,
+        text: classTitle,
         fill: '#fff',
         rectWidth,
       }));

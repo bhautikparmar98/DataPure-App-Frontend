@@ -14,6 +14,7 @@ const useAnnotatorLogic = () => {
 
   const startHandler = (project: IProject) => {
     //TODO: move to the editor
+    router.push(`/editor/${project._id}`);
   };
 
   const redoHandler = (project: IProject) => {

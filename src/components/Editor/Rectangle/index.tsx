@@ -6,7 +6,7 @@ import { Rect, Transformer } from 'react-konva';
 interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
-  layer: string;
+  classItemName: string;
   onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
   onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
@@ -19,7 +19,7 @@ const Rectangle = ({
   onClick,
   onChange,
   onDblClick,
-  layer,
+  classItemName,
   ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
@@ -71,7 +71,7 @@ const Rectangle = ({
         onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
-        layer={layer}
+        class={classItemName}
         onDblClick={onDblClick}
         onDragEnd={(e: any) => {
           onChange({

@@ -6,7 +6,7 @@ import Preview from './Preview';
 import Filters from './Filters';
 import Annotations from './Annotations';
 
-const LayersPanel = () => (
+const ClassPanel = () => (
   <div style={{ cursor: 'default' }}>
     <Drawer variant="permanent" anchor={'right'} open={true}>
       <Container
@@ -24,4 +24,4 @@ const LayersPanel = () => (
     </Drawer>
   </div>
 );
-export default LayersPanel;
+export default ClassPanel;

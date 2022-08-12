@@ -7,8 +7,8 @@ import Konva from 'konva';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 import Rectangle from '../Rectangle';
-import { updateShape } from 'src/redux/slices/layers/layers.actions';
-import { Layer as LayerType } from 'src/constants/layers';
+import { updateShape } from 'src/redux/slices/classes/classes.actions';
+import { Class } from 'src/constants/classes';
 import useTooltip from '../hooks/useTooltip';
 import useKeyboard from '../hooks/useKeyboard';
 import useImage from 'use-image';
@@ -19,16 +19,16 @@ const LAYERS_PANEL_WIDTH = 300;
 const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
 const HEIGHT = window.innerHeight;
 
-interface Layers {
-  layers: LayerType[];
-  selectedLayerId: number;
+interface Layer {
+  classes: Class[];
+  selectedClassId: number;
   comments: { text: string; x: number; y: number }[];
 }
 
 const Workspace: any = () => {
   const currentTool = useAppSelector(({ editor }) => editor.tool);
-  const { layers = [], selectedLayerId = 0 } = useAppSelector<Layers>(
-    ({ layers }) => layers
+  const { classes = [], selectedClassId = 0 } = useAppSelector(
+    ({ classes }) => classes
   );
 
   const dispatch = useAppDispatch();
@@ -64,8 +64,8 @@ const Workspace: any = () => {
     handleShapeMove,
     // eraserLines,
   } = useDraw(
-    selectedLayerId,
-    layers[selectedLayerId]?.color,
+    selectedClassId,
+    classes[selectedClassId]?.color,
     workspaceRef,
     stageRef,
     currentTool
@@ -81,7 +81,7 @@ const Workspace: any = () => {
   // For Rectangle transformation (size & rotation)
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
     if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape(selectedLayerId, newAttrs));
+      dispatch(updateShape(selectedClassId, newAttrs));
     }
   };
 
@@ -120,11 +120,11 @@ const Workspace: any = () => {
         draggable={stageDragging}
         // onDragEnd={() => {}}
       >
-        <Layer name="Background Layer">
+        <Layer name="Background Class">
           <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
         </Layer>
 
-        <Layer name="Temp Layer">
+        <Layer name="Temp Class">
           {/* <Group> */}
           {newRects.map((options, m) => (
             <Rect {...options} key={'temp-rect' + m} />
@@ -132,74 +132,81 @@ const Workspace: any = () => {
         </Layer>
 
         <Layer>
-          {layers.map((layer: LayerType, i) =>
-            layer.instances.map((instance) =>
-              instance.shapes?.map((shape, m) => (
+          {classes.map((classItem: Class, i) =>
+            classItem.annotations.map((annotation) =>
+              annotation.shapes?.map((shape, m) => (
                 <Group
                   key={`group-${m}-${i}`}
                   x={0}
                   y={0}
                   draggable={currentTool === TOOLS.SELECT && !stageDragging}
-                  name={layer.title}
-                  visible={instance.visible}
+                  name={classItem.name}
+                  visible={annotation.visible}
                   onDragStart={hideTooltip}
                   tabIndex={1}
-                  layerId={i}
-                  instanceId={instance.id}
-                  onDragEnd={(e) => handleShapeMove(e, i, shape, instance.id)}
+                  classId={i}
+                  annotationId={annotation.id}
+                  onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id)}
                 >
-                  {shape.map((shape, l) =>
-                    shape.type === TOOLS.LINE ? (
-                      <Line
-                        {...shape}
-                        key={`line-${m}-${l}`}
-                        listening={shape.type === TOOLS.LINE}
-                        draggable={shape.type === TOOLS.LINE}
-                        layer={layer.title}
-                        isSelected={shape.id === selectedId}
-                        onClick={(e: any) => {
-                          if (shape.id) {
-                            selectShape(shape.id);
-                          }
-                          showTooltip(e);
-                        }}
-                      />
-                    ) : (
-                      <Rectangle
-                        key={`${instance.id}-${m}-${l}-rect`}
-                        shapeProps={shape}
-                        layer={layer.title}
-                        isSelected={shape.id === selectedId}
-                        onClick={(e: any) => {
-                          if (shape.id) {
-                            selectShape(shape.id);
-                          }
-                          showTooltip(e);
-                        }}
-                        onChange={handleRectChange}
-                        onDblClick={hideShapeTemporarily}
-                      />
-                    )
+                  {shape.type === TOOLS.LINE ? (
+                    <Line
+                      {...shape}
+                      key={`line-${m}-${i}`}
+                      listening={shape.type === TOOLS.LINE}
+                      draggable={shape.type === TOOLS.LINE}
+                      class={classItem.name}
+                      isSelected={shape.id === selectedId}
+                      onClick={(e: any) => {
+                        if (shape.id) {
+                          selectShape(shape.id);
+                        }
+                        showTooltip(e);
+                      }}
+                      opacity={1}
+                      stroke={classItem.color}
+                      strokeWidth={5}
+                      tension={0.5}
+                      lineCap="round"
+                    />
+                  ) : (
+                    <Rectangle
+                      key={`rect-${m}-${i}`}
+                      shapeProps={{
+                        ...shape,
+                        fill: classItem.color
+                          .replace(')', ', 0.3)')
+                          .replace('rgb', 'rgba'),
+                        opacity: 0.7,
+                        stroke: classItem.color,
+                        strokeWidth: 5,
+                      }}
+                      classItemName={classItem.name}
+                      isSelected={shape.id === selectedId}
+                      onClick={(e: any) => {
+                        if (shape.id) {
+                          selectShape(shape.id);
+                        }
+                        showTooltip(e);
+                      }}
+                      onChange={handleRectChange}
+                      onDblClick={hideShapeTemporarily}
+                    />
                   )}
                 </Group>
               ))
             )
           )}
-          {/* Temporary shapes */}
-          {/* {eraserLines.map((options, e) => (
-            <Line
-              {...options}
-              key={'temp-eraser-line' + e}
-              listening={false}
-              draggable={false}
-            />
-          ))} */}
+
           {lines.map((options, l) => (
             <Line
-              {...options}
               key={'temp-line' + l}
               listening={false}
               draggable={false}
+              {...options}
+              opacity={1}
+              strokeWidth={5}
+              tension={0.5}
+              lineCap="round"
             />
           ))}
           {tooltip.text.length > 0 && (

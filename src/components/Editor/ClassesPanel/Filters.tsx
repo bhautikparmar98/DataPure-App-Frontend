@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { selectLayer } from 'src/redux/slices/layers/layers.actions';
-import styles from './filters.module.css';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import { Grid } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import { selectClass } from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import styles from './filters.module.css';
 
 // const StyledAutoComplete = styled(Autocomplete)({});
 
@@ -19,20 +19,20 @@ const StyledTextField = styled(TextField)({
 });
 
 const Filters = () => {
-  const { layers, selectedLayerId } = useAppSelector(({ layers }) => layers);
+  const { classes, selectedClassId } = useAppSelector(({ classes }) => classes);
   const dispatch = useAppDispatch();
 
-  const layersFilters = layers.map((layer, i) => ({
-    label: layer.title,
-    layerId: i,
+  const classesFilters = classes.map((classItem, i) => ({
+    label: classItem.name,
+    classId: i,
   }));
 
-  const handleLayerSelect = (
+  const handleClassSelect = (
     _: any,
-    layer: { label: string; layerId: number } | null
+    classItem: { label: string; classId: number } | null
   ) => {
-    if (layer) {
-      layer.layerId >= 0 ? dispatch(selectLayer(layer.layerId)) : null;
+    if (classItem) {
+      classItem.classId >= 0 ? dispatch(selectClass(classItem.classId)) : null;
     }
   };
 
@@ -44,20 +44,20 @@ const Filters = () => {
       }}
     >
       <label htmlFor="editor-classes" className={styles.label}>
-        Choose Class ({layers.length})
+        Choose Class ({classes.length})
       </label>
 
       <Autocomplete
         disablePortal
         id="editor-classes"
-        options={layersFilters}
+        options={classesFilters}
         sx={{ width: 250 }}
         value={{
-          label: layers[selectedLayerId]?.title || 'Choose Class',
-          layerId: selectedLayerId,
+          label: classes[selectedClassId]?.name || 'Choose Class',
+          classId: selectedClassId,
         }}
-        style={{ color: layers[selectedLayerId]?.color || '#000' }}
-        onChange={handleLayerSelect}
+        style={{ color: classes[selectedClassId]?.color || '#000' }}
+        onChange={handleClassSelect}
         fullWidth
         renderInput={(params) => <StyledTextField {...params} />}
         isOptionEqualToValue={(option, value) => option.label === value.label}

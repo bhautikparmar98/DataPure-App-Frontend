@@ -1,12 +1,12 @@
 import Konva from 'konva';
 import { useCallback, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addInstance } from 'src/redux/slices/layers/layers.actions';
+import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 import uniqid from 'uniqid';
 
-const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
+const useRect = (selectedClassId: number, selectedClassColor: string) => {
   const { isDrawing, tool } = useAppSelector(({ editor }) => editor);
   const dispatch = useAppDispatch();
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
@@ -26,9 +26,9 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
   }
 
   const config = {
-    fill: selectedLayerColor.replace(')', ', 0.3)').replace('rgb', 'rgba'),
+    fill: selectedClassColor.replace(')', ', 0.3)').replace('rgb', 'rgba'),
     opacity: 0.7,
-    stroke: selectedLayerColor,
+    stroke: selectedClassColor,
     strokeWidth: 5,
   } as const;
 
@@ -37,7 +37,7 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
       //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
       const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
       if (x != null && y != null) {
-        setNewAnnotation([{ x, y, width: 0, height: 0 }]);
+        setNewAnnotation([{ ...config, x, y, width: 0, height: 0 }]);
       }
     }
   };
@@ -50,11 +50,11 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
       if (x != null && y != null) {
         setNewAnnotation([
           {
+            ...config,
             x: sx,
             y: sy,
             width: x - sx,
             height: y - sy,
-            ...config,
           },
         ]);
       }
@@ -70,21 +70,21 @@ const useRect = (selectedLayerId: number, selectedLayerColor: string) => {
       const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
       if (x != null && y != null) {
         const annotationToAdd = {
+          type: TOOLS.RECTANGLE,
           x: sx,
           y: sy,
           width: x - sx,
           height: y - sy,
-          ...config,
           id: uniqid(),
         };
 
         //min width & height
         if (Math.abs(x - sx) > 5 && Math.abs(y - sy) > 5) {
           dispatch(
-            addInstance(selectedLayerId, {
+            addAnnotation(selectedClassId, {
               visible: true,
               id: uniqid(),
-              shapes: [[{ ...annotationToAdd }]],
+              shapes: [{ ...annotationToAdd }],
             })
           );
         }

@@ -1,4 +1,4 @@
-import { Instance, Tool, TOOLS } from 'src/constants';
+import { Annotation, Tool, TOOLS } from 'src/constants';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { setPreview } from 'src/redux/slices/editor/editor.actions';
@@ -10,16 +10,16 @@ import uniqid from 'uniqid';
 import Konva from 'konva';
 import { useRef } from 'react';
 import {
-  addInstance,
-  deleteInstance,
-  updateInstance,
+  addAnnotation,
+  deleteAnnotation,
+  updateAnnotation,
   updateShape,
-} from 'src/redux/slices/layers/layers.actions';
+} from 'src/redux/slices/classes/classes.actions';
 import _ from 'lodash';
 
 const useDraw = (
-  selectedLayerId: number,
-  selectedLayerColor: string,
+  selectedClassId: number,
+  selectedClassColor: string,
   workspaceRef: React.RefObject<HTMLDivElement>,
   stageRef: React.RefObject<Konva.Stage>,
   currentTool: Tool
@@ -28,15 +28,15 @@ const useDraw = (
   const updateCount = useRef(0);
 
   // State
-  const { layers } = useAppSelector(({ layers }) => layers);
+  const { classes } = useAppSelector(({ classes }) => classes);
 
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedLayerId, selectedLayerColor);
+    useRect(selectedClassId, selectedClassColor);
 
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
-    useLine(selectedLayerId, selectedLayerColor);
+    useLine(selectedClassId, selectedClassColor);
 
   const { handleComment, handleCommentClick, comments } = useComment(
     stageRef,
@@ -49,7 +49,7 @@ const useDraw = (
   //   eraseHandleMouseUp,
   //   eraseHandleMouseMove,
   //   eraserLines,
-  // } = useEraser(selectedLayerId, selectedLayerColor);
+  // } = useEraser(selectedClassId, selectedClassColor);
 
   // Update workspace preview
   const updatePreview = (forceUpdate: boolean) => {
@@ -111,7 +111,7 @@ const useDraw = (
     if (e.target.attrs?.fill) {
       e.target.attrs.fill =
         e.target.attrs.fill === 'rgba(0,0,0,0)'
-          ? layers[selectedLayerId].color
+          ? classes[selectedClassId].color
               .replace(')', ', 0.3)')
               .replace('rgb', 'rgba')
           : 'rgba(0,0,0,0)';
@@ -120,12 +120,13 @@ const useDraw = (
 
   const handleShapeMove = (
     e: any,
-    layerId: number,
+    classId: number,
     group: any,
-    instanceId: string
+    annotationId: string
   ) => {
     if (stageRef.current) {
-      const shape = _.cloneDeep(group[0]);
+      const shape = _.cloneDeep(group);
+      // console.log({ shape });
       if (shape.type === TOOLS.LINE) {
         let { points } = e.target.attrs;
         const { x = 0, y = 0 } = e.target.attrs;
@@ -143,7 +144,7 @@ const useDraw = (
         shape.x = shapeX + x;
         shape.y = shapeY + y;
       }
-      dispatch(updateInstance(layerId, instanceId, shape));
+      dispatch(updateAnnotation(classId, annotationId, shape));
     }
   };
 

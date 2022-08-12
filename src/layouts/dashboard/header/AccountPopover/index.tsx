@@ -4,30 +4,26 @@ import { useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 // @mui
-import { alpha } from '@mui/material/styles';
 import {
+  Avatar,
   Box,
   Divider,
-  Typography,
-  Stack,
-  MenuItem,
-  Avatar,
   IconButton,
-  Icon,
+  MenuItem,
+  Stack,
+  Typography,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 // routes
 import { PATH_AUTH } from 'src/routes/auth/paths';
 // hooks
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 // paths
-import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 // components
-import MenuPopover from 'src/components/Shared/MenuPopover';
-import { useTheme, styled } from '@mui/material/styles';
-import { IconButtonAnimate } from 'src/components/Shared/animate';
-import Iconify from 'src/components/Shared/Iconify';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { styled } from '@mui/material/styles';
+import MenuPopover from 'src/components/Shared/MenuPopover';
 
 // ----------------------------------------------------------------------
 
@@ -110,7 +106,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src="/static/unknown.jpg" alt={user?.fullName} />
+        <Avatar alt={user?.fullName} />
         <Typography
           variant="subtitle2"
           noWrap

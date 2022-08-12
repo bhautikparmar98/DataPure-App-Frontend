@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addEraserLines } from 'src/redux/slices/layers/layers.actions';
+import { addEraserLines } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import { TOOLS } from 'src/constants';
 
@@ -11,7 +11,7 @@ import { TOOLS } from 'src/constants';
     - Make the erased part's stroke width responsive to the Stage zoom scale
 */
 
-const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
+const useEraser = (selectedClassId: number, selectedClassColor: string) => {
   const dispatch = useAppDispatch();
 
   const rectId = useRef('');
@@ -20,7 +20,7 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
   const EraserConfig = {
     type: 'ERASER',
     opacity: 1,
-    stroke: selectedLayerColor,
+    stroke: selectedClassColor,
     strokeWidth: 25,
 
     globalCompositeOperation: 'destination-out', //for erasing effect
@@ -58,7 +58,7 @@ const useEraser = (selectedLayerId: number, selectedLayerColor: string) => {
     if (lines.length > 0) {
       //just store lines in redux store when mouse click ends
       if (rectId.current?.length > 0) {
-        dispatch(addEraserLines(selectedLayerId, rectId.current, lines));
+        dispatch(addEraserLines(selectedClassId, rectId.current, lines));
         rectId.current = '';
       }
       //remove temp lines
