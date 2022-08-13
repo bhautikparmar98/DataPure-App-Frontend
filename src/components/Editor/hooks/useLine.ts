@@ -1,14 +1,13 @@
-import Konva from 'konva';
-import { useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { useState } from 'react';
 import { TOOLS, type Line } from 'src/constants';
+import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch } from 'src/redux/store';
 import uniqid from 'uniqid';
 
 const useLine = (selectedClassId: number, selectedClassColor: string) => {
   const dispatch = useAppDispatch();
-  const { currentAnnotationId } = useAppSelector(({ classes }) => classes);
+
   const [lines, setLines] = useState<Line[]>([]);
 
   const lineConfig = {
@@ -24,29 +23,28 @@ const useLine = (selectedClassId: number, selectedClassColor: string) => {
   };
 
   const lineHandleMouseMove = (event: KonvaEventObject<WheelEvent>) => {
-    // when the left button is clicked
-    if (event.evt.buttons === 1) {
-      const lastLine = lines[lines.length - 1] || [];
+    // check the left button is clicked or not
+    if (event.evt.buttons !== 1) return;
+    const lastLine = lines[lines.length - 1] || [];
 
-      const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      // add point
+    const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+    // add point
 
-      //make it a straight line
-      if (lastLine?.points?.length >= 2) {
-        // const [lastX, lastY] = lastLine.points
-        lastLine.points = lastLine.points.slice(0, 2).concat([x, y]);
-      }
-
-      // replace last line
-      lines.splice(lines.length - 1, 1, lastLine);
-      setLines(lines.concat());
+    //make it a straight line
+    if (lastLine?.points?.length >= 2) {
+      // const [lastX, lastY] = lastLine.points
+      lastLine.points = lastLine.points.slice(0, 2).concat([x, y]);
     }
+
+    // replace last line
+    lines.splice(lines.length - 1, 1, lastLine);
+    setLines(lines.concat());
   };
 
   const lineHandleMouseUp = () => {
-    if (lines.length > 0 && typeof currentAnnotationId === 'number') {
+    if (lines.length > 0) {
       // checks that it's not a dot, but a line
-      if (lines[0]?.points?.length > 2) {
+      if (lines[0].points?.length > 2) {
         dispatch(
           addAnnotation(selectedClassId, {
             visible: true,

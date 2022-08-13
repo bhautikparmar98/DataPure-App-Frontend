@@ -1,9 +1,8 @@
 import Konva from 'konva';
-import { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
+import { useRef, useState } from 'react';
 import { addEraserLines } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
-import { TOOLS } from 'src/constants';
 
 /* 
   TODO: 

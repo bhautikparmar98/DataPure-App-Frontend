@@ -1,23 +1,20 @@
-import { useState, memo, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import { Checkbox } from '@mui/material';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import { Checkbox } from '@mui/material';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { Icon } from '@iconify/react';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
 
-import styles from './annotations.module.css';
-import { Class } from 'src/constants';
 import { Box } from '@mui/system';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
 import _ from 'lodash';
+import { Class } from 'src/constants';
+import { useAppSelector } from 'src/redux/store';
+import styles from './annotations.module.css';
+import Annotation from './Annotation';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -56,7 +53,6 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 function Annotations() {
-  const dispatch = useAppDispatch();
   const { classes } = useAppSelector(({ classes }) => classes);
 
   const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
@@ -69,14 +65,6 @@ function Annotations() {
     handleClasses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classes]);
-
-  const handleAnnotationToggle = (
-    classId: number,
-    annotationId: string,
-    visible: boolean
-  ) => {
-    dispatch(updateAnnotation(classId, annotationId, { visible }));
-  };
 
   return (
     <div className={styles.list}>
@@ -103,29 +91,28 @@ function Annotations() {
               sx={{ margin: 0, backgroundColor: 'transparent' }}
             >
               <List dense={true}>
-                {classItem.annotations.map((annotation, i) => (
-                  <ListItem key={annotation.id} sx={{ marginTop: -2 }}>
-                    <Checkbox />
-                    <ListItemText primary={`Annotation ${i + 1}`} />
-                    {annotation.visible ? (
-                      <Icon
-                        icon="majesticons:eye"
-                        className={styles.eyeIcon}
-                        onClick={(e) =>
-                          handleAnnotationToggle(classId, annotation.id, false)
-                        }
-                      />
-                    ) : (
-                      <Icon
-                        icon="eva:eye-off-fill"
-                        className={styles.eyeIcon}
-                        onClick={(e) =>
-                          handleAnnotationToggle(classId, annotation.id, true)
-                        }
-                      />
-                    )}
-                  </ListItem>
-                ))}
+                {classItem.annotations.length > 0 ? (
+                  classItem.annotations.map(({ visible, id }, i) => (
+                    <Annotation
+                      key={`${classId}-${i}`}
+                      id={id}
+                      classId={classId}
+                      visible={visible}
+                      index={i}
+                    />
+                  ))
+                ) : (
+                  <div
+                    style={{
+                      color: '#757a7f',
+                      fontStyle: 'italic',
+                      fontSize: 14,
+                      textAlign: 'center',
+                    }}
+                  >
+                    No Instances yet
+                  </div>
+                )}
               </List>
             </AccordionDetails>
           </Accordion>

@@ -1,18 +1,20 @@
-import { useRef, useState } from 'react';
-import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva';
-import useDraw from '../hooks/useDraw';
-import BackgroundImage from './BackgroundImage';
-import useZoom from 'src/components/Editor/hooks/useZoom';
 import Konva from 'konva';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { useRef } from 'react';
+import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
+import useZoom from 'src/components/Editor/hooks/useZoom';
 import { TOOLS } from 'src/constants';
-import Rectangle from '../Rectangle';
-import { updateShape } from 'src/redux/slices/classes/classes.actions';
 import { Class } from 'src/constants/classes';
-import useTooltip from '../hooks/useTooltip';
-import useKeyboard from '../hooks/useKeyboard';
+import { updateShape } from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import useImage from 'use-image';
 import useCursor from '../hooks/useCursor';
+import useDraw from '../hooks/useDraw';
+import useKeyboard from '../hooks/useKeyboard';
+import useSelectShape from '../hooks/useSelectShape';
+import useTooltip from '../hooks/useTooltip';
+import BackgroundImage from './BackgroundImage';
+import Shapes from './Shapes';
+import TempShapes from './TempShapes';
 
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
@@ -26,17 +28,21 @@ interface Layer {
 }
 
 const Workspace: any = () => {
-  const currentTool = useAppSelector(({ editor }) => editor.tool);
+  const dispatch = useAppDispatch();
+
+  const [url, currentTool] = useAppSelector(({ editor }) => [
+    editor.url,
+    editor.tool,
+  ]);
+
   const { classes = [], selectedClassId = 0 } = useAppSelector(
     ({ classes }) => classes
   );
 
-  const dispatch = useAppDispatch();
-
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
-  const [selectedId, selectShape] = useState('');
+  const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
   const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
     workspaceRef,
@@ -44,31 +50,22 @@ const Workspace: any = () => {
     selectedId
   );
 
-  const checkDeselect = (e: any) => {
-    // deselect when clicked on empty area
-    const clickedOnEmpty = e.target === e.target.getStage();
-    if (clickedOnEmpty) {
-      selectShape('');
-    }
-  };
-
   const {
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    rects: newRects,
+    rects,
     lines,
     hideShapeTemporarily,
+    handleShapeMove,
     comments,
     handleCommentClick,
-    handleShapeMove,
-    // eraserLines,
   } = useDraw(
     selectedClassId,
     classes[selectedClassId]?.color,
-    workspaceRef,
     stageRef,
-    currentTool
+    currentTool,
+    stageDragging
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -108,7 +105,7 @@ const Workspace: any = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseDown={(e: any) => {
-          // check Deselect(e);
+          checkDeselect(e);
           if (stageDragging) return;
           handleMouseDown(e);
         }}
@@ -118,97 +115,23 @@ const Workspace: any = () => {
           // e.cancelBubble = true;
         }}
         draggable={stageDragging}
-        // onDragEnd={() => {}}
+        onDragEnd={() => {}}
       >
-        <Layer name="Background Class">
-          <BackgroundImage width={WIDTH} height={HEIGHT} url="/images/1.jpg" />
-        </Layer>
-
-        <Layer name="Temp Class">
-          {/* <Group> */}
-          {newRects.map((options, m) => (
-            <Rect {...options} key={'temp-rect' + m} />
-          ))}
-        </Layer>
-
         <Layer>
-          {classes.map((classItem: Class, i) =>
-            classItem.annotations.map((annotation) =>
-              annotation.shapes?.map((shape, m) => (
-                <Group
-                  key={`group-${m}-${i}`}
-                  x={0}
-                  y={0}
-                  draggable={currentTool === TOOLS.SELECT && !stageDragging}
-                  name={classItem.name}
-                  visible={annotation.visible}
-                  onDragStart={hideTooltip}
-                  tabIndex={1}
-                  classId={i}
-                  annotationId={annotation.id}
-                  onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id)}
-                >
-                  {shape.type === TOOLS.LINE ? (
-                    <Line
-                      {...shape}
-                      key={`line-${m}-${i}`}
-                      listening={shape.type === TOOLS.LINE}
-                      draggable={shape.type === TOOLS.LINE}
-                      class={classItem.name}
-                      isSelected={shape.id === selectedId}
-                      onClick={(e: any) => {
-                        if (shape.id) {
-                          selectShape(shape.id);
-                        }
-                        showTooltip(e);
-                      }}
-                      opacity={1}
-                      stroke={classItem.color}
-                      strokeWidth={5}
-                      tension={0.5}
-                      lineCap="round"
-                    />
-                  ) : (
-                    <Rectangle
-                      key={`rect-${m}-${i}`}
-                      shapeProps={{
-                        ...shape,
-                        fill: classItem.color
-                          .replace(')', ', 0.3)')
-                          .replace('rgb', 'rgba'),
-                        opacity: 0.7,
-                        stroke: classItem.color,
-                        strokeWidth: 5,
-                      }}
-                      classItemName={classItem.name}
-                      isSelected={shape.id === selectedId}
-                      onClick={(e: any) => {
-                        if (shape.id) {
-                          selectShape(shape.id);
-                        }
-                        showTooltip(e);
-                      }}
-                      onChange={handleRectChange}
-                      onDblClick={hideShapeTemporarily}
-                    />
-                  )}
-                </Group>
-              ))
-            )
-          )}
-
-          {lines.map((options, l) => (
-            <Line
-              key={'temp-line' + l}
-              listening={false}
-              draggable={false}
-              {...options}
-              opacity={1}
-              strokeWidth={5}
-              tension={0.5}
-              lineCap="round"
-            />
-          ))}
+          <BackgroundImage width={WIDTH} height={HEIGHT} url={url} />
+          <Shapes
+            classes={classes}
+            handleRectChange={handleRectChange}
+            showTooltip={showTooltip}
+            selectShape={selectShape}
+            hideShapeTemporarily={hideShapeTemporarily}
+            handleShapeMove={handleShapeMove}
+            currentTool={currentTool}
+            selectedId={selectedId}
+            stageDragging={stageDragging}
+            hideTooltip={hideTooltip}
+          />
+          <TempShapes lines={lines} rects={rects} />
           {tooltip.text.length > 0 && (
             <Group draggable>
               <Rect

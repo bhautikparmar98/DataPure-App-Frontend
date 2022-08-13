@@ -1,10 +1,10 @@
+import { Tool, TOOLS } from 'src/constants';
 import { EditorActionTypes } from './editor.types';
-import { TOOLS, Tool } from 'src/constants';
 
 type State = {
   tool: Tool;
   isDrawing: boolean;
-
+  url: string;
   preview: string;
 };
 
@@ -12,6 +12,7 @@ const initialState: State = {
   tool: TOOLS.RECTANGLE as Tool,
   isDrawing: true,
   preview: '',
+  url: '/images/1.jpg',
 };
 
 export const editorReducer = (state = initialState, action: any) => {

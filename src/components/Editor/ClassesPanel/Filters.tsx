@@ -1,16 +1,13 @@
-import { Grid } from '@mui/material';
+import styled from '@emotion/styled';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import { styled } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import * as React from 'react';
-import { selectClass } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import styles from './filters.module.css';
 
-// const StyledAutoComplete = styled(Autocomplete)({});
+import * as React from 'react';
+import FilterActions from './FilterActions';
+
+import { TextField } from '@mui/material';
+import styles from './filters.module.css';
+import useFilters from './hooks/useFilters';
 
 const StyledTextField = styled(TextField)({
   '& .MuiInputBase-input.MuiAutocomplete-input': {
@@ -19,22 +16,8 @@ const StyledTextField = styled(TextField)({
 });
 
 const Filters = () => {
-  const { classes, selectedClassId } = useAppSelector(({ classes }) => classes);
-  const dispatch = useAppDispatch();
-
-  const classesFilters = classes.map((classItem, i) => ({
-    label: classItem.name,
-    classId: i,
-  }));
-
-  const handleClassSelect = (
-    _: any,
-    classItem: { label: string; classId: number } | null
-  ) => {
-    if (classItem) {
-      classItem.classId >= 0 ? dispatch(selectClass(classItem.classId)) : null;
-    }
-  };
+  const { classes, selectedClassId, classesFilters, handleClassSelect } =
+    useFilters();
 
   return (
     <Box
@@ -62,61 +45,9 @@ const Filters = () => {
         renderInput={(params) => <StyledTextField {...params} />}
         isOptionEqualToValue={(option, value) => option.label === value.label}
       />
-
-      <Box
-        component="form"
-        noValidate
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { sm: '1fr 1fr' },
-          gap: 2,
-          marginTop: 4,
-        }}
-      >
-        <Grid justifyContent={'space-between'}>
-          <label htmlFor="editor-action" className={styles.label}>
-            Action
-          </label>
-          <Select
-            labelId="editor-action"
-            id="editor-action"
-            value={0}
-            label="input"
-            // onChange={handleChange}
-            fullWidth
-            className={styles.input}
-            MenuProps={{
-              disableScrollLock: true,
-            }}
-          >
-            <MenuItem value={0}>Input</MenuItem>
-            <MenuItem value={1}>Input 2</MenuItem>
-            <MenuItem value={2}>Input 3</MenuItem>
-          </Select>
-        </Grid>
-        <div>
-          <label htmlFor="editor-sortBy" className={styles.label}>
-            Sort By
-          </label>
-          <Select
-            labelId="editor-sortBy"
-            id="editor-sortBy"
-            value={0}
-            fullWidth
-            label="input"
-            // onChange={handleChange}
-            className={styles.input}
-            MenuProps={{
-              disableScrollLock: true,
-            }}
-          >
-            <MenuItem value={0}>Input</MenuItem>
-            <MenuItem value={1}>Input 2</MenuItem>
-            <MenuItem value={2}>Input 3</MenuItem>
-          </Select>
-        </div>
-      </Box>
+      <FilterActions />
     </Box>
   );
 };
+
 export default React.memo(Filters);

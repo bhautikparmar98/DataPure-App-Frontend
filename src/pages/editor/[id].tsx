@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import Page from 'src/components/Shared/Page';
-import AuthGuard from 'src/guards/AuthGuard';
+// import AuthGuard from 'src/guards/AuthGuard';
 const Editor = dynamic(() => import('src/components/Editor'), { ssr: false });
 
 const Index = () => {
@@ -19,9 +19,9 @@ const Index = () => {
 
   return (
     <Page title="Editor">
-      <AuthGuard>
-        <Editor />
-      </AuthGuard>
+      {/* <AuthGuard> */}
+      <Editor />
+      {/* </AuthGuard> */}
     </Page>
   );
 };
