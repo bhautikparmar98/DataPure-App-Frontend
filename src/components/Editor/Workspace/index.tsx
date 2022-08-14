@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { TOOLS } from 'src/constants';
@@ -41,6 +41,7 @@ const Workspace: any = () => {
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  const shapesRef = useRef<Konva.Group>(null);
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
@@ -82,6 +83,16 @@ const Workspace: any = () => {
     }
   };
 
+  const handleShapesCaching = (shouldCache = true) => {
+    shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
+  };
+
+  useEffect(() => {
+    if (shapesRef.current) {
+      stageDragging ? handleShapesCaching(true) : handleShapesCaching(false);
+    }
+  }, [stageDragging]);
+
   return (
     <div
       ref={workspaceRef}
@@ -119,18 +130,20 @@ const Workspace: any = () => {
       >
         <Layer>
           <BackgroundImage width={WIDTH} height={HEIGHT} url={url} />
-          <Shapes
-            classes={classes}
-            handleRectChange={handleRectChange}
-            showTooltip={showTooltip}
-            selectShape={selectShape}
-            hideShapeTemporarily={hideShapeTemporarily}
-            handleShapeMove={handleShapeMove}
-            currentTool={currentTool}
-            selectedId={selectedId}
-            stageDragging={stageDragging}
-            hideTooltip={hideTooltip}
-          />
+          <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
+            <Shapes
+              classes={classes}
+              handleRectChange={handleRectChange}
+              showTooltip={showTooltip}
+              selectShape={selectShape}
+              hideShapeTemporarily={hideShapeTemporarily}
+              handleShapeMove={handleShapeMove}
+              currentTool={currentTool}
+              selectedId={selectedId}
+              stageDragging={stageDragging}
+              hideTooltip={hideTooltip}
+            />
+          </Group>
           <TempShapes lines={lines} rects={rects} />
           {tooltip.text.length > 0 && (
             <Group draggable>
