@@ -15,6 +15,7 @@ interface ProjectBodyListProps {
     action: (p: IProject) => void;
     variant: 'contained' | 'icon' | 'outlined';
     icon?: string;
+    disabled?: boolean;
   }[];
   removeProgress?: boolean;
   calcProgress?: (p: IProject) => number;

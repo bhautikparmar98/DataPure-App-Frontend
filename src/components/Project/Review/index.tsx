@@ -4,8 +4,6 @@ import {
   Card,
   Checkbox,
   Container,
-  FormControlLabel,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -14,21 +12,20 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React from 'react';
-import useSettings from 'src/hooks/useSettings';
-import useDatasetReview from './hooks/useDatasetReview';
 import { useTheme } from '@mui/material/styles';
-import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
+import React from 'react';
 import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
-import ReviewHeaderToolBar from './ReviewHeaderToolBar';
-import Scrollbar from 'src/components/Shared/Scrollbar';
-import ReviewListHead from './ReviewListHead';
 import Image from 'src/components/Shared/Image';
-import { fDate } from 'src/utils/formatTime';
 import Label from 'src/components/Shared/Label';
-import { IMAGE_STATUS } from 'src/constants/ImageStatus';
+import Scrollbar from 'src/components/Shared/Scrollbar';
 import SearchNotFound from 'src/components/Shared/SearchNotFound';
-import TablePaginationActionWithDense from 'src/components/Shared/TablePaginationActionWithDense';
+import { IMAGE_STATUS } from 'src/constants/ImageStatus';
+import useSettings from 'src/hooks/useSettings';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
+import { fDate } from 'src/utils/formatTime';
+import useDatasetReview from './hooks/useDatasetReview';
+import ReviewHeaderToolBar from './ReviewHeaderToolBar';
+import ReviewListHead from './ReviewListHead';
 
 interface ProjectDataSetReviewProps {
   projectId: string;
@@ -70,7 +67,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
       <HeaderBreadcrumbs
-        heading="Project List"
+        heading="Review Images"
         links={[
           { name: 'Projects', href: PATH_DASHBOARD.project.list },
           {
@@ -115,7 +112,14 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
                 {filteredImages
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const { _id, fileName, src, createdAt, status } = row;
+                    const {
+                      _id,
+                      fileName,
+                      src,
+                      createdAt,
+                      status,
+                      dateAnnotated,
+                    } = row;
 
                     const isItemSelected = selected.indexOf(_id!) !== -1;
 
@@ -159,7 +163,9 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
                         <TableCell style={{ minWidth: 160 }}>
                           {fDate(createdAt)}
                         </TableCell>
-                        <TableCell align="center">_</TableCell>
+                        <TableCell align="center">
+                          {dateAnnotated ? fDate(dateAnnotated) : '_'}
+                        </TableCell>
                         <TableCell align="center" style={{ minWidth: 160 }}>
                           <Label
                             color={

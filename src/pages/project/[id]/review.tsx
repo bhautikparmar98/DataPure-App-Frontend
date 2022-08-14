@@ -31,7 +31,7 @@ export default function ProjectDataSet() {
   }
 
   return (
-    <Page title="DataSet">
+    <Page title="Review">
       <AuthGuard>
         <ProjectDataSetReview projectId={id} />
       </AuthGuard>

@@ -26,6 +26,7 @@ const AdminProjectsComponents = () => {
     downloadOutputHandler,
     closeEditModalHandler,
     assignTaskFinishHandler,
+    downloadLoading,
   } = useAdminLogic();
 
   return (
@@ -50,17 +51,16 @@ const AdminProjectsComponents = () => {
 
         <ProjectGrid
           projects={projects}
-          onDownloadOutput={downloadOutputHandler}
           renderStatistics={(project) => (
             <AdminProjectStatistics project={project} />
           )}
           actions={[
             {
               label: '',
-              action: (project: IProject) =>
-                downloadOutputHandler(project._id!),
+              action: (project: IProject) => downloadOutputHandler(project),
               variant: 'icon',
               icon: 'ant-design:download-outlined',
+              disabled: downloadLoading,
             },
             {
               label: 'View Dataset',

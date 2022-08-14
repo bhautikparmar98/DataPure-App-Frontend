@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import Iconify from 'src/components/Shared/Iconify';
 import axiosInstance from 'src/utils/axios';
+import { downloadFile } from 'src/utils/downloadFile';
 import ProjectGrid from '../../Shared/ProjectGrid';
 import { IProject } from '../../types/project';
 import AssignAdminModal from '../AssignAdminModal';
@@ -23,6 +24,7 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
 
   const [projects, setProjects] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [assignAdminModalOpened, setAssignAdminModalOpened] = useState(false);
   const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
@@ -30,8 +32,14 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
     router.push(`/project/${id}/dataset`);
   };
 
-  const downloadOutputHandler = (id: string) => {
-    // TODO: download Output file
+  const downloadOutputHandler = async (project: IProject) => {
+    setDownloadLoading(true);
+    try {
+      await downloadFile(`/project/${project._id}/download`, project.name);
+    } catch (error) {
+      console.log('error', error);
+    }
+    setDownloadLoading(false);
   };
 
   const assignModalHandler = (project: IProject) => {
@@ -137,7 +145,6 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
         onAssignFinish={assignAdminToProjectFinishHandler}
       />
       <ProjectGrid
-        onDownloadOutput={() => console.log('dd')}
         projects={projects}
         renderStatistics={(project: IProject) => (
           <SuperAdminProjectStatistics project={project} admins={admins} />
@@ -145,9 +152,10 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
         actions={[
           {
             label: '',
-            action: (project: IProject) => downloadOutputHandler(project._id!),
+            action: (project: IProject) => downloadOutputHandler(project),
             variant: 'icon',
             icon: 'ant-design:download-outlined',
+            disabled: downloadLoading,
           },
           {
             label: 'View Dataset',

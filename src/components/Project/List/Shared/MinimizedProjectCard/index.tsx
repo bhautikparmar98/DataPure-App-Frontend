@@ -23,6 +23,7 @@ interface MinimizedProjectCardProps {
     action: (p: IProject) => void;
     variant: 'contained' | 'icon' | 'outlined';
     icon?: string;
+    disabled?: boolean;
   }[];
   removeProgress?: boolean;
   calcProgress?: (p: IProject) => number;
@@ -117,6 +118,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                   edge="end"
                   key={index}
                   onClick={() => a.action(project)}
+                  disabled={a.disabled}
                 >
                   <Iconify icon={a.icon as any} />
                 </IconButton>
@@ -129,6 +131,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                 variant={a.variant as any}
                 color="primary"
                 onClick={() => a.action(project)}
+                disabled={a.disabled}
               >
                 {a.label}
               </Button>

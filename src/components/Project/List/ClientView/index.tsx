@@ -9,6 +9,7 @@ import ProjectListHeader from './Header';
 import ProjectGrid from '../Shared/ProjectGrid';
 import { IProject } from '../types/project';
 import { useRouter } from 'next/router';
+import { downloadFile } from 'src/utils/downloadFile';
 
 const ClientProjectsComponent = () => {
   const { themeStretch } = useSettings();
@@ -18,9 +19,16 @@ const ClientProjectsComponent = () => {
 
   const [projects, setProjects] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
-  const downloadOutputHandler = (id: string) => {
-    // TODO: download Output file
+  const downloadOutputHandler = async (project: IProject) => {
+    setDownloadLoading(true);
+    try {
+      await downloadFile(`/project/${project._id}/download`, project.name);
+    } catch (error) {
+      console.log('error', error);
+    }
+    setDownloadLoading(false);
   };
 
   const viewDataSetHandler = (id: string) => {
@@ -69,10 +77,10 @@ const ClientProjectsComponent = () => {
           actions={[
             {
               label: '',
-              action: (project: IProject) =>
-                downloadOutputHandler(project._id!),
+              action: (project: IProject) => downloadOutputHandler(project),
               variant: 'icon',
               icon: 'ant-design:download-outlined',
+              disabled: downloadLoading,
             },
             {
               label: 'View Dataset',

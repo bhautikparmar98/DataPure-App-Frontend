@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import useAuth from 'src/hooks/useAuth';
 import axiosInstance from 'src/utils/axios';
+import { downloadFile } from 'src/utils/downloadFile';
 import { IProject } from '../types/project';
 
 const useAdminLogic = () => {
@@ -16,6 +16,7 @@ const useAdminLogic = () => {
   const [annotators, setAnnotators] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [editTeamModalOpened, setEditTeamModalOpened] = useState(false);
 
   const editTeamHandler = (project: IProject) => {
@@ -27,7 +28,15 @@ const useAdminLogic = () => {
     router.push(`/project/${id}/dataset`);
   };
 
-  const downloadOutputHandler = (projectId: string) => {};
+  const downloadOutputHandler = async (project: IProject) => {
+    setDownloadLoading(true);
+    try {
+      await downloadFile(`/project/${project._id}/download`, project.name);
+    } catch (error) {
+      console.log('error', error);
+    }
+    setDownloadLoading(false);
+  };
 
   const closeEditModalHandler = () => {
     setEditTeamModalOpened(false);
@@ -111,6 +120,7 @@ const useAdminLogic = () => {
     downloadOutputHandler,
     closeEditModalHandler,
     assignTaskFinishHandler,
+    downloadLoading,
   };
 };
 
