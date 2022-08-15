@@ -6,6 +6,7 @@ import { Rect, Transformer } from 'react-konva';
 interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
+  hideTransformer: boolean;
   classItemName: string;
   onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
@@ -16,6 +17,7 @@ interface IRectangle {
 const Rectangle = ({
   shapeProps,
   isSelected,
+  hideTransformer,
   onClick,
   onChange,
   onDblClick,
@@ -84,7 +86,7 @@ const Rectangle = ({
         {...otherProps}
         draggable={false}
       />
-      {isSelected && (
+      {isSelected && !hideTransformer && (
         <Transformer
           ref={trRef}
           boundBoxFunc={(oldBox, newBox) => {

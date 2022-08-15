@@ -2,8 +2,7 @@ import Konva from 'konva';
 import { useEffect, useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
-import { TOOLS } from 'src/constants';
-import { Class } from 'src/constants/classes';
+import { TOOLS,Class } from 'src/constants';
 import { updateShape } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import useImage from 'use-image';
@@ -74,7 +73,7 @@ const Workspace: any = () => {
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
-  const { stageScale, handleWheel } = useZoom();
+  const { stageScale, handleWheel, zooming } = useZoom();
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.svg`);
 
@@ -91,9 +90,11 @@ const Workspace: any = () => {
 
   useEffect(() => {
     if (shapesRef.current) {
-      stageDragging ? handleShapesCaching(true) : handleShapesCaching(false);
+      stageDragging || zooming
+        ? handleShapesCaching(true)
+        : handleShapesCaching(false);
     }
-  }, [stageDragging]);
+  }, [stageDragging, zooming]);
 
   return (
     <div
@@ -133,20 +134,8 @@ const Workspace: any = () => {
         >
           <Layer>
             <BackgroundImage width={WIDTH} height={HEIGHT} url={src} />
-            <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
-              <Shapes
-                classes={classes}
-                handleRectChange={handleRectChange}
-                showTooltip={showTooltip}
-                selectShape={selectShape}
-                hideShapeTemporarily={hideShapeTemporarily}
-                handleShapeMove={handleShapeMove}
-                currentTool={currentTool}
-                selectedId={selectedId}
-                stageDragging={stageDragging}
-                hideTooltip={hideTooltip}
-              />
-            </Group>
+          </Layer>
+          <Layer>
             <TempShapes lines={lines} rects={rects} />
             {tooltip.text.length > 0 && (
               <Group draggable>
@@ -185,6 +174,23 @@ const Workspace: any = () => {
                   onMouseLeave={(_) => setCursorStyle()}
                 />
               ))}
+          </Layer>
+          <Layer>
+            <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
+              <Shapes
+                classes={classes}
+                handleRectChange={handleRectChange}
+                showTooltip={showTooltip}
+                selectShape={selectShape}
+                hideShapeTemporarily={hideShapeTemporarily}
+                handleShapeMove={handleShapeMove}
+                currentTool={currentTool}
+                selectedId={selectedId}
+                stageDragging={stageDragging}
+                hideTooltip={hideTooltip}
+                zooming={zooming}
+              />
+            </Group>
           </Layer>
         </Stage>
       ) : (

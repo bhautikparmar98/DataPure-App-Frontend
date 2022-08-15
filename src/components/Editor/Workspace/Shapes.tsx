@@ -12,6 +12,7 @@ interface IShapes {
   handleRectChange: (newAttrs: Konva.ShapeConfig) => void;
   selectShape: (shapeId: string) => void;
   hideShapeTemporarily: (e: KonvaEventObject<MouseEvent>) => void;
+  zooming: boolean;
   handleShapeMove: (
     e: any,
     classId: number,
@@ -33,69 +34,75 @@ const Shapes = ({
   selectedId,
   stageDragging,
   hideTooltip,
+  zooming,
 }: IShapes) => (
   <>
     {classes.map((classItem: Class, i) =>
       classItem.annotations.map((annotation) =>
         annotation.shapes?.map((shape, m) => (
-          <Group
-            key={`group-${shape.id}`}
-            x={0}
-            y={0}
-            draggable={currentTool === TOOLS.SELECT && !stageDragging}
-            name={classItem.name}
-            visible={annotation.visible}
-            onDragStart={hideTooltip}
-            tabIndex={1}
-            classId={i}
-            annotationId={annotation.id}
-            onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id!)}
-          >
-            {shape.type === TOOLS.LINE ? (
-              <Line
-                {...shape}
-                key={`line-${m}-${i}`}
-                listening={shape.type === TOOLS.LINE}
-                draggable={shape.type === TOOLS.LINE}
-                class={classItem.name}
-                isSelected={shape.id === selectedId}
-                onClick={(e: any) => {
-                  if (shape.id) {
-                    selectShape(shape.id);
-                  }
-                  showTooltip(e);
-                }}
-                opacity={1}
-                stroke={classItem.color}
-                strokeWidth={5}
-                tension={0.5}
-                lineCap="round"
-              />
-            ) : (
-              <Rectangle
-                key={`rect-${m}-${i}`}
-                shapeProps={{
-                  ...shape,
-                  fill: classItem.color
-                    .replace(')', ', 0.3)')
-                    .replace('rgb', 'rgba'),
-                  opacity: 0.7,
-                  stroke: classItem.color,
-                  strokeWidth: 5,
-                }}
-                classItemName={classItem.name}
-                isSelected={shape.id === selectedId}
-                onClick={(e: any) => {
-                  if (shape.id) {
-                    selectShape(shape.id);
-                  }
-                  showTooltip(e);
-                }}
-                onChange={handleRectChange}
-                onDblClick={hideShapeTemporarily}
-              />
+          <>
+            {annotation.visible && (
+              <Group
+                key={`group-${shape.id}`}
+                x={0}
+                y={0}
+                draggable={currentTool === TOOLS.SELECT && !stageDragging}
+                name={classItem.name}
+                visible={annotation.visible}
+                onDragStart={hideTooltip}
+                tabIndex={1}
+                classId={i}
+                annotationId={annotation.id}
+                onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id!)}
+              >
+                {shape.type === TOOLS.LINE ? (
+                  <Line
+                    {...shape}
+                    key={`line-${m}-${i}`}
+                    listening={shape.type === TOOLS.LINE}
+                    draggable={shape.type === TOOLS.LINE}
+                    class={classItem.name}
+                    isSelected={shape.id === selectedId}
+                    onClick={(e: any) => {
+                      if (shape.id) {
+                        selectShape(shape.id);
+                      }
+                      showTooltip(e);
+                    }}
+                    opacity={1}
+                    stroke={classItem.color}
+                    strokeWidth={5}
+                    tension={0.5}
+                    lineCap="round"
+                  />
+                ) : (
+                  <Rectangle
+                    key={`rect-${m}-${i}`}
+                    shapeProps={{
+                      ...shape,
+                      fill: classItem.color
+                        .replace(')', ', 0.3)')
+                        .replace('rgb', 'rgba'),
+                      opacity: 0.7,
+                      stroke: classItem.color,
+                      strokeWidth: 2,
+                    }}
+                    classItemName={classItem.name}
+                    isSelected={shape.id === selectedId}
+                    onClick={(e: any) => {
+                      if (shape.id) {
+                        selectShape(shape.id);
+                      }
+                      showTooltip(e);
+                    }}
+                    onChange={handleRectChange}
+                    onDblClick={hideShapeTemporarily}
+                    hideTransformer={stageDragging || zooming}
+                  />
+                )}
+              </Group>
             )}
-          </Group>
+          </>
         ))
       )
     )}

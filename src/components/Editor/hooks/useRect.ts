@@ -8,7 +8,7 @@ import uniqid from 'uniqid';
 
 const config = {
   opacity: 0.7,
-  strokeWidth: 5,
+  strokeWidth: 2,
 } as const;
 
 const useRect = (

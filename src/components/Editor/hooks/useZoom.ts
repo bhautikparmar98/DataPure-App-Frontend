@@ -1,5 +1,6 @@
 import Konva from 'konva';
-import { useRef, useState } from 'react';
+import _ from 'lodash';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // import { setPreview } from 'src/redux/slices/editor/editor.actions';
 // import { useAppDispatch } from 'src/redux/store';
 
@@ -15,26 +16,26 @@ const useZoom = () => {
     stageY: 0,
   });
 
+  const [zooming, setZooming] = useState(false);
+
   const stageRef = useRef<Konva.Stage | null>(null);
 
-  // const dispatch = useAppDispatch();
+  const updateZoom = useCallback(() => {
+    if (zooming) {
+      setZooming(false);
+    }
+  }, [zooming]);
 
-  // const updatePreview = _.debounce((stage: Konva.Stage) => {
-  //   const src = stage.toDataURL({ pixelRatio: PREVIEW_SCALE });
-  //   dispatch(setPreview({ src }));
-  // }, 1000);
+  const debounced = _.debounce(updateZoom, 1200);
 
-  // useEffect(() => {
-  //   if (stageRef.current) {
-  //     updatePreview(stageRef.current);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [stageScale]);
+  useEffect(() => {
+    debounced();
+  }, [stageScale]);
 
   // We may need to debounce this method for big number of shapes drawn
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
-
+    setZooming(true);
     const stage = e.target.getStage();
 
     if (!stage) return;
@@ -64,7 +65,7 @@ const useZoom = () => {
     });
   };
 
-  return { stageScale, handleWheel };
+  return { stageScale, handleWheel, zooming };
 };
 
 export default useZoom;
