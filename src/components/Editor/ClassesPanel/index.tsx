@@ -20,6 +20,7 @@ const ClassPanel = () => (
         <Preview />
         <Filters />
         <Annotations />
+        {/* <SubmitAnnotations/> */}
       </Container>
     </Drawer>
   </div>

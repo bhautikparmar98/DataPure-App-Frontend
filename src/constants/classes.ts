@@ -20,6 +20,7 @@ export interface Annotation {
   visible: boolean;
   id: string;
   _id?: string;
+  classId?: string;
   shapes: (Rectangle | Line)[];
 }
 
@@ -29,26 +30,27 @@ export interface Class {
   visible?: boolean;
   selectedClassId?: number;
   annotations: Annotation[];
+  _id?: string;
 }
 
-const mockRects = () =>
-  [...Array(2)].map((_, i) => {
-    if (i % 2 === 0) {
-      return {
-        id: uniqid(),
-        type: TOOLS.RECTANGLE,
-        x: Math.random() * 600,
-        y: Math.random() * 300,
-        width: Math.random() * 300,
-        height: Math.random() * 400,
-      };
-    }
-    return {
-      id: uniqid(),
-      type: TOOLS.LINE,
-      points: [...Array(4)].map((a) => Math.random() * 500),
-    };
-  });
+// const mockRects = () =>
+//   [...Array(2)].map((_, i) => {
+//     if (i % 2 === 0) {
+//       return {
+//         id: uniqid(),
+//         type: TOOLS.RECTANGLE,
+//         x: Math.random() * 600,
+//         y: Math.random() * 300,
+//         width: Math.random() * 300,
+//         height: Math.random() * 400,
+//       };
+//     }
+//     return {
+//       id: uniqid(),
+//       type: TOOLS.LINE,
+//       points: [...Array(4)].map((a) => Math.random() * 500),
+//     };
+//   });
 
 export const classes: Class[] = [
   {
@@ -58,7 +60,7 @@ export const classes: Class[] = [
       {
         visible: true,
         id: uniqid(),
-        shapes: mockRects(),
+        shapes: [],
       },
     ],
   },
@@ -69,7 +71,7 @@ export const classes: Class[] = [
       {
         visible: true,
         id: uniqid(),
-        shapes: mockRects(),
+        shapes: [],
       },
     ],
   },

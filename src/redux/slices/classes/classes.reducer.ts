@@ -7,17 +7,40 @@ type State = {
   selectedClassId: number;
   currentAnnotationId: number | null;
   comments: { text: string; x: number; y: number }[];
+  src: string;
 };
 
 const initialState: State = {
   classes,
   selectedClassId: 0,
-  currentAnnotationId: 0, //!Unset this value later
+  currentAnnotationId: 0,
   comments: [],
+  src: '',
 };
 
 export const classesReducer = (state = initialState, action: any) => {
   switch (action.type) {
+    case EditorActionTypes.INITIALIZE_STATE:
+      const { src, project, annotations } = action.payload.state?.images[0];
+      let { classes } = project;
+      classes = classes.map((classItem: Class) => ({
+        ...classItem,
+        annotations: annotations.filter(
+          (anno: Annotation) => anno.classId === classItem._id
+        ),
+      }));
+
+      state = {
+        ...state,
+        classes,
+        src,
+      };
+
+      return {
+        ...state,
+        selectedClassId: 0,
+      };
+
     case EditorActionTypes.SELECT_CLASS:
       return {
         ...state,
@@ -71,17 +94,6 @@ export const classesReducer = (state = initialState, action: any) => {
         classes,
       };
     }
-
-    // case EditorActionTypes.ADD_SHAPE: {
-    //   const { classId, shape } = action.payload;
-    //   shape.id = uniqid();
-    //   state.classes[classId]?.annotations.push({
-    //     visible: true,
-    //     id: uniqid(),
-    //     shapes: [[shape]],
-    //   });
-    //   return state;
-    // }
 
     case EditorActionTypes.UPDATE_SHAPE: {
       const { classes } = state;

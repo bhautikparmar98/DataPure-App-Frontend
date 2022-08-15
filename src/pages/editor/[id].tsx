@@ -4,7 +4,7 @@ import Page from 'src/components/Shared/Page';
 // import AuthGuard from 'src/guards/AuthGuard';
 const Editor = dynamic(() => import('src/components/Editor'), { ssr: false });
 
-const Index = () => {
+const EditorPage = () => {
   const router = useRouter();
 
   const query = router.query;
@@ -25,4 +25,4 @@ const Index = () => {
     </Page>
   );
 };
-export default Index;
+export default EditorPage;

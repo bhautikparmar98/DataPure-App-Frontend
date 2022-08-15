@@ -4,6 +4,14 @@ import { Annotation } from 'src/constants';
 import { dispatch } from 'src/redux/store';
 import Konva from 'konva';
 
+export function initializeState(state: any) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.INITIALIZE_STATE,
+      payload: { state },
+    });
+}
+
 export function selectClass(classId: number) {
   return () =>
     dispatch({

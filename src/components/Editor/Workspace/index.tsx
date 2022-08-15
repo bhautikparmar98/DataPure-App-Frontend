@@ -30,14 +30,13 @@ interface Layer {
 const Workspace: any = () => {
   const dispatch = useAppDispatch();
 
-  const [url, currentTool] = useAppSelector(({ editor }) => [
-    editor.url,
-    editor.tool,
-  ]);
+  const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
 
-  const { classes = [], selectedClassId = 0 } = useAppSelector(
-    ({ classes }) => classes
-  );
+  const {
+    classes = [],
+    selectedClassId = 0,
+    src,
+  } = useAppSelector(({ classes }) => classes);
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -129,7 +128,7 @@ const Workspace: any = () => {
         onDragEnd={() => {}}
       >
         <Layer>
-          <BackgroundImage width={WIDTH} height={HEIGHT} url={url} />
+          <BackgroundImage width={WIDTH} height={HEIGHT} url={src} />
           <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
             <Shapes
               classes={classes}

@@ -1,4 +1,5 @@
 export enum EditorActionTypes {
+  INITIALIZE_STATE = '@classes/INITIALIZE_STATE',
   SELECT_CLASS = '@classes/SELECT_CLASS',
   DELETE_ANNOTATION = '@classes/DELETE_ANNOTATION',
   ADD_ANNOTATION = '@classes/ADD_ANNOTATION',
