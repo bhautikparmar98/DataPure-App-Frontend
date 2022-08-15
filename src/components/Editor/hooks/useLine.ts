@@ -1,14 +1,22 @@
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useState } from 'react';
-import { TOOLS, type Line } from 'src/constants';
+import { TOOLS, Line } from 'src/constants';
 import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import uniqid from 'uniqid';
 
-const useLine = (selectedClassId: number, selectedClassColor: string) => {
+interface LineWithStroke extends Line {
+  stroke: string;
+}
+
+const useLine = (
+  selectedClassIndex: number,
+  classId: string,
+  selectedClassColor: string
+) => {
   const dispatch = useAppDispatch();
 
-  const [lines, setLines] = useState<Line[]>([]);
+  const [lines, setLines] = useState<LineWithStroke[]>([]);
 
   const lineConfig = {
     type: TOOLS.LINE,
@@ -42,21 +50,21 @@ const useLine = (selectedClassId: number, selectedClassColor: string) => {
   };
 
   const lineHandleMouseUp = () => {
-    if (lines.length > 0) {
-      // checks that it's not a dot, but a line
-      if (lines[0].points?.length > 2) {
-        dispatch(
-          addAnnotation(selectedClassId, {
-            visible: true,
-            id: uniqid(),
-            shapes: [{ ...lines[lines.length - 1] }],
-          })
-        );
-      }
+    // checks that it's not a dot, but a line
+    if (lines[0].points?.length > 2) {
+      const linesWithoutStoke = lines.map(({ stroke, ...rest }) => rest);
 
-      //remove temp lines
-      setLines([]);
+      dispatch(
+        addAnnotation(selectedClassIndex, classId, {
+          visible: true,
+          id: uniqid(),
+          shapes: [{ ...linesWithoutStoke[linesWithoutStoke.length - 1] }],
+        })
+      );
     }
+
+    //remove temp lines
+    setLines([]);
   };
 
   return {

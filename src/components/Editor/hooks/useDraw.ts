@@ -11,7 +11,8 @@ import useRect from './useRect';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
 
 const useDraw = (
-  selectedClassId: number,
+  selectedClassIndex: number,
+  classId: string,
   selectedClassColor: string,
   stageRef: React.RefObject<Konva.Stage>,
   currentTool: Tool,
@@ -25,11 +26,11 @@ const useDraw = (
 
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedClassId, selectedClassColor);
+    useRect(selectedClassIndex, classId, selectedClassColor);
 
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
-    useLine(selectedClassId, selectedClassColor);
+    useLine(selectedClassIndex, classId, selectedClassColor);
 
   const { handleComment, handleCommentClick, comments } = useComment(
     stageRef,
@@ -94,7 +95,7 @@ const useDraw = (
     if (e.target.attrs?.fill) {
       e.target.attrs.fill =
         e.target.attrs.fill === 'rgba(0,0,0,0)'
-          ? classes[selectedClassId].color
+          ? classes[selectedClassIndex].color
               .replace(')', ', 0.3)')
               .replace('rgb', 'rgba')
           : 'rgba(0,0,0,0)';
@@ -126,7 +127,9 @@ const useDraw = (
       shape.x = shapeX + x;
       shape.y = shapeY + y;
     }
-    dispatch(updateAnnotation(classId, annotationId, shape));
+    const shapes = [{ ...shape }];
+    e.target.children[0].destroy();
+    dispatch(updateAnnotation(classId, annotationId, { shapes }));
   };
 
   return {

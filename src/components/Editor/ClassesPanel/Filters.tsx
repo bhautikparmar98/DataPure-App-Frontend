@@ -16,7 +16,7 @@ const StyledTextField = styled(TextField)({
 });
 
 const Filters = () => {
-  const { classes, selectedClassId, classesFilters, handleClassSelect } =
+  const { classes, selectedClassIndex, classesFilters, handleClassSelect } =
     useFilters();
 
   return (
@@ -36,10 +36,10 @@ const Filters = () => {
         options={classesFilters}
         sx={{ width: 250 }}
         value={{
-          label: classes[selectedClassId]?.name || 'Choose Class',
-          classId: selectedClassId,
+          label: classes[selectedClassIndex]?.name || 'Choose Class',
+          classId: selectedClassIndex,
         }}
-        style={{ color: classes[selectedClassId]?.color || '#000' }}
+        style={{ color: classes[selectedClassIndex]?.color || '#000' }}
         onChange={handleClassSelect}
         fullWidth
         renderInput={(params) => <StyledTextField {...params} />}

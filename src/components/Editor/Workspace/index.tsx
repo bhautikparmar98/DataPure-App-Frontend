@@ -19,11 +19,11 @@ import TempShapes from './TempShapes';
 const TOOLBAR_WIDTH = 70;
 const LAYERS_PANEL_WIDTH = 300;
 const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
-const HEIGHT = window.innerHeight;
+const HEIGHT = window.innerHeight - 50;
 
 interface Layer {
   classes: Class[];
-  selectedClassId: number;
+  selectedClassIndex: number;
   comments: { text: string; x: number; y: number }[];
 }
 
@@ -34,9 +34,11 @@ const Workspace: any = () => {
 
   const {
     classes = [],
-    selectedClassId = 0,
+    selectedClassIndex = 0,
     src,
   } = useAppSelector(({ classes }) => classes);
+
+  const classId: string = classes[selectedClassIndex]?._id;
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -61,8 +63,9 @@ const Workspace: any = () => {
     comments,
     handleCommentClick,
   } = useDraw(
-    selectedClassId,
-    classes[selectedClassId]?.color,
+    selectedClassIndex,
+    classId,
+    classes[selectedClassIndex]?.color,
     stageRef,
     currentTool,
     stageDragging
@@ -78,7 +81,7 @@ const Workspace: any = () => {
   // For Rectangle transformation (size & rotation)
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
     if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape(selectedClassId, newAttrs));
+      dispatch(updateShape(selectedClassIndex, newAttrs));
     }
   };
 
@@ -103,86 +106,90 @@ const Workspace: any = () => {
       tabIndex={0}
       onKeyUp={handleKeyUp}
     >
-      <Stage
-        width={WIDTH}
-        height={HEIGHT}
-        ref={stageRef}
-        onWheel={handleWheel}
-        scaleX={stageScale.stageScale}
-        scaleY={stageScale.stageScale}
-        x={stageScale.stageX}
-        y={stageScale.stageY}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseDown={(e: any) => {
-          checkDeselect(e);
-          if (stageDragging) return;
-          handleMouseDown(e);
-        }}
-        onClick={(e) => {
-          checkDeselect(e);
-          // hideTooltip();
-          // e.cancelBubble = true;
-        }}
-        draggable={stageDragging}
-        onDragEnd={() => {}}
-      >
-        <Layer>
-          <BackgroundImage width={WIDTH} height={HEIGHT} url={src} />
-          <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
-            <Shapes
-              classes={classes}
-              handleRectChange={handleRectChange}
-              showTooltip={showTooltip}
-              selectShape={selectShape}
-              hideShapeTemporarily={hideShapeTemporarily}
-              handleShapeMove={handleShapeMove}
-              currentTool={currentTool}
-              selectedId={selectedId}
-              stageDragging={stageDragging}
-              hideTooltip={hideTooltip}
-            />
-          </Group>
-          <TempShapes lines={lines} rects={rects} />
-          {tooltip.text.length > 0 && (
-            <Group draggable>
-              <Rect
-                x={tooltip.x - 8}
-                y={tooltip.y - 5}
-                width={tooltip.rectWidth}
-                height={24}
-                stroke={'rgba(0,0,0,0.4)'}
-                strokeWidth={2}
-                fill={'rgba(103,58,183, 0.8)'}
-                shadowColor="rgba(0,0,0,.3)"
-                shadowBlur={2}
-                shadowOffsetX={10}
-                shadowOffsetY={0}
-                shadowOpacity={0.2}
-                cornerRadius={5}
+      {classes.length > 0 ? (
+        <Stage
+          width={WIDTH}
+          height={HEIGHT}
+          ref={stageRef}
+          onWheel={handleWheel}
+          scaleX={stageScale.stageScale}
+          scaleY={stageScale.stageScale}
+          x={stageScale.stageX}
+          y={stageScale.stageY}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseDown={(e: any) => {
+            checkDeselect(e);
+            if (stageDragging) return;
+            handleMouseDown(e);
+          }}
+          onClick={(e) => {
+            checkDeselect(e);
+            // hideTooltip();
+            // e.cancelBubble = true;
+          }}
+          draggable={stageDragging}
+          onDragEnd={() => {}}
+        >
+          <Layer>
+            <BackgroundImage width={WIDTH} height={HEIGHT} url={src} />
+            <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
+              <Shapes
+                classes={classes}
+                handleRectChange={handleRectChange}
+                showTooltip={showTooltip}
+                selectShape={selectShape}
+                hideShapeTemporarily={hideShapeTemporarily}
+                handleShapeMove={handleShapeMove}
+                currentTool={currentTool}
+                selectedId={selectedId}
+                stageDragging={stageDragging}
+                hideTooltip={hideTooltip}
               />
-              <Text {...tooltip} />
             </Group>
-          )}
-          {currentTool === TOOLS.COMMENT &&
-            comments.map((comment, commendIndex) => (
-              <Image
-                x={comment.x}
-                y={comment.y}
-                key={`comment-${commendIndex}`}
-                image={image}
-                alt="Comment"
-                type="Comment"
-                draggable
-                onClick={(e) =>
-                  handleCommentClick(e, comment.text, commendIndex)
-                }
-                onMouseEnter={(_) => setCursorStyle('pointer')}
-                onMouseLeave={(_) => setCursorStyle()}
-              />
-            ))}
-        </Layer>
-      </Stage>
+            <TempShapes lines={lines} rects={rects} />
+            {tooltip.text.length > 0 && (
+              <Group draggable>
+                <Rect
+                  x={tooltip.x - 8}
+                  y={tooltip.y - 5}
+                  width={tooltip.rectWidth}
+                  height={24}
+                  stroke={'rgba(0,0,0,0.4)'}
+                  strokeWidth={2}
+                  fill={'rgba(103,58,183, 0.8)'}
+                  shadowColor="rgba(0,0,0,.3)"
+                  shadowBlur={2}
+                  shadowOffsetX={10}
+                  shadowOffsetY={0}
+                  shadowOpacity={0.2}
+                  cornerRadius={5}
+                />
+                <Text {...tooltip} />
+              </Group>
+            )}
+            {currentTool === TOOLS.COMMENT &&
+              comments.map((comment, commendIndex) => (
+                <Image
+                  x={comment.x}
+                  y={comment.y}
+                  key={`comment-${commendIndex}`}
+                  image={image}
+                  alt="Comment"
+                  type="Comment"
+                  draggable
+                  onClick={(e) =>
+                    handleCommentClick(e, comment.text, commendIndex)
+                  }
+                  onMouseEnter={(_) => setCursorStyle('pointer')}
+                  onMouseLeave={(_) => setCursorStyle()}
+                />
+              ))}
+          </Layer>
+        </Stage>
+      ) : (
+        <div>Image annotations are loading...</div>
+      )}
     </div>
   );
 };

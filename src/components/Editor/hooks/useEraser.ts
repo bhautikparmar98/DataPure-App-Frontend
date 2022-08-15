@@ -10,7 +10,7 @@ import { useAppDispatch } from 'src/redux/store';
     - Make the erased part's stroke width responsive to the Stage zoom scale
 */
 
-const useEraser = (selectedClassId: number, selectedClassColor: string) => {
+const useEraser = (selectedClassIndex: number, selectedClassColor: string) => {
   const dispatch = useAppDispatch();
 
   const rectId = useRef('');
@@ -57,7 +57,7 @@ const useEraser = (selectedClassId: number, selectedClassColor: string) => {
     if (lines.length > 0) {
       //just store lines in redux store when mouse click ends
       if (rectId.current?.length > 0) {
-        dispatch(addEraserLines(selectedClassId, rectId.current, lines));
+        dispatch(addEraserLines(selectedClassIndex, rectId.current, lines));
         rectId.current = '';
       }
       //remove temp lines

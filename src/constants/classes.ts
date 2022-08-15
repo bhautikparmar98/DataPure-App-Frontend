@@ -5,6 +5,10 @@ export interface Line {
   id: string;
   points: number[];
   type: typeof TOOLS.LINE;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
 }
 export interface Rectangle {
   id: string;
@@ -13,12 +17,13 @@ export interface Rectangle {
   width: number;
   height: number;
   type: typeof TOOLS.RECTANGLE;
+  points?: [];
 }
 
 // shapes are array and each array element will represent Konva.Group. This is done to so if there are erased parts, they will be grouped together with their rectangle/polygon and when the shape is dragged, the erased part is dragged too
 export interface Annotation {
   visible: boolean;
-  id: string;
+  id?: string;
   _id?: string;
   classId?: string;
   shapes: (Rectangle | Line)[];
@@ -30,7 +35,7 @@ export interface Class {
   visible?: boolean;
   selectedClassId?: number;
   annotations: Annotation[];
-  _id?: string;
+  _id: string;
 }
 
 // const mockRects = () =>
@@ -56,6 +61,7 @@ export const classes: Class[] = [
   {
     name: 'Flame',
     color: 'rgb(3,169,244)',
+    _id: 'dummy_id',
     annotations: [
       {
         visible: true,
@@ -67,6 +73,7 @@ export const classes: Class[] = [
   {
     name: 'Containers',
     color: 'rgb(15,220,144)',
+    _id: 'dummy_id2',
     annotations: [
       {
         visible: true,

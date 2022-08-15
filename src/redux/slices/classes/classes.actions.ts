@@ -1,6 +1,6 @@
 import { EditorActionTypes } from './classes.types';
 
-import { Annotation } from 'src/constants';
+import { Annotation, Tool } from 'src/constants';
 import { dispatch } from 'src/redux/store';
 import Konva from 'konva';
 
@@ -9,6 +9,14 @@ export function initializeState(state: any) {
     dispatch({
       type: EditorActionTypes.INITIALIZE_STATE,
       payload: { state },
+    });
+}
+
+export function resetState() {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.RESET_STATE,
+      payload: {},
     });
 }
 
@@ -28,11 +36,15 @@ export function deleteAnnotation(classId: number, annotationId: string) {
     });
 }
 
-export function addAnnotation(classId: number, annotation: Annotation) {
+export function addAnnotation(
+  classIndex: number,
+  classId: string,
+  annotation: Annotation
+) {
   return () =>
     dispatch({
       type: EditorActionTypes.ADD_ANNOTATION,
-      payload: { classId, annotation },
+      payload: { classIndex, classId, annotation },
     });
 }
 
@@ -44,6 +56,17 @@ export function updateAnnotation(
   return () =>
     dispatch({
       type: EditorActionTypes.UPDATE_ANNOTATION,
+      payload: { classId, annotationId, update },
+    });
+}
+export function moveAnnotation(
+  classId: number,
+  annotationId: string,
+  update: { x: number; y: number; points: number[]; type: Tool }
+) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.MOVE_ANNOTATION,
       payload: { classId, annotationId, update },
     });
 }
@@ -61,13 +84,13 @@ export function addShape(
 }
 
 export function updateShape(
-  selectedClassId: number,
+  selectedClassIndex: number,
   newAttrs: Konva.ShapeConfig
 ) {
   return () =>
     dispatch({
       type: EditorActionTypes.UPDATE_SHAPE,
-      payload: { selectedClassId, newAttrs },
+      payload: { selectedClassIndex, newAttrs },
     });
 }
 

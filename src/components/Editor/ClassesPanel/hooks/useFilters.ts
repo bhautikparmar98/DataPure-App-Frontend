@@ -2,7 +2,9 @@ import { selectClass } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 
 const useFilters = () => {
-  const { classes, selectedClassId } = useAppSelector(({ classes }) => classes);
+  const { classes, selectedClassIndex } = useAppSelector(
+    ({ classes }) => classes
+  );
   const dispatch = useAppDispatch();
 
   const classesFilters = classes.map((classItem, i) => ({
@@ -21,7 +23,7 @@ const useFilters = () => {
 
   return {
     classes,
-    selectedClassId,
+    selectedClassIndex,
     classesFilters,
     handleClassSelect,
   };

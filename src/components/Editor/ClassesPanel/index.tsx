@@ -5,6 +5,7 @@ import { Container } from '@mui/material';
 import Preview from './Preview';
 import Filters from './Filters';
 import Annotations from './Annotations';
+import SubmitAnnotations from './SubmitAnnotations';
 
 const ClassPanel = () => (
   <div style={{ cursor: 'default' }}>
@@ -20,7 +21,7 @@ const ClassPanel = () => (
         <Preview />
         <Filters />
         <Annotations />
-        {/* <SubmitAnnotations/> */}
+        <SubmitAnnotations />
       </Container>
     </Drawer>
   </div>

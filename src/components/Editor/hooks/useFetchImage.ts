@@ -1,18 +1,32 @@
 import { useEffect } from 'react';
-import { initializeState } from 'src/redux/slices/classes/classes.actions';
+
+import {
+  initializeState,
+  resetState,
+} from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import axios from 'src/utils/axios';
+import { useRouter } from 'next/router';
 
-const useFetchImage = async (projId: string, take = 1) => {
+const useFetchImage = async (projId: string, role: string, take = 1) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const getData = async (): Promise<void> => {
-    const fetchedData = await axios.get(
-      `/project/${projId}/annotator/images?take=${take}`
-    );
+    try {
+      const fetchedData = await axios.get(
+        `/project/${projId}/${role.toLowerCase()}/images?take=${take}`
+      );
 
-    if (fetchedData?.data) {
-      dispatch(initializeState(fetchedData?.data));
+      if (fetchedData?.data.images.length > 0) {
+        dispatch(initializeState(fetchedData?.data));
+      } else {
+        router.push('/');
+      }
+    } catch (err) {
+      console.error(err);
+      dispatch(resetState());
+      router.push('/');
     }
   };
 

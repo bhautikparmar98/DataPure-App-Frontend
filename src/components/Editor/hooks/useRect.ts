@@ -11,14 +11,20 @@ const config = {
   strokeWidth: 5,
 } as const;
 
-const useRect = (selectedClassId: number, selectedClassColor: string) => {
+const useRect = (
+  selectedClassIndex: number,
+  classId: string,
+  selectedClassColor: string
+) => {
   const dispatch = useAppDispatch();
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 
   const rectConfig = {
     ...config,
-    fill: selectedClassColor.replace(')', ', 0.3)').replace('rgb', 'rgba'),
+    fill:
+      selectedClassColor?.replace(')', ', 0.3)').replace('rgb', 'rgba') ||
+      'rgba(0,0,0,0.3)',
     stroke: selectedClassColor,
   };
 
@@ -79,7 +85,7 @@ const useRect = (selectedClassId: number, selectedClassColor: string) => {
         //min width & height
         if (Math.abs(x - sx) > 5 && Math.abs(y - sy) > 5) {
           dispatch(
-            addAnnotation(selectedClassId, {
+            addAnnotation(selectedClassIndex, classId, {
               visible: true,
               id: uniqid(),
               shapes: [{ ...annotationToAdd }],

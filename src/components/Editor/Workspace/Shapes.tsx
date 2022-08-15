@@ -39,7 +39,7 @@ const Shapes = ({
       classItem.annotations.map((annotation) =>
         annotation.shapes?.map((shape, m) => (
           <Group
-            key={`group-${m}-${i}`}
+            key={`group-${shape.id}`}
             x={0}
             y={0}
             draggable={currentTool === TOOLS.SELECT && !stageDragging}
@@ -49,7 +49,7 @@ const Shapes = ({
             tabIndex={1}
             classId={i}
             annotationId={annotation.id}
-            onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id)}
+            onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id!)}
           >
             {shape.type === TOOLS.LINE ? (
               <Line
