@@ -7,6 +7,9 @@ import useAuth from 'src/hooks/useAuth';
 //* fetched from .env file
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || '',
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+  },
 });
 
 export const AxiosInterceptor: React.FC<{ children: any }> = ({ children }) => {
