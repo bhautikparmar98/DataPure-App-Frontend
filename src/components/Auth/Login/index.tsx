@@ -9,7 +9,7 @@ import {
   Link,
   Stack,
   Tooltip,
-  Typography
+  Typography,
 } from '@mui/material';
 
 import Image from 'src/components/Shared/Image';
@@ -28,7 +28,6 @@ import LoginForm from './LoginForm';
 import { ContentStyle, HeaderStyle, RootStyle, SectionStyle } from './styles';
 
 const Login = () => {
-
   const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
 
@@ -56,7 +55,11 @@ const Login = () => {
               <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
                 Hi, Welcome Back
               </Typography>
-              <Image src="/images/illustration_login.png" alt="login" />
+              <Image
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Bossa_Nova_Robotics_logo.svg"
+                alt="login"
+                sx={{ mx: 2 }}
+              />
             </SectionStyle>
           )}
 

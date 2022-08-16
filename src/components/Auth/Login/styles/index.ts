@@ -31,7 +31,7 @@ export const RootStyle = styled('div')(({ theme }) => ({
 
 export const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
-  maxWidth: 464,
+  maxWidth: 600,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
