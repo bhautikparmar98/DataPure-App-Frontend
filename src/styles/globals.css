@@ -1,0 +1,63 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    color: white;
+    background: black;
+  }
+}
+
+.labels-hidden .a9s-formatter-el {
+  display: none;
+}
+
+/* hide tags in editor */
+
+.r6o-widget.r6o-tag ul.r6o-taglist {
+  /* flex: 0 1;
+  flex-wrap: wrap;
+  max-width: 100%; */
+  /* display: none; */
+}
+.r6o-widget.r6o-tag ul.r6o-taglist {
+  white-space: normal;
+  flex: auto;
+}
+
+.r6o-autocomplete {
+  display: none;
+}
+
+.r6o-editor-inner .r6o-taglist {
+  /* max-width: calc(400px); */
+  background: transparent;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.a9s-shape-label {
+  border: 1px solid orange;
+}
+
+label,
+input[type='checkbox'] {
+  cursor: pointer;
+}
