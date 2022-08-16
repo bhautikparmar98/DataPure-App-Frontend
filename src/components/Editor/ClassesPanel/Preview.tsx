@@ -1,21 +1,22 @@
-import { useAppSelector } from 'src/redux/store';
+import { Grid } from '@mui/material';
 
-const Preview = () => {
-  const src = useAppSelector(({ classes }) => classes.src);
+const Preview = () => (
+  // const src = useAppSelector(({ classes }) => classes.src);
 
-  return (
-    <div
-      style={{
-        border: '5px solid yellow',
-        background: '#C6C6C6',
-      }}
-    >
-      <img
-        src={src}
-        alt="workspace preview"
-        style={{ height: 150, margin: 'auto' }}
-      />
-    </div>
-  );
-};
+  <Grid
+    sx={{
+      border: '5px solid yellow',
+      background: '#C6C6C6',
+      height: 150,
+    }}
+    alignItems="center"
+    container
+  >
+    <img
+      src={'/images/3-compressed.jpg'}
+      alt="workspace preview"
+      style={{ margin: 'auto', width: '100%' }}
+    />
+  </Grid>
+);
 export default Preview;

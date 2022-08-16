@@ -9,20 +9,28 @@ import SubmitAnnotations from './SubmitAnnotations';
 
 const ClassPanel = () => (
   <div style={{ cursor: 'default' }}>
-    <Drawer variant="permanent" anchor={'right'} open={true}>
+    <Drawer
+      variant="permanent"
+      anchor={'right'}
+      open={true}
+      PaperProps={{
+        sx: {
+          backgroundColor: '#F6F6F6',
+        },
+      }}
+    >
       <Container
         sx={{
           width: 300,
           paddingTop: 2,
-          backgroundColor: '#F6F6F6',
-          minHeight: '100vh',
+          minHeight: '90vh',
         }}
       >
         <Preview />
         <Filters />
         <Annotations />
-        <SubmitAnnotations />
       </Container>
+      <SubmitAnnotations />
     </Drawer>
   </div>
 );

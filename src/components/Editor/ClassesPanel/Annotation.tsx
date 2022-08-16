@@ -26,9 +26,17 @@ const Annotation = memo(({ id, classId, visible, index }: Props) => {
     dispatch(updateAnnotation(classId, annotationId, { visible }));
   };
   return (
-    <ListItem key={id} sx={{ marginTop: -2 }}>
+    <ListItem
+      key={id}
+      sx={{
+        marginTop: -2,
+        // marginBottom: -5,
+        paddingBottom: 0,
+        paddingTop: 1,
+      }}
+    >
       <Checkbox />
-      <ListItemText primary={`Annotation ${index + 1}`} />
+      <ListItemText primary={`Instance ${index + 1}`} />
       {visible ? (
         <Icon
           icon="majesticons:eye"

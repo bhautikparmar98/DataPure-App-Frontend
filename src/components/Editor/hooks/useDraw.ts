@@ -4,19 +4,21 @@ import { Tool, TOOLS } from 'src/constants';
 import Konva from 'konva';
 import _ from 'lodash';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import useComment from './useComment';
 import useLine from './useLine';
 import useRect from './useRect';
 // import { useRef } from 'react';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
+import useComment from './useComment';
 
 const useDraw = (
   selectedClassIndex: number,
   classId: string,
   selectedClassColor: string,
   stageRef: React.RefObject<Konva.Stage>,
+  bgLayerRef: React.RefObject<Konva.Layer>,
   currentTool: Tool,
-  stageDragging: boolean
+  stageDragging: boolean,
+  backgroundWidth: number
 ) => {
   const dispatch = useAppDispatch();
   // const updateCount = useRef(0);
@@ -33,8 +35,9 @@ const useDraw = (
     useLine(selectedClassIndex, classId, selectedClassColor);
 
   const { handleComment, handleCommentClick, comments } = useComment(
-    stageRef,
-    currentTool
+    bgLayerRef,
+    currentTool,
+    backgroundWidth
   );
 
   // Update workspace preview

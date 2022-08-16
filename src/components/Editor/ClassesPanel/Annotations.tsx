@@ -48,7 +48,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
+  padding: theme.spacing(0, 2),
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
@@ -70,7 +70,10 @@ function Annotations() {
     <div className={styles.list}>
       {memoisedClass.length > 0 &&
         memoisedClass.map((classItem, classId) => (
-          <Accordion key={`class-accordion-${classId}`}>
+          <Accordion
+            key={`class-accordion-${classId}`}
+            sx={{ marginBottom: 3 }}
+          >
             <AccordionSummary
               aria-controls="panel1d-content"
               id="panel1d-header"
@@ -88,9 +91,20 @@ function Annotations() {
               </Box>
             </AccordionSummary>
             <AccordionDetails
-              sx={{ margin: 0, backgroundColor: 'transparent' }}
+              sx={{
+                margin: 0,
+                backgroundColor: 'transparent',
+              }}
             >
-              <List dense={true}>
+              <List
+                dense={true}
+                sx={{
+                  marginTop: 0,
+                  marginBottom: 0,
+                  maxHeight: 250,
+                  overflowY: 'auto',
+                }}
+              >
                 {classItem.annotations.length > 0 ? (
                   classItem.annotations.map(({ visible, id }, i) => (
                     <Annotation

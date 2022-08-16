@@ -14,6 +14,7 @@ import { Icon } from '@iconify/react';
 import { TOOLS, type Tool } from 'src/constants';
 import { setTool } from 'src/redux/slices/editor';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import Image from 'src/components/Shared/Image';
 
 const drawerWidth = 240;
 
@@ -62,17 +63,17 @@ function Toolbar() {
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <FormatShapesIcon />
+          <Image src="/images/logo.png" alt="DataPure" sx={{ width: 40 }} />
         </DrawerHeader>
-        <List>
+        <List
+          sx={{
+            paddingTop: 35,
+          }}
+        >
           {Object.values(TOOLS)
             .slice(0, 4)
             .map((text, index) => (
-              <ListItem
-                key={`${text}-${index}`}
-                disablePadding
-                sx={{ display: 'block' }}
-              >
+              <ListItem key={`${text}-${index}`} disablePadding>
                 <ListItemButton
                   sx={{
                     minHeight: 48,

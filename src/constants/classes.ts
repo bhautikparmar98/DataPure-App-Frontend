@@ -59,8 +59,8 @@ export interface Class {
 
 export const classes: Class[] = [
   {
-    name: 'Flame',
-    color: 'rgb(3,169,244)',
+    name: 'Accessories',
+    color: 'rgb(255,87,1)',
     _id: 'dummy_id',
     annotations: [
       {
@@ -71,7 +71,7 @@ export const classes: Class[] = [
     ],
   },
   {
-    name: 'Containers',
+    name: 'Beverage',
     color: 'rgb(15,220,144)',
     _id: 'dummy_id2',
     annotations: [

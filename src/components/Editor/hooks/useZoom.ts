@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // import { useAppDispatch } from 'src/redux/store';
 
 const SCALE_BY = 1.4;
-const MIN_SCALE = 0.05;
+const MIN_SCALE = 0.005;
 // const MAX_SCALE = 20;
 // const PREVIEW_SCALE = 1 / 4;
 

@@ -2,10 +2,11 @@ import Konva from 'konva';
 import { useEffect, useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
-import { TOOLS,Class } from 'src/constants';
+import { TOOLS, Class } from 'src/constants';
 import { updateShape } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import useImage from 'use-image';
+import useBackground from '../hooks/useBackground';
 import useCursor from '../hooks/useCursor';
 import useDraw from '../hooks/useDraw';
 import useKeyboard from '../hooks/useKeyboard';
@@ -31,17 +32,22 @@ const Workspace: any = () => {
 
   const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
 
-  const {
-    classes = [],
-    selectedClassIndex = 0,
-    src,
-  } = useAppSelector(({ classes }) => classes);
+  const { classes = [], selectedClassIndex = 0 } = useAppSelector(
+    ({ classes }) => classes
+  );
 
   const classId: string = classes[selectedClassIndex]?._id;
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const shapesRef = useRef<Konva.Group>(null);
+  const bgLayerRef = useRef<Konva.Layer>(null);
+
+  const { background, width, height, widthRatio, heightRatio } = useBackground({
+    url: '/images/3.jpg',
+    width: WIDTH,
+    height: HEIGHT,
+  });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
@@ -66,8 +72,10 @@ const Workspace: any = () => {
     classId,
     classes[selectedClassIndex]?.color,
     stageRef,
+    bgLayerRef,
     currentTool,
-    stageDragging
+    stageDragging,
+    width
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -75,7 +83,7 @@ const Workspace: any = () => {
 
   const { stageScale, handleWheel, zooming } = useZoom();
 
-  const [image] = useImage(`/tools/${TOOLS.COMMENT}.svg`);
+  const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
   // For Rectangle transformation (size & rotation)
   const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
@@ -84,7 +92,8 @@ const Workspace: any = () => {
     }
   };
 
-  const handleShapesCaching = (shouldCache = true) => {
+  const handleShapesCaching = (shouldCache = true, e?: any) => {
+    console.log(e);
     shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
   };
 
@@ -132,13 +141,19 @@ const Workspace: any = () => {
           draggable={stageDragging}
           onDragEnd={() => {}}
         >
-          <Layer>
-            <BackgroundImage width={WIDTH} height={HEIGHT} url={src} />
+          <Layer ref={bgLayerRef}>
+            <BackgroundImage
+              width={width}
+              height={height}
+              background={background}
+              widthRatio={widthRatio}
+              heightRatio={heightRatio}
+            />
           </Layer>
           <Layer>
             <TempShapes lines={lines} rects={rects} />
             {tooltip.text.length > 0 && (
-              <Group draggable>
+              <Group>
                 <Rect
                   x={tooltip.x - 8}
                   y={tooltip.y - 5}
@@ -157,26 +172,34 @@ const Workspace: any = () => {
                 <Text {...tooltip} />
               </Group>
             )}
+
             {currentTool === TOOLS.COMMENT &&
               comments.map((comment, commendIndex) => (
-                <Image
-                  x={comment.x}
-                  y={comment.y}
-                  key={`comment-${commendIndex}`}
-                  image={image}
-                  alt="Comment"
-                  type="Comment"
-                  draggable
-                  onClick={(e) =>
-                    handleCommentClick(e, comment.text, commendIndex)
-                  }
-                  onMouseEnter={(_) => setCursorStyle('pointer')}
-                  onMouseLeave={(_) => setCursorStyle()}
-                />
+                <>
+                  <Image
+                    key={`comment-${commendIndex}`}
+                    width={250}
+                    height={250}
+                    image={image}
+                    x={comment.x}
+                    y={comment.y}
+                    alt="Comment"
+                    type="Comment"
+                    draggable
+                    onClick={(e) =>
+                      handleCommentClick(e, comment.text, commendIndex)
+                    }
+                    onMouseEnter={(_) => setCursorStyle('pointer')}
+                    onMouseLeave={(_) => setCursorStyle()}
+                  />
+                </>
               ))}
           </Layer>
           <Layer>
-            <Group ref={shapesRef} onClick={(e) => handleShapesCaching(false)}>
+            <Group
+              ref={shapesRef}
+              onClick={(e) => handleShapesCaching(false, e)}
+            >
               <Shapes
                 classes={classes}
                 handleRectChange={handleRectChange}

@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import _ from 'lodash';
-import { Annotation, Class, TOOLS } from 'src/constants';
+import { Annotation, Class, TOOLS, classes } from 'src/constants';
 import uniqid from 'uniqid';
 import { EditorActionTypes } from './classes.types';
 
@@ -14,7 +14,7 @@ type State = {
 };
 
 const initialState: State = {
-  classes: [],
+  classes,
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],
@@ -28,7 +28,6 @@ export const classesReducer = (state = initialState, action: any) => {
       const { src, project, annotations, _id } =
         action.payload.state?.images[0];
 
-      console.log(action.payload.state?.images[0]);
       const purifiedAnnos = annotations?.map((anno: any) => {
         const { id, classId, shapes, visible } = anno;
         const purifiedShapes = shapes.map((shape: any) => {
@@ -44,7 +43,6 @@ export const classesReducer = (state = initialState, action: any) => {
 
         return anno;
       });
-      console.log(purifiedAnnos);
       let { classes } = project;
       classes = classes.map((classItem: Class) => ({
         ...classItem,
@@ -165,7 +163,7 @@ export const classesReducer = (state = initialState, action: any) => {
 
     case EditorActionTypes.SET_COMMENTS:
       const { comments } = action.payload;
-      if (comments?.length >= 0) state.comments = comments;
+      if (comments?.length >= 0) state = { ...state, comments };
       return state;
 
     default:

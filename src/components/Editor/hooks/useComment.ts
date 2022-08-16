@@ -10,8 +10,9 @@ interface Comment {
 }
 
 const useComment = (
-  stageRef: React.RefObject<Konva.Stage>,
-  currentTool: Tool
+  bgLayerRef: React.RefObject<Konva.Layer>,
+  currentTool: Tool,
+  backgroundWidth: number
 ) => {
   const storedComments = useAppSelector(({ classes }) => classes.comments);
   const [comments, setComments] = useState<Comment[]>(
@@ -35,10 +36,10 @@ const useComment = (
     document.querySelector('.editor-comment-popup')?.remove();
 
     const textarea = document.createElement('textarea');
-    document.body.appendChild(textarea);
-    textarea.style.position = 'absolute';
-    textarea.style.top = y + 'px';
-    textarea.style.left = x + 'px';
+    document.body!.appendChild(textarea);
+    textarea.style.position = 'fixed';
+    textarea.style.top = '50%';
+    textarea.style.left = 'calc(50% - 300px)';
     textarea.style.width = '250px';
     textarea.style.height = '36px';
     textarea.style.resize = 'none';
@@ -71,43 +72,45 @@ const useComment = (
         });
         setComments(newComments);
 
-        document.body.removeChild(textarea);
+        document.body!.removeChild(textarea);
       } else if (
         e.code === 'Escape' || //cancel comment
         (e.code === 'Enter' && textarea.value.length === 0) //empty textarea
       ) {
-        document.body.removeChild(textarea);
+        document.body!.removeChild(textarea);
       }
     });
   };
 
   const handleComment = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const stage = stageRef.current;
-    if (!stage) return;
+    const layer = bgLayerRef.current;
 
-    //to avoid clicking on a previous comment
-    if (e.target.attrs?.type === 'Comment') return;
+    if (layer && layer?.children?.length !== 0) {
+      const bg = layer.children[0]!;
+      //to avoid clicking on a previous comment
+      if (e.target.attrs?.type === 'Comment') return;
 
-    const { x = 0, y = 0 } = e.target.getStage()!.getRelativePointerPosition()!;
+      const { x = 0, y = 0 } = bg!.getStage()!.getRelativePointerPosition();
+      console.log(x, y);
 
-    // create textarea and style it
-    const textarea = createStyledTextarea(x, y);
+      // create textarea and style it
+      const textarea = createStyledTextarea(x, y);
 
-    textarea.addEventListener('keydown', function (e) {
-      if (e.code === 'Enter' && textarea.value.length > 0) {
-        setComments((prev) => [...prev, { text: textarea.value, x, y }]);
+      textarea.addEventListener('keydown', function (e) {
+        if (e.code === 'Enter' && textarea.value.length > 0) {
+          setComments((prev) => [...prev, { text: textarea.value, x, y }]);
 
-        document.body.removeChild(textarea);
-      } else if (
-        e.code === 'Escape' || //cancel comment
-        (e.code === 'Enter' && textarea.value.length === 0) //empty textarea
-      ) {
-        document.body.removeChild(textarea);
-      }
-    });
+          document.body!.removeChild(textarea);
+        } else if (
+          e.code === 'Escape' || //cancel comment
+          (e.code === 'Enter' && textarea.value.length === 0) //empty textarea
+        ) {
+          document.body!.removeChild(textarea);
+        }
+      });
+    }
   };
 
   return { handleComment, handleCommentClick, comments };
 };
-
 export default useComment;

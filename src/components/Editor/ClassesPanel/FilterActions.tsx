@@ -1,10 +1,11 @@
-import { Box, Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { memo } from 'React';
+import { memo } from 'react';
 import styles from './filters.module.css';
 
-const Actions = memo(() => (
+const FilterActions = memo(() => (
   <Box
     component="form"
     noValidate
@@ -12,7 +13,8 @@ const Actions = memo(() => (
       display: 'grid',
       gridTemplateColumns: { sm: '1fr 1fr' },
       gap: 2,
-      marginTop: 4,
+      marginTop: 2,
+      paddingBottom: 2,
     }}
   >
     <Grid justifyContent={'space-between'}>
@@ -30,10 +32,11 @@ const Actions = memo(() => (
         MenuProps={{
           disableScrollLock: true,
         }}
+        sx={{ height: 40 }}
       >
-        <MenuItem value={0}>Input</MenuItem>
-        <MenuItem value={1}>Input 2</MenuItem>
-        <MenuItem value={2}>Input 3</MenuItem>
+        <MenuItem value={0}>Hide</MenuItem>
+        <MenuItem value={1}>Delete</MenuItem>
+        <MenuItem value={2}>Change Class</MenuItem>
       </Select>
     </Grid>
     <div>
@@ -51,13 +54,14 @@ const Actions = memo(() => (
         MenuProps={{
           disableScrollLock: true,
         }}
+        sx={{ height: 40 }}
       >
-        <MenuItem value={0}>Input</MenuItem>
-        <MenuItem value={1}>Input 2</MenuItem>
-        <MenuItem value={2}>Input 3</MenuItem>
+        <MenuItem value={0}>Class A-Z</MenuItem>
+        <MenuItem value={1}>Newest</MenuItem>
+        <MenuItem value={2}>Oldest</MenuItem>
       </Select>
     </div>
   </Box>
 ));
 
-export default Actions;
+export default FilterActions;
