@@ -42,7 +42,7 @@ const Login = () => {
             <Logo />
             {smUp && (
               <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-                Don’t have an account? {''}
+                Don’t have an account?{' '}
                 <NextLink href={PATH_AUTH.login} passHref>
                   <Link variant="subtitle2">Connect with us</Link>
                 </NextLink>
