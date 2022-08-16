@@ -18,7 +18,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
     const classTitle: string = e.target?.attrs?.class;
     const { type, points } = e.target.attrs;
     const { x, y } = e.target.getClientRect({
-      relativeTo: stageRef.current,
+      relativeTo: stageRef.current as any,
     });
 
     if (
@@ -53,7 +53,8 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
 
       // !FIX: srcElements is deprecated, change it
       const rectWidth =
-        e.evt?.srcElement?.getContext('2d')?.measureText(classTitle)?.width *
+        (e.evt?.srcElement as any)?.getContext('2d')?.measureText(classTitle)
+          ?.width *
           1.4 +
           10 || 40;
 

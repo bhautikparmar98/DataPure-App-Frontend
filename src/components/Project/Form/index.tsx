@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // @mui
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -22,23 +23,20 @@ import {
 import { styled } from '@mui/material/styles';
 import {
   FormProvider,
-  RHFEditor,
   RHFSelect,
   RHFTextField,
   RHFUploadMultiFile,
 } from 'src/components/Shared/hook-form';
-import { IProject, IProjectClass } from '../List/types/project';
+import RHFDatePicker from 'src/components/Shared/hook-form/RHFDatePicker';
+import Iconify from 'src/components/Shared/Iconify';
 import { ANNOTATION_TYPES } from 'src/constants';
 import { AnnotationTypeKey } from 'src/constants/annotationTypes';
-import RHFDatePicker from 'src/components/Shared/hook-form/RHFDatePicker';
 import useSettings from 'src/hooks/useSettings';
-import Iconify from 'src/components/Shared/Iconify';
+import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
+import axiosInstance from 'src/utils/axios';
+import { IProject, IProjectClass } from '../List/types/project';
 import AddClassDialog from './AddClass';
 import ClassItem from './ClassItem';
-import Scrollbar from 'src/components/Shared/Scrollbar';
-import { LoadingButton } from '@mui/lab';
-import axiosInstance from 'src/utils/axios';
-import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -92,7 +90,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewProjectSchema),
-    defaultValues,
+    defaultValues: defaultValues as any,
   });
 
   const {
@@ -110,17 +108,17 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
   useEffect(() => {
     if (isEdit && currentProject) {
-      reset(defaultValues);
+      reset(defaultValues as any);
     }
     if (!isEdit) {
-      reset(defaultValues);
+      reset(defaultValues as any);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentProject]);
 
   const uploadHandler = async (
     urls: { url: string; presignedURL: string }[],
-    files
+    files: any
   ) => {
     setUploading(true);
 
@@ -137,7 +135,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     let requests = 0;
     for (let i = 0; i < chunks.length; i++) {
       const promise = chunks[i];
-      const response = await Promise.all(promise);
+      await Promise.all(promise);
 
       requests += promise.length;
 
@@ -151,7 +149,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     setLoading(true);
 
     try {
-      const imageList = data.images.map((i) => i.name);
+      const imageList = data.images.map((i: any) => i.name);
 
       const response = await axiosInstance.post('/image/sign', {
         files: imageList,

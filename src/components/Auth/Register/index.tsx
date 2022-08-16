@@ -20,7 +20,7 @@ import useRegisterLogic from './hooks/useRegisterLogic';
 const Register: React.FC = () => {
   const isDesktop = useResponsive('up', 'lg');
 
-  const { submitHandler } = useRegisterLogic();
+  // const { submitHandler } = useRegisterLogic();
 
   return (
     <Page title="Sign Up">
@@ -47,12 +47,20 @@ const Register: React.FC = () => {
             ) : (
               <Logo sx={{ width: '60px', margin: '0 auto', p: 0 }} />
             )}
-            <Typography variant="h4" sx={{ mb: 3, mt: isDesktop ? 0 : '-60px' }}>
+            <Typography
+              variant="h4"
+              sx={{ mb: 3, mt: isDesktop ? 0 : '-60px' }}
+            >
               Create a New Hammoq Account
             </Typography>
 
-            <RegisterForm onSubmit={submitHandler} />
-            <Typography variant="body2" align="center" sx={{ mt: 3 }} color="text.secondary">
+            <RegisterForm onSubmit={() => {}} />
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ mt: 3 }}
+              color="text.secondary"
+            >
               Already have account?{' '}
               <NextLink href={PATH_AUTH.login} passHref>
                 <Link>Sign in</Link>

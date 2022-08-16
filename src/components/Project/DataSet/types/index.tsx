@@ -6,4 +6,5 @@ export interface IImage {
   projectId: string;
   createdAt: Date;
   updatedAt: Date;
+  dateAnnotated: Date | undefined;
 }

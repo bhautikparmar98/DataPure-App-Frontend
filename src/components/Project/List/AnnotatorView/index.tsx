@@ -26,7 +26,7 @@ const AnnotatorProjectsComponents = () => {
         <ProjectGrid
           projects={projects}
           calcProgress={(project: IProject) => {
-            const { pendingAnnotation, submitted } = counts[project._id];
+            const { pendingAnnotation, submitted } = counts[project._id as any];
 
             if (submitted + pendingAnnotation === 0) return 100;
 
@@ -35,7 +35,7 @@ const AnnotatorProjectsComponents = () => {
             );
           }}
           getProgressLabel={(project) => {
-            const { pendingAnnotation, submitted } = counts[project._id];
+            const { pendingAnnotation, submitted } = counts[project._id as any];
 
             return `Progress ${submitted} / ${submitted + pendingAnnotation}`;
           }}

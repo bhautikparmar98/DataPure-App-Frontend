@@ -25,7 +25,7 @@ const useQALogic = () => {
 
         const updatedCounts = {};
         QACounts.forEach((count: any) => {
-          updatedCounts[count.projectId as any] = count;
+          (updatedCounts as any)[count.projectId as any] = count;
         });
 
         setCounts(updatedCounts);

@@ -27,7 +27,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId }) => {
 
   const uploadHandler = async (
     urls: { url: string; presignedURL: string }[],
-    files
+    files: any
   ) => {
     setUploading(true);
 
@@ -74,7 +74,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId }) => {
 
       const { imagesIds } = response.data;
 
-      const results: IImage[] = imagesIds.map((i, index) => ({
+      const results: IImage[] = imagesIds.map((i: any, index: number) => ({
         _id: i._id,
         src: files[index].url,
         fileName: files[index].fileName,

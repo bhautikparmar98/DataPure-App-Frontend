@@ -86,7 +86,7 @@ const useComment = (
     const layer = bgLayerRef.current;
 
     if (layer && layer?.children?.length !== 0) {
-      const bg = layer.children[0]!;
+      const bg = (layer as any).children[0]!;
       //to avoid clicking on a previous comment
       if (e.target.attrs?.type === 'Comment') return;
 

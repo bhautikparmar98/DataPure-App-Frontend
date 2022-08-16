@@ -42,7 +42,7 @@ export const ProjectDataSetComponent: React.FC<
     setNumberOfLoaded(arr.length);
   };
 
-  const addingImagesHandler = (data) => {
+  const addingImagesHandler = (data: any) => {
     setImagesList((prev) => [...data, ...prev]);
     setFilteredImageList((prev) => [...data, ...prev]);
     setNumberOfLoaded((prev) => prev + data.length);

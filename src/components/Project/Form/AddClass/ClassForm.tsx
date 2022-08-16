@@ -36,7 +36,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit }) => {
     }
   };
 
-  const isColorChecked = (c) => color === c;
+  const isColorChecked = (c: string) => color === c;
 
   return (
     <>
