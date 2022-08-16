@@ -14,8 +14,6 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-
-  crossOrigin: 'anonymous',
 };
 
 module.exports = nextConfig;
