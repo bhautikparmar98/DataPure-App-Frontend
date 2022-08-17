@@ -99,9 +99,7 @@ function Annotations() {
               <List
                 dense={true}
                 sx={{
-                  marginTop: 0,
-                  marginBottom: 0,
-                  maxHeight: 250,
+                  maxHeight: 220,
                   overflowY: 'auto',
                 }}
               >

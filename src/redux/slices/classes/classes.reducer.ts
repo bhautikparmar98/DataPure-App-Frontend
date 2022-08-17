@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import _ from 'lodash';
-import { Annotation, Class, TOOLS, classes } from 'src/constants';
+import { Annotation, Class, TOOLS } from 'src/constants';
 import uniqid from 'uniqid';
 import { EditorActionTypes } from './classes.types';
 
@@ -14,7 +14,7 @@ type State = {
 };
 
 const initialState: State = {
-  classes,
+  classes: [],
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],

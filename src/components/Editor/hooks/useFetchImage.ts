@@ -8,7 +8,11 @@ import { useAppDispatch } from 'src/redux/store';
 import axios from 'src/utils/axios';
 import { useRouter } from 'next/router';
 
-const useFetchImage = async (projId: string, role: string, take = 1) => {
+const useFetchImage = async (
+  projId: string | undefined,
+  role: string,
+  take = 1
+) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 

@@ -3,6 +3,8 @@ import { Rect } from 'react-konva';
 type Props = {
   width: number;
   height: number;
+  x: number;
+  y: number;
   widthRatio: number;
   heightRatio: number;
   background: HTMLImageElement | undefined;
@@ -11,21 +13,25 @@ type Props = {
 const BackgroundImage = ({
   width,
   height,
+  x,
+  y,
   background,
   widthRatio,
   heightRatio,
-}: Props) => (
-  <Rect
-    x={-width / 2}
-    y={-height / 2}
-    width={width}
-    height={height}
-    fillPatternImage={background}
-    fillPatternRepeat={'no-repeat'}
-    fillPatternScaleX={widthRatio}
-    fillPatternScaleY={heightRatio}
-    id="canvasBackground"
-    listening={false}
-  />
-);
+}: Props) => {
+  return (
+    <Rect
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      fillPatternImage={background}
+      fillPatternRepeat={'no-repeat'}
+      fillPatternScaleX={widthRatio}
+      fillPatternScaleY={heightRatio}
+      id="canvasBackground"
+      listening={false}
+    />
+  );
+};
 export default BackgroundImage;

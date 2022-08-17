@@ -26,7 +26,6 @@ const useAnnotationSubmit = () => {
   const handleSubmit = async (done = false) => {
     try {
       const annotations: Annotation[] = [];
-
       classes.forEach((cls) => {
         cls.annotations.forEach((anno) => {
           delete anno.id;

@@ -6,15 +6,20 @@ import Iconify from 'src/components/Shared/Iconify';
 function SubmitAnnotations() {
   // const { handleSubmit, handleReset } = useAnnotationSubmit();
   return (
-    <Box>
-      <Grid container justifyContent="space-around">
-        {/* <Button
-        variant="outlined"
-        onClick={(e) => {}}
-        startIcon={<Iconify icon={'ant-design:reload-outlined'} />}
+    <Box alignSelf="flex-end" mt="auto" sx={{ width: '100%' }}>
+      <Grid
+        container
+        justifyContent="space-around"
+        mt={3}
+        sx={{ display: 'flex' }}
       >
-        Reset
-      </Button> */}
+        <Button
+          variant="outlined"
+          onClick={(e) => {}}
+          startIcon={<Iconify icon={'ant-design:reload-outlined'} />}
+        >
+          Reset
+        </Button>
         <Button
           variant="contained"
           onClick={(e) => {}}

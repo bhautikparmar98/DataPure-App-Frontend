@@ -11,7 +11,7 @@ const MIN_SCALE = 0.005;
 
 const useZoom = () => {
   const [stageScale, setStageScale] = useState({
-    stageScale: 1,
+    stageScale: 0.25,
     stageX: 0,
     stageY: 0,
   });

@@ -67,7 +67,11 @@ function Toolbar() {
         </DrawerHeader>
         <List
           sx={{
-            paddingTop: 35,
+            display: 'inline-flex',
+            flexDirection: 'column',
+            margin: 'auto',
+            position: 'relative',
+            top: -88,
           }}
         >
           {Object.values(TOOLS)

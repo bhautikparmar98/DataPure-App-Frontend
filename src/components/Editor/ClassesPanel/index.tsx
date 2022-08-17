@@ -23,14 +23,17 @@ const ClassPanel = () => (
         sx={{
           width: 300,
           paddingTop: 2,
-          minHeight: '90vh',
+          paddingBottom: 8,
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Preview />
         <Filters />
         <Annotations />
+        <SubmitAnnotations />
       </Container>
-      <SubmitAnnotations />
     </Drawer>
   </div>
 );

@@ -32,9 +32,11 @@ const Workspace: any = () => {
 
   const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
 
-  const { classes = [], selectedClassIndex = 0 } = useAppSelector(
-    ({ classes }) => classes
-  );
+  const {
+    classes = [],
+    selectedClassIndex = 0,
+    src,
+  } = useAppSelector(({ classes }) => classes);
 
   const classId: string = classes[selectedClassIndex]?._id;
 
@@ -43,11 +45,12 @@ const Workspace: any = () => {
   const shapesRef = useRef<Konva.Group>(null);
   const bgLayerRef = useRef<Konva.Layer>(null);
 
-  const { background, width, height, widthRatio, heightRatio } = useBackground({
-    url: '/images/3.jpg',
-    width: WIDTH,
-    height: HEIGHT,
-  });
+  const { background, width, height, widthRatio, heightRatio, bgX, bgY } =
+    useBackground({
+      url: src,
+      stageWidth: WIDTH,
+      stageHeight: HEIGHT,
+    });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
@@ -148,6 +151,8 @@ const Workspace: any = () => {
               background={background}
               widthRatio={widthRatio}
               heightRatio={heightRatio}
+              x={bgX}
+              y={bgY}
             />
           </Layer>
           <Layer>
