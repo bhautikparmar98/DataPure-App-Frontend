@@ -25,12 +25,15 @@ const useFetchImage = async (
       if (fetchedData?.data.images.length > 0) {
         dispatch(initializeState(fetchedData?.data));
       } else {
-        router.push('/');
+        dispatch(resetState());
+        // !uncomment this
+        // router.push('/');
       }
     } catch (err) {
       console.error(err);
       dispatch(resetState());
-      router.push('/');
+      // !uncomment this
+      // router.push('/');
     }
   };
 

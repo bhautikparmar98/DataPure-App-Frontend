@@ -1,13 +1,8 @@
-import { Alert, AlertTitle, Box, Container, Grid } from '@mui/material';
-import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
+import { Alert, AlertTitle, Box, Container } from '@mui/material';
 import useSettings from 'src/hooks/useSettings';
-import axiosInstance from 'src/utils/axios';
 import ProjectGrid from '../Shared/ProjectGrid';
 import { IProject } from '../types/project';
 import EditTeamModal from './EditTeamModal';
-import AssignAdminModal from './EditTeamModal';
 import ProjectListHeader from './Header';
 import AdminProjectStatistics from './Statistics';
 import useAdminLogic from './useAdminLogic';

@@ -96,7 +96,6 @@ const Workspace: any = () => {
   };
 
   const handleShapesCaching = (shouldCache = true, e?: any) => {
-    console.log(e);
     shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
   };
 
@@ -222,7 +221,23 @@ const Workspace: any = () => {
           </Layer>
         </Stage>
       ) : (
-        <div>Image annotations are loading...</div>
+        <div
+          style={{
+            height: 'calc(100vh - 50px)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <p
+            style={{
+              marginLeft: -(TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH) / 2,
+              fontSize: '1.3rem',
+            }}
+          >
+            Annotations are loading...
+          </p>
+        </div>
       )}
     </div>
   );

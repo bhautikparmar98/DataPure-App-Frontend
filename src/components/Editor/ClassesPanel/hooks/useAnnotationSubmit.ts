@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router';
-import { Annotation } from 'src/constants';
-import { useAppSelector } from 'src/redux/store';
-import axios from 'src/utils/axios';
 import { useSnackbar } from 'notistack';
-import useAuth from 'src/hooks/useAuth';
 import { useEffect } from 'react';
+import { Annotation, ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
+import { useAppSelector } from 'src/redux/store';
+import { adminSubmitAnnotations } from '../../utils/adminRequests';
+import { annotatorSubmitAnnotations } from '../../utils/annotatorRequest';
+import { qaSubmitAnnotations } from '../../utils/qaRequests';
 
 const useAnnotationSubmit = () => {
   const { classes, imageId } = useAppSelector(({ classes }) => classes);
@@ -14,7 +16,6 @@ const useAnnotationSubmit = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (role.toLowerCase() === 'qa') return;
       if (classes.length > 0) handleSubmit();
     }, 5 * 3600);
 
@@ -25,39 +26,46 @@ const useAnnotationSubmit = () => {
 
   const handleSubmit = async (done = false) => {
     try {
-      const annotations: Annotation[] = [];
+      const purifiedAnnotations: Annotation[] = [];
       classes.forEach((cls) => {
         cls.annotations.forEach((anno) => {
           delete anno.id;
-          annotations.push(anno);
+          purifiedAnnotations.push(anno);
         });
       });
 
       let response;
-      console.log('submitting');
-      if (done) {
-        response = await axios.put(`image/${imageId}/annotation/finish`, {
-          annotations,
-        });
-      } else {
-        response = await axios.post(`image/${imageId}/annotation`, {
-          annotations,
-        });
+
+      switch (role) {
+        case ROLES.QA.value:
+          response = await qaSubmitAnnotations(purifiedAnnotations, imageId);
+          break;
+        case ROLES.ANNOTATOR.value:
+          response = await annotatorSubmitAnnotations(
+            purifiedAnnotations,
+            imageId
+          );
+          break;
+        case ROLES.ANNOTATOR.value:
+          response = await adminSubmitAnnotations(purifiedAnnotations, imageId);
+          break;
+        default:
+          throw new Error('Undefined user role');
       }
-      console.log(response);
 
       if (response?.data?.success)
         enqueueSnackbar('Annotation has been saved', {
           variant: 'success',
         });
+
       setTimeout(() => {
-        done && router.reload();
+        // done && router.reload();
       }, 3000);
     } catch (error) {
       console.error(error);
-      // enqueueSnackbar('Something went wrong with saving annotations..', {
-      //   variant: 'warning',
-      // });
+      enqueueSnackbar('Something went wrong with saving annotations..', {
+        variant: 'warning',
+      });
     }
   };
 

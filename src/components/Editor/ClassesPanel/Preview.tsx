@@ -2,8 +2,8 @@ import { Grid } from '@mui/material';
 import { useAppSelector } from 'src/redux/store';
 
 const Preview = () => {
-  const src = useAppSelector(({ classes }) => classes.src);
-  return (
+  const src: string = useAppSelector(({ classes }) => classes.src);
+  return src.length > 0 ? (
     <Grid
       sx={{
         border: '5px solid yellow',
@@ -19,6 +19,6 @@ const Preview = () => {
         style={{ margin: 'auto', width: 'auto', maxHeight: 140 }}
       />
     </Grid>
-  );
+  ) : null;
 };
 export default Preview;

@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 import React from 'react';
 import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
 import Image from 'src/components/Shared/Image';
@@ -60,8 +61,10 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
     denseToggleHandler,
   } = useDatasetReview({ projectId });
 
+  const router = useRouter();
+
   const reviewHandler = () => {
-    // TODO: navigate to editor
+    router.push(`/editor/${projectId}`);
   };
 
   return (
@@ -182,7 +185,8 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
                         <TableCell align="center" color="default">
                           <Button
                             disabled={
-                              status !== IMAGE_STATUS.PENDING_REDO.value
+                              status !==
+                              IMAGE_STATUS.PENDING_CLIENT_REVIEW.value
                             }
                             variant="text"
                             onClick={reviewHandler}
