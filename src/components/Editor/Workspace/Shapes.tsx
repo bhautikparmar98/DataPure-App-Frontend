@@ -2,7 +2,7 @@ import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Group, Line } from 'react-konva';
 import { Class, Tool, TOOLS } from 'src/constants';
-import Rectangle from '../Rectangle';
+import Rectangle from './Rectangle';
 
 interface IShapes {
   classes: Class[];
@@ -39,16 +39,15 @@ const Shapes = ({
   <>
     {classes.map((classItem: Class, i) =>
       classItem.annotations.map((annotation) =>
-        annotation.shapes?.map((shape, m) => (
-          <>
-            {annotation.visible && (
+        annotation.shapes?.map(
+          (shape, m) =>
+            annotation.visible && (
               <Group
-                key={`group-${shape.id}`}
+                key={`group-${m}-${shape.id}`}
                 x={0}
                 y={0}
                 draggable={currentTool === TOOLS.SELECT && !stageDragging}
                 name={classItem.name}
-                visible={annotation.visible}
                 onDragStart={hideTooltip}
                 tabIndex={1}
                 classId={i}
@@ -101,9 +100,8 @@ const Shapes = ({
                   />
                 )}
               </Group>
-            )}
-          </>
-        ))
+            )
+        )
       )
     )}
   </>

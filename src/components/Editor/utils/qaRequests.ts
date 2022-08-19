@@ -7,9 +7,14 @@ const qaSubmitAnnotations = async (
   annotations: Annotation[],
   imageId: string
 ) => {
+  console.log({ imageId });
   return await axios.put(`image/${imageId}/annotation/approve`, {
     annotations,
   });
 };
 
-export { qaSubmitAnnotations };
+const qaRequestRedo = async (imageId: string) => {
+  // !logic here
+};
+
+export { qaSubmitAnnotations, qaRequestRedo };

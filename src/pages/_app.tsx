@@ -83,7 +83,7 @@ export default function MyApp(props: MyAppProps) {
     <>
       <Head>
         <meta
-          http-equiv="Content-Security-Policy"
+          httpEquiv="Content-Security-Policy"
           content="upgrade-insecure-requests"
         />
         <meta name="viewport" content="initial-scale=1, width=device-width" />

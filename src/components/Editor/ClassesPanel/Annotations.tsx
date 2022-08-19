@@ -106,11 +106,11 @@ function Annotations() {
                 {classItem.annotations.length > 0 ? (
                   classItem.annotations.map(({ visible, id }, i) => (
                     <Annotation
-                      key={`${classId}-${i}`}
                       id={id!}
                       classId={classId}
                       visible={visible}
                       index={i}
+                      key={`annotation-${id}`}
                     />
                   ))
                 ) : (

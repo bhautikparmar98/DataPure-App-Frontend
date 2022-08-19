@@ -179,24 +179,22 @@ const Workspace: any = () => {
 
             {currentTool === TOOLS.COMMENT &&
               comments.map((comment, commendIndex) => (
-                <>
-                  <Image
-                    key={`comment-${commendIndex}`}
-                    width={250}
-                    height={250}
-                    image={image}
-                    x={comment.x}
-                    y={comment.y}
-                    alt="Comment"
-                    type="Comment"
-                    draggable
-                    onClick={(e) =>
-                      handleCommentClick(e, comment.text, commendIndex)
-                    }
-                    onMouseEnter={(_) => setCursorStyle('pointer')}
-                    onMouseLeave={(_) => setCursorStyle()}
-                  />
-                </>
+                <Image
+                  key={`comment-${commendIndex}`}
+                  width={250}
+                  height={250}
+                  image={image}
+                  x={comment.x}
+                  y={comment.y}
+                  alt="Comment"
+                  type="Comment"
+                  draggable
+                  onClick={(e) =>
+                    handleCommentClick(e, comment.text, commendIndex)
+                  }
+                  onMouseEnter={(_) => setCursorStyle('pointer')}
+                  onMouseLeave={(_) => setCursorStyle()}
+                />
               ))}
           </Layer>
           <Layer>

@@ -10,9 +10,9 @@ import styles from './annotations.module.css';
 
 interface Props {
   id: string;
+  index: number;
   classId: number;
   visible: boolean;
-  index: number;
 }
 
 const Annotation = memo(({ id, classId, visible, index }: Props) => {
@@ -27,7 +27,7 @@ const Annotation = memo(({ id, classId, visible, index }: Props) => {
   };
   return (
     <ListItem
-      key={id}
+      key={`${classId}-listItem-${index}`}
       sx={{
         marginTop: -2,
         // marginBottom: -5,

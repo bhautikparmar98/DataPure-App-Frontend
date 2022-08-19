@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
+import { ROLES } from 'src/constants';
 import {
   initializeState,
   resetState,
 } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import axios from 'src/utils/axios';
-import { useRouter } from 'next/router';
 
 const useFetchImage = async (
   projId: string | undefined,
@@ -14,15 +14,23 @@ const useFetchImage = async (
   take = 1
 ) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
   const getData = async (): Promise<void> => {
     try {
-      const fetchedData = await axios.get(
-        `/project/${projId}/${role.toLowerCase()}/images?take=${take}`
-      );
+      let fetchedData = { data: { images: [] } };
 
-      if (fetchedData?.data.images.length > 0) {
+      if (ROLES.CLIENT.value === role) {
+        fetchedData = await axios.get(
+          `/project/${projId}/${role.toLowerCase()}/review/images`
+        );
+      } else {
+        fetchedData = await axios.get(
+          `/project/${projId}/${role.toLowerCase()}/images?take=${take}`
+        );
+      }
+
+      if (fetchedData?.data!.images?.length > 0) {
+        console.log(fetchedData?.data!.images);
         dispatch(initializeState(fetchedData?.data));
       } else {
         dispatch(resetState());

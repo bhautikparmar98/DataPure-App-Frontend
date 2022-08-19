@@ -1,9 +1,13 @@
 import { Grid, Button, Box } from '@mui/material';
 import React from 'react';
 import Iconify from 'src/components/Shared/Iconify';
+import { ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 
 function SubmitAnnotations() {
+  const { role } = useAuth();
+
   const { handleSubmit, handleReset } = useAnnotationSubmit();
   return (
     <Box alignSelf="flex-end" mt="auto" sx={{ width: '100%' }}>
@@ -13,15 +17,17 @@ function SubmitAnnotations() {
         mt={3}
         sx={{ display: 'flex' }}
       >
-        <Button
-          variant="outlined"
-          onClick={(e) => {
-            handleReset();
-          }}
-          startIcon={<Iconify icon={'ant-design:reload-outlined'} />}
-        >
-          Reset
-        </Button>
+        {ROLES.CLIENT.value !== role && (
+          <Button
+            variant="outlined"
+            onClick={(e) => {
+              handleReset();
+            }}
+            startIcon={<Iconify icon={'ant-design:reload-outlined'} />}
+          >
+            Reset
+          </Button>
+        )}
         <Button
           variant="contained"
           onClick={(e) => {
@@ -29,7 +35,7 @@ function SubmitAnnotations() {
           }}
           startIcon={<Iconify icon={'ic:outline-done'} />}
         >
-          Save
+          {ROLES.CLIENT.value === role ? 'Done' : 'Save'}
         </Button>
       </Grid>
     </Box>

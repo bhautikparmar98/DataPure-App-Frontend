@@ -4,9 +4,12 @@ import { useEffect } from 'react';
 import { Annotation, ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { useAppSelector } from 'src/redux/store';
-import { adminSubmitAnnotations } from '../../utils/adminRequests';
-import { annotatorSubmitAnnotations } from '../../utils/annotatorRequest';
-import { qaSubmitAnnotations } from '../../utils/qaRequests';
+import { annotatorSubmitAnnotations } from '../../utils/annotatorRequests';
+import { qaSubmitAnnotations, qaRequestRedo } from '../../utils/qaRequests';
+import {
+  clientApproveAnnotations,
+  clientRequestRedo,
+} from '../../utils/clientRequests';
 
 const useAnnotationSubmit = () => {
   const { classes, imageId } = useAppSelector(({ classes }) => classes);
@@ -15,13 +18,15 @@ const useAnnotationSubmit = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (classes.length > 0) handleSubmit();
-    }, 5 * 3600);
+    if (ROLES.CLIENT.value !== role) {
+      const interval = setInterval(() => {
+        if (classes.length > 0) handleSubmit();
+      }, 5 * 3600);
 
-    return () => {
-      clearInterval(interval);
-    };
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   const handleSubmit = async (done = false) => {
@@ -35,7 +40,6 @@ const useAnnotationSubmit = () => {
       });
 
       let response;
-
       switch (role) {
         case ROLES.QA.value:
           response = await qaSubmitAnnotations(purifiedAnnotations, imageId);
@@ -43,11 +47,15 @@ const useAnnotationSubmit = () => {
         case ROLES.ANNOTATOR.value:
           response = await annotatorSubmitAnnotations(
             purifiedAnnotations,
-            imageId
+            imageId,
+            done
           );
           break;
-        case ROLES.ANNOTATOR.value:
-          response = await adminSubmitAnnotations(purifiedAnnotations, imageId);
+        case ROLES.CLIENT.value:
+          response = await clientApproveAnnotations(
+            purifiedAnnotations,
+            imageId
+          );
           break;
         default:
           throw new Error('Undefined user role');
@@ -70,9 +78,19 @@ const useAnnotationSubmit = () => {
   };
 
   const handleReset = () => {};
+
+  const requestRedo = async () => {
+    if (role === ROLES.QA.value) {
+      return await qaRequestRedo(imageId);
+    }
+    if (role === ROLES.CLIENT.value) {
+      return clientRequestRedo(imageId);
+    }
+  };
   return {
     handleSubmit,
     handleReset,
+    requestRedo,
   };
 };
 
