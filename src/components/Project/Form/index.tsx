@@ -329,7 +329,13 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                             type="submit"
                             variant="contained"
                             fullWidth
-                            // disabled={classes.length === 0}
+                            disabled={
+                              classes.length === 0 ||
+                              loading ||
+                              values.name === '' ||
+                              values.type === '' ||
+                              values.dueAt === null
+                            }
                             loading={isSubmitting || loading}
                           >
                             Save & Preview
