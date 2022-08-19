@@ -11,7 +11,7 @@ const clientApproveAnnotations = async (
 };
 
 const clientRequestRedo = async (imageId: string) => {
-  // !logic here
+  return await axios.put(`image/${imageId}/client/disapprove`);
 };
 
 export { clientApproveAnnotations, clientRequestRedo };

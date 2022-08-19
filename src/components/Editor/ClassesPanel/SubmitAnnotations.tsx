@@ -8,7 +8,8 @@ import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 function SubmitAnnotations() {
   const { role } = useAuth();
 
-  const { handleSubmit, handleReset } = useAnnotationSubmit();
+  const { handleSubmit, handleReset, handleApproveImage } =
+    useAnnotationSubmit();
   return (
     <Box alignSelf="flex-end" mt="auto" sx={{ width: '100%' }}>
       <Grid
@@ -17,7 +18,7 @@ function SubmitAnnotations() {
         mt={3}
         sx={{ display: 'flex' }}
       >
-        {ROLES.CLIENT.value !== role && (
+        {ROLES.ANNOTATOR.value === role && (
           <Button
             variant="outlined"
             onClick={(e) => {
@@ -37,6 +38,15 @@ function SubmitAnnotations() {
         >
           {ROLES.CLIENT.value === role ? 'Done' : 'Save'}
         </Button>
+        {ROLES.QA.value === role && (
+          <Button
+            variant="contained"
+            onClick={handleApproveImage}
+            startIcon={<Iconify icon={'ic:outline-done'} />}
+          >
+            Approve
+          </Button>
+        )}
       </Grid>
     </Box>
   );

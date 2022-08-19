@@ -16,18 +16,25 @@ import BackgroundImage from './BackgroundImage';
 import Shapes from './Shapes';
 import TempShapes from './TempShapes';
 
-const TOOLBAR_WIDTH = 70;
-const LAYERS_PANEL_WIDTH = 300;
-const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
-const HEIGHT = window.innerHeight - 50;
-
 interface Layer {
   classes: Class[];
   selectedClassIndex: number;
   comments: { text: string; x: number; y: number }[];
 }
 
-const Workspace: any = () => {
+interface IProps {
+  TOOLBAR_WIDTH: number;
+  LAYERS_PANEL_WIDTH: number;
+  WIDTH: number;
+  HEIGHT: number;
+}
+
+const Workspace: any = ({
+  TOOLBAR_WIDTH,
+  LAYERS_PANEL_WIDTH,
+  WIDTH,
+  HEIGHT,
+}: IProps) => {
   const dispatch = useAppDispatch();
 
   const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
@@ -221,7 +228,7 @@ const Workspace: any = () => {
       ) : (
         <div
           style={{
-            height: 'calc(100vh - 50px)',
+            height: HEIGHT - 2,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

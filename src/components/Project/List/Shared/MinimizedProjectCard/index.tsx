@@ -45,6 +45,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
       100
   );
   if (calcProgress) progress = calcProgress(project);
+  if (progress > 100) progress = 100; //!remove this later
 
   return (
     <Card>
@@ -118,7 +119,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                   edge="end"
                   key={index}
                   onClick={() => a.action(project)}
-                  disabled={a.disabled}
+                  disabled={true}
                 >
                   <Iconify icon={a.icon as any} />
                 </IconButton>
@@ -131,7 +132,6 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                 variant={a.variant as any}
                 color="primary"
                 onClick={() => a.action(project)}
-                disabled={a.disabled}
               >
                 {a.label}
               </Button>

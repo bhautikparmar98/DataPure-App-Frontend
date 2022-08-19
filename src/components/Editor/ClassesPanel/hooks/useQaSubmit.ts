@@ -13,7 +13,7 @@ const useQaSubmit = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (classes.length > 0) handleQaSubmit();
-    }, 5 * 2000);
+    }, 1000 * 60 * 5);
 
     return () => {
       clearInterval(interval);

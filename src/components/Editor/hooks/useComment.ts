@@ -91,7 +91,6 @@ const useComment = (
       if (e.target.attrs?.type === 'Comment') return;
 
       const { x = 0, y = 0 } = bg!.getStage()!.getRelativePointerPosition();
-      console.log(x, y);
 
       // create textarea and style it
       const textarea = createStyledTextarea(x, y);

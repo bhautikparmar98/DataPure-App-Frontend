@@ -63,7 +63,10 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
 
   const router = useRouter();
 
-  const reviewHandler = () => {
+  const reviewHandler = (imageId: string | undefined) => {
+    if (typeof imageId === 'string') {
+      localStorage.setItem(projectId, imageId);
+    }
     router.push(`/editor/${projectId}`);
   };
 
@@ -189,7 +192,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({
                               IMAGE_STATUS.PENDING_CLIENT_REVIEW.value
                             }
                             variant="text"
-                            onClick={reviewHandler}
+                            onClick={(e) => reviewHandler(_id)}
                           >
                             Review
                           </Button>

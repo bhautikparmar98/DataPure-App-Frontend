@@ -1,20 +1,21 @@
 import { Annotation } from 'src/constants';
 import axios from 'src/utils/axios';
 
-const approveImage = async () => {};
-
 const qaSubmitAnnotations = async (
   annotations: Annotation[],
   imageId: string
 ) => {
-  console.log({ imageId });
-  return await axios.put(`image/${imageId}/annotation/approve`, {
+  return await axios.post(`image/${imageId}/annotation`, {
     annotations,
   });
 };
 
 const qaRequestRedo = async (imageId: string) => {
-  // !logic here
+  return await axios.put(`image/${imageId}/annotation/redo`);
 };
 
-export { qaSubmitAnnotations, qaRequestRedo };
+const qaApproveImage = async (imageId: string) => {
+  return await axios.put(`image/${imageId}/annotation/approve`);
+};
+
+export { qaSubmitAnnotations, qaRequestRedo, qaApproveImage };

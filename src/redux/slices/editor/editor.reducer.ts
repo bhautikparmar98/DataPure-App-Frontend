@@ -4,7 +4,6 @@ import { EditorActionTypes } from './editor.types';
 type State = {
   tool: Tool;
   isDrawing: boolean;
-
   preview: string;
 };
 

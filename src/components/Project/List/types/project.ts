@@ -13,6 +13,7 @@ export interface IProject {
   qaCount: number;
   clientReviewCount: number;
   doneCount: number;
+  finished?: boolean;
 
   // admins
   adminId: number;

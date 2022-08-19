@@ -6,13 +6,14 @@ const annotatorSubmitAnnotations = async (
   imageId: string,
   done: boolean
 ) => {
-  return done
-    ? await axios.put(`image/${imageId}/annotation/finish`, {
-        annotations,
-      })
-    : await axios.post(`image/${imageId}/annotation`, {
-        annotations,
-      });
+  let response = await axios.post(`image/${imageId}/annotation`, {
+    annotations,
+  });
+  if (done)
+    return await axios.put(`image/${imageId}/annotation/finish`, {
+      annotations,
+    });
+  return response;
 };
 
 export { annotatorSubmitAnnotations };

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { ROLES } from 'src/constants';
 import {
@@ -8,17 +9,19 @@ import {
 import { useAppDispatch } from 'src/redux/store';
 import axios from 'src/utils/axios';
 
-const useFetchImage = async (
-  projId: string | undefined,
-  role: string,
-  take = 1
-) => {
+const useFetchImage = (projId: string | undefined, role: string, take = 1) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [projId, take]);
 
   const getData = async (): Promise<void> => {
     try {
       let fetchedData = { data: { images: [] } };
-
       if (ROLES.CLIENT.value === role) {
         fetchedData = await axios.get(
           `/project/${projId}/${role.toLowerCase()}/review/images`
@@ -30,24 +33,22 @@ const useFetchImage = async (
       }
 
       if (fetchedData?.data!.images?.length > 0) {
-        console.log(fetchedData?.data!.images);
         dispatch(initializeState(fetchedData?.data));
+        if (ROLES.CLIENT.value === role) setImages(fetchedData.data.images);
       } else {
         dispatch(resetState());
-        // !uncomment this
-        // router.push('/');
+        router.push('/');
       }
     } catch (err) {
       console.error(err);
       dispatch(resetState());
-      // !uncomment this
-      // router.push('/');
+      router.push('/');
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, [projId, take]);
+  return {
+    images,
+  };
 };
 
 export default useFetchImage;

@@ -11,6 +11,7 @@ const AnnotatorProjectsComponents = () => {
   const { projects, loading, startHandler, counts, redoHandler } =
     useAnnotatorLogic();
 
+  console.log({ projects });
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
       <ProjectListHeader />
