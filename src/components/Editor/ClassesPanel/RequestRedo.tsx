@@ -4,8 +4,18 @@ import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 
 import NextLink from 'next/link';
 
-const RequestRedo = () => {
-  const { requestRedo } = useAnnotationSubmit();
+interface RequestRedoProps {
+  onRequestRedoFinish: (imgId: string) => void;
+}
+
+const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
+  const { requestRedo, imageId } = useAnnotationSubmit();
+
+  const requestRedoHandler = async (imgId: string) => {
+    await requestRedo();
+    onRequestRedoFinish(imgId);
+  };
+
   return (
     <Grid
       justifyContent="space-between"
@@ -14,7 +24,11 @@ const RequestRedo = () => {
       mb={5}
       sx={{ display: 'flex' }}
     >
-      <Button variant="contained" color="error" onClick={requestRedo}>
+      <Button
+        variant="contained"
+        color="error"
+        onClick={() => requestRedoHandler(imageId)}
+      >
         Request Redo
       </Button>
       <NextLink href="/project/list" passHref style={{ color: '#313131' }}>

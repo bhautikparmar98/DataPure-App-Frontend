@@ -15,7 +15,8 @@ const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
-  const { images } = useFetchImage(id, role);
+
+  const { images, removeImage } = useFetchImage(id);
   const dispatch = useAppDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
@@ -31,6 +32,8 @@ const Editor = () => {
         if (foundIndex >= 0) {
           setImgIndex(foundIndex);
 
+          localStorage.removeItem(id);
+
           // initialize state with requested image
           dispatch(
             initializeState({
@@ -42,7 +45,7 @@ const Editor = () => {
     };
 
     if (images?.length) getIndexedImage();
-  }, [id, images]);
+  }, [id, images?.length]);
 
   const getNextImg = () => {
     if (imgIndex < images.length - 1) {
@@ -69,6 +72,24 @@ const Editor = () => {
     }
   };
 
+  const requestRedoHandler = (imgId: string) => {
+    if (images.length === 1) return router.push(`/project/${id}/review`);
+
+    let ind = imgIndex;
+    if (imgIndex > 0) {
+      ind = ind - 1;
+      setImgIndex(ind);
+    }
+
+    const newImages = removeImage(imgId);
+
+    dispatch(
+      initializeState({
+        images: [newImages[ind]],
+      })
+    );
+  };
+
   const TOOLBAR_WIDTH = 70;
   const LAYERS_PANEL_WIDTH = 300;
   const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
@@ -84,7 +105,7 @@ const Editor = () => {
           HEIGHT={HEIGHT}
         />
       </div>
-      <ClassesPanel />
+      <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
       {ROLES.CLIENT.value === role && (
         <Grid
           container

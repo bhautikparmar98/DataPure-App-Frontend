@@ -110,10 +110,6 @@ const useAnnotationSubmit = () => {
           },
         });
         dispatch(resetState());
-
-        setTimeout(() => {
-          router.reload();
-        }, 3000);
       } else {
         throw new Error('Request has not been successful');
       }
@@ -156,6 +152,7 @@ const useAnnotationSubmit = () => {
     handleReset,
     requestRedo,
     handleApproveImage,
+    imageId,
   };
 };
 

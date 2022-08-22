@@ -10,7 +10,11 @@ import RequestRedo from './RequestRedo';
 import useAuth from 'src/hooks/useAuth';
 import { ROLES } from 'src/constants';
 
-const ClassPanel = () => {
+interface ClassPanelProps {
+  onRequestRedoFinish: (imgId: string) => void;
+}
+
+const ClassPanel: React.FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
   const { role } = useAuth();
   return (
     <div style={{ cursor: 'default' }}>
@@ -35,7 +39,7 @@ const ClassPanel = () => {
           }}
         >
           {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
-            <RequestRedo />
+            <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
           )}
           <Preview />
           <Filters />
