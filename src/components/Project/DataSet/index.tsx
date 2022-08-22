@@ -23,7 +23,7 @@ interface ProjectDataSetComponentProps {
 
 //------------------------------------------------------------------------
 
-const LOAD_MORE_COUNT = 5;
+const LOAD_MORE_COUNT = 8;
 
 export const ProjectDataSetComponent: React.FC<
   ProjectDataSetComponentProps

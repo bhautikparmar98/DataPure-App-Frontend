@@ -3,7 +3,7 @@ import { useAppSelector } from 'src/redux/store';
 
 const Preview = () => {
   const src: string = useAppSelector(({ classes }) => classes.src);
-  return src.length > 0 ? (
+  return src?.length > 0 ? (
     <Grid
       sx={{
         border: '5px solid yellow',

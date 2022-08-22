@@ -4,10 +4,7 @@ import { useEffect, useState } from 'react';
 import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import {
-  initializeState,
-  resetState,
-} from 'src/redux/slices/classes/classes.actions';
+import { initializeState } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import ClassesPanel from './ClassesPanel';
 import useFetchImage from './hooks/useFetchImage';
@@ -19,39 +16,54 @@ const Editor = () => {
   const id = router.query.id as string;
   const { role } = useAuth();
   const { images } = useFetchImage(id, role);
-
   const dispatch = useAppDispatch();
+
+  const [imgIndex, setImgIndex] = useState(0);
+
   let indicatorsHeight = ROLES.CLIENT.value === role ? 50 : 0;
 
-  const imgId = localStorage.getItem(id);
-  let initialIndex = 0;
   useEffect(() => {
-    if (typeof imgId === 'string' && imgId?.length > 0) {
-      const foundIndex = images.findIndex((img: any) => img._id! === imgId);
-      if (foundIndex >= 0) initialIndex = foundIndex;
-    }
-  }, [imgId, id]);
+    const getIndexedImage = () => {
+      const imgId = localStorage.getItem(id);
 
-  const [imgIndex, setImgIndex] = useState(initialIndex);
+      if (typeof imgId === 'string' && imgId?.length > 0) {
+        const foundIndex = images.findIndex((img: any) => img._id! === imgId);
+        if (foundIndex >= 0) {
+          setImgIndex(foundIndex);
+
+          // initialize state with requested image
+          dispatch(
+            initializeState({
+              images: [images[foundIndex]],
+            })
+          );
+        }
+      }
+    };
+
+    if (images?.length) getIndexedImage();
+  }, [id, images]);
 
   const getNextImg = () => {
     if (imgIndex < images.length - 1) {
-      setImgIndex((prev) => prev + 1);
+      const newIndex = imgIndex + 1;
+      setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
         initializeState({
-          images: [images[imgIndex]],
+          images: [images[newIndex]],
         })
       );
     }
   };
   const getPrevImg = () => {
     if (imgIndex > 0) {
-      setImgIndex((prev) => prev - 1);
+      const newIndex = imgIndex - 1;
+      setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
         initializeState({
-          images: [images[imgIndex]],
+          images: [images[newIndex]],
         })
       );
     }
@@ -83,7 +95,11 @@ const Editor = () => {
         >
           <Iconify
             icon={'bi:arrow-left-circle'}
-            sx={{ marginLeft: 5, cursor: 'pointer' }}
+            sx={{
+              marginLeft: 5,
+              cursor: 'pointer',
+              opacity: imgIndex === 0 ? 0.2 : 1,
+            }}
             onClick={(e) => getPrevImg()}
           />
           <span style={{ padding: '10px 15px' }}>
@@ -91,7 +107,11 @@ const Editor = () => {
           </span>
           <Iconify
             icon={'bi:arrow-right-circle'}
-            sx={{ marginRight: 5, cursor: 'pointer' }}
+            sx={{
+              marginRight: 5,
+              cursor: 'pointer',
+              opacity: imgIndex + 1 === images.length ? 0.2 : 1,
+            }}
             onClick={(e) => getNextImg()}
           />
         </Grid>
