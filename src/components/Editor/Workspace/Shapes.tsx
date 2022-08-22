@@ -13,6 +13,8 @@ interface IShapes {
   selectShape: (shapeId: string) => void;
   hideShapeTemporarily: (e: KonvaEventObject<MouseEvent>) => void;
   zooming: boolean;
+  bgX: number;
+  bgY: number;
   handleShapeMove: (
     e: any,
     classId: number,
@@ -35,6 +37,8 @@ const Shapes = ({
   stageDragging,
   hideTooltip,
   zooming,
+  bgX,
+  bgY,
 }: IShapes) => (
   <>
     {classes.map((classItem: Class, i) =>
@@ -97,6 +101,8 @@ const Shapes = ({
                     onChange={handleRectChange}
                     onDblClick={hideShapeTemporarily}
                     hideTransformer={stageDragging || zooming}
+                    bgX={bgX}
+                    bgY={bgY}
                   />
                 )}
               </Group>

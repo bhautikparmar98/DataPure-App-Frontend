@@ -7,6 +7,8 @@ interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
   hideTransformer: boolean;
+  bgX: number;
+  bgY: number;
   classItemName: string;
   onClick: (e: KonvaEventObject<Event>) => void;
   onChange: (e: Konva.ShapeConfig) => void;
@@ -22,6 +24,8 @@ const Rectangle = ({
   onChange,
   onDblClick,
   classItemName,
+  bgX,
+  bgY,
   ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
@@ -73,6 +77,8 @@ const Rectangle = ({
         onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
+        x={shapeProps.x + bgX}
+        y={shapeProps.y + bgY}
         class={classItemName}
         onDblClick={onDblClick}
         onDragEnd={(e: any) => {
