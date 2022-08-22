@@ -23,8 +23,8 @@ const BackgroundImage = ({
     <Rect
       x={x}
       y={y}
-      width={width}
-      height={height}
+      width={width * widthRatio}
+      height={height * heightRatio}
       fillPatternImage={background}
       fillPatternRepeat={'no-repeat'}
       fillPatternScaleX={widthRatio}
