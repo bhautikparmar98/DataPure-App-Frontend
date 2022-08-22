@@ -113,6 +113,7 @@ const useDraw = (
   ) => {
     if (stageDragging || !stageRef.current) return;
     const shape = _.cloneDeep(group);
+    let shapes = [];
     if (shape.type === TOOLS.LINE) {
       let { points } = e.target.attrs;
       const { x = 0, y = 0 } = e.target.attrs;
@@ -121,17 +122,22 @@ const useDraw = (
         return point + y;
       });
       shape.points = points;
+      shapes = [{ ...shape }];
     } else {
+      const bg = e.target.getStage()?.find('#canvasBackground');
+      if (!bg || bg.length === 0) return;
+      const { x: bgX, y: bgY } = bg[0].attrs;
+
       const { x, y } = e.target.children[0].getClientRect({
         relativeTo: e.target,
       });
       const { x: shapeX, y: shapeY } = e.target.attrs;
 
-      shape.x = shapeX + x;
-      shape.y = shapeY + y;
+      shape.x = shapeX + x - bgX + 1;
+      shape.y = shapeY + y - bgY + 1;
+      shapes = [{ ...shape }];
+      e.target.children[0].destroy();
     }
-    const shapes = [{ ...shape }];
-    e.target.children[0].destroy();
     dispatch(updateAnnotation(classId, annotationId, { shapes }));
   };
 

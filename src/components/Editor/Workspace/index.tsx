@@ -150,7 +150,7 @@ const Workspace: any = ({
           draggable={stageDragging}
           onDragEnd={() => {}}
         >
-          <Layer ref={bgLayerRef}>
+          <Layer ref={bgLayerRef} id="background_layer">
             <BackgroundImage
               width={width}
               height={height}
@@ -221,6 +221,8 @@ const Workspace: any = ({
                 stageDragging={stageDragging}
                 hideTooltip={hideTooltip}
                 zooming={zooming}
+                bgX={bgX}
+                bgY={bgY}
               />
             </Group>
           </Layer>

@@ -24,6 +24,7 @@ const useKeyboard = (
       case 'Space':
         return handlePanTool();
       case 'Delete':
+      case 'Backspace':
         return handleShapeDeletion();
 
       default:

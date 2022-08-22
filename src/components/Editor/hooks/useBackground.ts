@@ -76,17 +76,6 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     [width, height, heightRatio, widthRatio, stageWidth, stageHeight]
   )();
 
-  console.log({
-    width,
-    height,
-    heightRatio,
-    widthRatio,
-    stageWidth,
-    stageHeight,
-    bgX,
-    bgY,
-  });
-
   return {
     background,
     widthRatio,
