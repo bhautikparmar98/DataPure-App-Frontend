@@ -47,8 +47,9 @@ const Rectangle = ({
       node.scaleY(1);
       onChange({
         ...shapeProps,
-        x: node.x(),
-        y: node.y(),
+        // reset x,y pair to be without the coords of the background in redux state
+        x: node.x() - bgX,
+        y: node.y() - bgY,
         // set minimal value
         width: Math.max(5, node.width() * scaleX),
         height: Math.max(node.height() * scaleY),
@@ -77,8 +78,8 @@ const Rectangle = ({
         onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
-        x={shapeProps.x + bgX}
-        y={shapeProps.y + bgY}
+        x={(shapeProps.x || 0) + bgX}
+        y={(shapeProps.y || 0) + bgY}
         class={classItemName}
         onDblClick={onDblClick}
         onDragEnd={(e: any) => {
