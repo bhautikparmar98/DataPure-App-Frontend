@@ -43,6 +43,7 @@ export const classesReducer = (state = initialState, action: any) => {
 
         return anno;
       });
+
       let { classes } = project;
       classes = classes.map((classItem: Class) => ({
         ...classItem,

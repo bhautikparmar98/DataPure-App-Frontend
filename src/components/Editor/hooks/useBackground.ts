@@ -56,9 +56,13 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     height = 0;
   if (background !== undefined) {
     widthRatio =
-      stageWidth > background.width ? stageWidth / background.width : 1;
+      stageWidth > background.width
+        ? stageWidth / background.width
+        : background?.width / stageWidth;
     heightRatio =
-      stageHeight > background.height ? stageHeight / background.height : 1;
+      stageHeight > background.height
+        ? stageHeight / background.height
+        : background.height / stageHeight;
 
     width = background.width;
     height = background.height;

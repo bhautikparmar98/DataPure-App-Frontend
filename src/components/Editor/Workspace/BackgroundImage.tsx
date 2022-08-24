@@ -21,14 +21,15 @@ const BackgroundImage = ({
 }: Props) => {
   return (
     <Rect
-      x={x}
+      x={x + width}
       y={y}
       width={width * widthRatio}
       height={height * heightRatio}
+      rotation={90}
       fillPatternImage={background}
       fillPatternRepeat={'no-repeat'}
-      fillPatternScaleX={widthRatio}
-      fillPatternScaleY={heightRatio}
+      // fillPatternScaleX={widthRatio}
+      // fillPatternScaleY={heightRatio}
       id="canvasBackground"
       listening={false}
     />

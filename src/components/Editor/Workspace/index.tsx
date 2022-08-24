@@ -204,28 +204,30 @@ const Workspace: any = ({
                 />
               ))}
           </Layer>
-          <Layer>
-            <Group
-              ref={shapesRef}
-              onClick={(e) => handleShapesCaching(false, e)}
-            >
-              <Shapes
-                classes={classes}
-                handleRectChange={handleRectChange}
-                showTooltip={showTooltip}
-                selectShape={selectShape}
-                hideShapeTemporarily={hideShapeTemporarily}
-                handleShapeMove={handleShapeMove}
-                currentTool={currentTool}
-                selectedId={selectedId}
-                stageDragging={stageDragging}
-                hideTooltip={hideTooltip}
-                zooming={zooming}
-                bgX={bgX}
-                bgY={bgY}
-              />
-            </Group>
-          </Layer>
+          {background?.width > 0 && (
+            <Layer>
+              <Group
+                ref={shapesRef}
+                onClick={(e) => handleShapesCaching(false, e)}
+              >
+                <Shapes
+                  classes={classes}
+                  handleRectChange={handleRectChange}
+                  showTooltip={showTooltip}
+                  selectShape={selectShape}
+                  hideShapeTemporarily={hideShapeTemporarily}
+                  handleShapeMove={handleShapeMove}
+                  currentTool={currentTool}
+                  selectedId={selectedId}
+                  stageDragging={stageDragging}
+                  hideTooltip={hideTooltip}
+                  zooming={zooming}
+                  bgX={bgX}
+                  bgY={bgY}
+                />
+              </Group>
+            </Layer>
+          )}
         </Stage>
       ) : (
         <div
