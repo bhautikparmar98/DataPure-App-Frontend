@@ -70,11 +70,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={3}>
-        <Box my={2}>
-          {!!errors.afterSubmit && (
-            <Alert severity="error">{errors.afterSubmit.message}</Alert>
-          )}
-        </Box>
+        {!!errors.afterSubmit && (
+          <Alert severity="error">{errors.afterSubmit.message}</Alert>
+        )}
 
         <RHFTextField key="emailAddressForLogin" name="email" label="Email" />
 
