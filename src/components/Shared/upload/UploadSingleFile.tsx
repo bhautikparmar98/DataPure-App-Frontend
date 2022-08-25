@@ -16,11 +16,11 @@ const DropZoneStyle = styled('div')(({ theme }) => ({
   outline: 'none',
   overflow: 'hidden',
   position: 'relative',
-  padding: theme.spacing(5, 1),
+  padding: theme.spacing(3, 1),
   borderRadius: theme.shape.borderRadius,
   transition: theme.transitions.create('padding'),
   backgroundColor: theme.palette.background.neutral,
-  border: `1px dashed ${theme.palette.grey[500_32]}`,
+  border: `3px dashed #688BB1`,
   '&:hover': { opacity: 0.72, cursor: 'pointer' },
 }));
 
@@ -31,9 +31,17 @@ export default function UploadSingleFile({
   file,
   helperText,
   sx,
+  minHeight,
+  label,
   ...other
 }: UploadProps) {
-  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    fileRejections,
+  } = useDropzone({
     multiple: false,
     ...other,
   });
@@ -50,13 +58,13 @@ export default function UploadSingleFile({
             bgcolor: 'error.lighter',
           }),
           ...(file && {
-            padding: '12% 0',
+            borderColor: 'success.dark',
           }),
         }}
       >
         <input {...getInputProps()} />
 
-        <BlockContent />
+        <BlockContent minHeight={minHeight} label={label} />
 
         {file && (
           <Image
@@ -74,7 +82,9 @@ export default function UploadSingleFile({
         )}
       </DropZoneStyle>
 
-      {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
+      {fileRejections.length > 0 && (
+        <RejectionFiles fileRejections={fileRejections} />
+      )}
 
       {helperText && helperText}
     </Box>

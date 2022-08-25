@@ -16,6 +16,8 @@ export interface UploadProps extends DropzoneOptions {
   file: CustomFile | string | null;
   helperText?: ReactNode;
   sx?: SxProps<Theme>;
+  minHeight: number;
+  label?: string;
 }
 
 export interface UploadMultiFileProps extends DropzoneOptions {
@@ -31,4 +33,5 @@ export interface UploadMultiFileProps extends DropzoneOptions {
   uploading?: boolean;
   progress?: number;
   buffer?: number;
+  label?: string;
 }

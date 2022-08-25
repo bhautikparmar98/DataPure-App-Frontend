@@ -32,7 +32,6 @@ interface AnnoData {
 
 export const formatAnnotations = (data: AnnoData) => {
   const { annotations, images } = data;
-  console.log({ annotations });
 
   const imagesData: ImageData = {};
 

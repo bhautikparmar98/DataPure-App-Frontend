@@ -34,6 +34,7 @@ export default function UploadMultiFile({
   blockContent,
   minHeight,
   uploading,
+  label,
   progress,
   buffer,
   ...other
@@ -47,9 +48,6 @@ export default function UploadMultiFile({
   } = useDropzone({
     ...other,
   });
-
-  console.log('uploading && progress', uploading);
-  console.log('uploading && progress', progress);
 
   return (
     <Box sx={{ width: '100%', ...sx }}>
@@ -68,7 +66,7 @@ export default function UploadMultiFile({
 
         <input {...getInputProps()} />
 
-        <BlockContent minHeight={minHeight} />
+        <BlockContent minHeight={minHeight} label={label} />
       </DropZoneStyle>
 
       {uploading && (

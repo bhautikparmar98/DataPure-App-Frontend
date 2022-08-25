@@ -15,6 +15,7 @@ import {
 
 interface Props extends Omit<UploadProps, 'file'> {
   name: string;
+  minHeight: number;
 }
 
 export function RHFUploadAvatar({ name, ...other }: Props) {
@@ -44,7 +45,7 @@ export function RHFUploadAvatar({ name, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadSingleFile({ name, ...other }: Props) {
+export function RHFUploadSingleFile({ name, minHeight, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
@@ -59,6 +60,7 @@ export function RHFUploadSingleFile({ name, ...other }: Props) {
             accept="image/*"
             file={field.value}
             error={checkError}
+            minHeight={minHeight}
             helperText={
               checkError && (
                 <FormHelperText error sx={{ px: 2 }}>

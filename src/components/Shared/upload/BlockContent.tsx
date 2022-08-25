@@ -5,7 +5,13 @@ import { UploadIllustration } from 'src/assets';
 
 // ----------------------------------------------------------------------
 
-export default function BlockContent({ minHeight }: { minHeight?: number }) {
+export default function BlockContent({
+  minHeight,
+  label,
+}: {
+  minHeight?: number;
+  label?: string;
+}) {
   return (
     <Stack
       spacing={2}
@@ -19,7 +25,7 @@ export default function BlockContent({ minHeight }: { minHeight?: number }) {
 
       <Box sx={{ p: 3 }}>
         <Typography gutterBottom variant="h5">
-          Drop or Select file
+          {label ? label : 'Drop or Select file'}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
