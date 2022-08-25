@@ -3600,6 +3600,11 @@
   "resolved" "https://registry.npmjs.org/exenv/-/exenv-1.2.2.tgz"
   "version" "1.2.2"
 
+"exif-js@^2.3.0":
+  "integrity" "sha512-1Og9pAzG2FZRVlaavH8bB8BTeHcjMdJhKmeQITkX+uLRCD0xPtKAdZ2clZmQdJ56p9adXtJ8+jwrGp/4505lYg=="
+  "resolved" "https://registry.npmjs.org/exif-js/-/exif-js-2.3.0.tgz"
+  "version" "2.3.0"
+
 "expression-eval@^2.0.0":
   "integrity" "sha512-FUJO/Akvl/JOWkvlqZaqbkhsEWlCJWDeZG4tzX96UH68D9FeRgYgtb55C2qtqbORC0Q6x5419EDjWu4IT9kQfg=="
   "resolved" "https://registry.npmjs.org/expression-eval/-/expression-eval-2.1.0.tgz"

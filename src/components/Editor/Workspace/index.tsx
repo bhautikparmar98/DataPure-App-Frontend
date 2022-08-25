@@ -52,12 +52,20 @@ const Workspace: any = ({
   const shapesRef = useRef<Konva.Group>(null);
   const bgLayerRef = useRef<Konva.Layer>(null);
 
-  const { background, width, height, widthRatio, heightRatio, bgX, bgY } =
-    useBackground({
-      url: src,
-      stageWidth: WIDTH,
-      stageHeight: HEIGHT,
-    });
+  const {
+    background,
+    backgroundStatus,
+    width,
+    height,
+    widthRatio,
+    heightRatio,
+    bgX,
+    bgY,
+  } = useBackground({
+    url: src,
+    stageWidth: WIDTH,
+    stageHeight: HEIGHT,
+  });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
@@ -155,6 +163,7 @@ const Workspace: any = ({
               width={width}
               height={height}
               background={background}
+              backgroundStatus={backgroundStatus}
               widthRatio={widthRatio}
               heightRatio={heightRatio}
               x={bgX}
@@ -204,7 +213,7 @@ const Workspace: any = ({
                 />
               ))}
           </Layer>
-          {background?.width > 0 && (
+          {backgroundStatus === 'loaded' && (
             <Layer>
               <Group
                 ref={shapesRef}

@@ -84,11 +84,11 @@ const Shapes = ({
                     shapeProps={{
                       ...shape,
                       fill: classItem.color
-                        .replace(')', ', 0.3)')
+                        .replace(')', ', 0.6)')
                         .replace('rgb', 'rgba'),
-                      opacity: 0.7,
+                      opacity: 0.8,
                       stroke: classItem.color,
-                      strokeWidth: 2,
+                      strokeWidth: 20,
                     }}
                     classItemName={classItem.name}
                     isSelected={shape.id === selectedId}

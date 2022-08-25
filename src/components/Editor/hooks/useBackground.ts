@@ -1,4 +1,5 @@
 import useImage from 'use-image';
+
 import { useCallback } from 'react';
 type Props = {
   url: string;
@@ -48,7 +49,8 @@ const calcBgPosition: CalcBgPosition = ({
 };
 
 const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
-  const [background] = useImage(url);
+  let [background, backgroundStatus] = useImage(url);
+
   let widthRatio = 1,
     heightRatio = 1;
 
@@ -82,6 +84,7 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
 
   return {
     background,
+    backgroundStatus,
     widthRatio,
     heightRatio,
     width,

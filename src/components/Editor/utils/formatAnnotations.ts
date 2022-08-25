@@ -87,7 +87,7 @@ export const formatAnnotations = (data: AnnoData) => {
           {
             _id: '1',
             id: '1',
-            color: 'rgb(100,0,100)',
+            color: 'rgb(0,0,255)',
             name: 'Metals',
           },
         ],

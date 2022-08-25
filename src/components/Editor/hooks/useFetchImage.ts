@@ -10,9 +10,6 @@ import {
 import { useAppDispatch } from 'src/redux/store';
 import axios from 'src/utils/axios';
 
-import { formatAnnotations } from 'src/components/Editor/utils/formatAnnotations';
-import AnnotationsData from 'src/components/Editor/utils/annotations.json';
-
 const useFetchImage = (projId: string | undefined, take = 1) => {
   const router = useRouter();
   const { role } = useAuth();
@@ -29,11 +26,9 @@ const useFetchImage = (projId: string | undefined, take = 1) => {
     try {
       let fetchedData = { data: { images: [] } };
       if (ROLES.CLIENT.value === role) {
-        // fetchedData = await axios.get(
-        //   `/project/${projId}/${role.toLowerCase()}/review/images?take=${10000}`
-        // );
-        fetchedData = formatAnnotations(AnnotationsData);
-        console.log(fetchedData);
+        fetchedData = await axios.get(
+          `/project/${projId}/${role.toLowerCase()}/review/images?take=${10000}`
+        );
       } else {
         fetchedData = await axios.get(
           `/project/${projId}/${role.toLowerCase()}/images?take=${take}`
