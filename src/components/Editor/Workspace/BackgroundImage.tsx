@@ -1,7 +1,6 @@
 import Konva from 'konva';
-import { useCallback, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Rect } from 'react-konva';
-import useImgOrientation from '../hooks/useImgOrientation';
 
 type Props = {
   width: number;
@@ -12,6 +11,7 @@ type Props = {
   heightRatio: number;
   background: HTMLImageElement | undefined;
   backgroundStatus: string;
+  rotation: number;
 };
 
 const BackgroundImage = ({
@@ -22,35 +22,20 @@ const BackgroundImage = ({
   background,
   widthRatio,
   heightRatio,
-  backgroundStatus,
+  rotation,
 }: Props) => {
   const rectRef = useRef<Konva.Rect | null>(null);
-
-  const { getOrientation, orientation } = useImgOrientation();
-
-  const checkOrientation = () => {
-    if (background?.complete && background.width > 0) {
-      const img = new Image();
-      img.onload = async () => {
-        getOrientation(img);
-      };
-      img.src = background.src;
-    }
-  };
-
-  useEffect(() => {
-    if (backgroundStatus === 'loaded' && rectRef?.current) checkOrientation();
-  }, [background]);
 
   return (
     <Rect
       ref={rectRef}
       // !Fix this
-      x={x + width}
+      // x={x + (rotation === 90 ? width : 0)}
+      x={x}
       y={y}
       width={width * widthRatio}
       height={height * heightRatio}
-      rotation={orientation}
+      rotation={rotation}
       fillPatternImage={background}
       fillPatternRepeat={'no-repeat'}
       // fillPatternScaleX={widthRatio}

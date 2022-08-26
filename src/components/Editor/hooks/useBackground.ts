@@ -1,6 +1,7 @@
 import useImage from 'use-image';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import useImgRotation from './useImgRotation';
 type Props = {
   url: string;
   stageWidth: number;
@@ -50,6 +51,18 @@ const calcBgPosition: CalcBgPosition = ({
 
 const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
   let [background, backgroundStatus] = useImage(url);
+  const { getRotation, rotation } = useImgRotation();
+
+  const checkRotation = useCallback(() => {
+    if (backgroundStatus !== 'loaded') return;
+    getRotation(background?.src || '');
+  }, [backgroundStatus, background]);
+
+  useEffect(() => {
+    if (background && background.src?.length > 0) {
+      checkRotation();
+    }
+  }, [background]);
 
   let widthRatio = 1,
     heightRatio = 1;
@@ -68,8 +81,11 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
 
     width = background.width;
     height = background.height;
+    // background.style.transform = 'rotate(45deg)';
+    // background.style.border = '20px solid #ddd';
+    // console.log(background);
   }
-  const { bgX, bgY } = useCallback(
+  let { bgX, bgY } = useCallback(
     () =>
       calcBgPosition({
         width,
@@ -82,6 +98,14 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     [width, height, heightRatio, widthRatio, stageWidth, stageHeight]
   )();
 
+  // if img has Orientation 6 EXIF value, then it will be flipped and this is a fix for the bgX for it
+  if (rotation === 90) {
+    // [bgX, bgY] = [bgY, bgX];
+    // [height, width] = [width, height];
+    // [widthRatio, heightRatio] = [heightRatio, widthRatio];
+    // bgX = bgX + width;
+  }
+
   return {
     background,
     backgroundStatus,
@@ -91,6 +115,7 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     height,
     bgX,
     bgY,
+    rotation,
   };
 };
 
