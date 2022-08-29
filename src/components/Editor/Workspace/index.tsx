@@ -177,10 +177,14 @@ const Workspace: any = ({
           <Layer>
             <TempShapes lines={lines} rects={rects} />
             {tooltip.text.length > 0 && (
-              <Group>
+              <Group y={-80}>
                 <Rect
                   x={tooltip.x - 8}
-                  y={tooltip.y - 5}
+                  y={tooltip.y + 20}
+                  scaleX={5}
+                  scaleY={5}
+                  offsetY={8}
+                  offsetX={2}
                   width={tooltip.rectWidth}
                   height={24}
                   stroke={'rgba(0,0,0,0.4)'}
@@ -193,7 +197,7 @@ const Workspace: any = ({
                   shadowOpacity={0.2}
                   cornerRadius={5}
                 />
-                <Text {...tooltip} />
+                <Text {...tooltip} scaleX={5} scaleY={5} />
               </Group>
             )}
 
