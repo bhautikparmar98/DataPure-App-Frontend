@@ -9,9 +9,9 @@ const MIN_SCALE = 0.005;
 // const MAX_SCALE = 20;
 // const PREVIEW_SCALE = 1 / 4;
 
-const useZoom = (bgRatio: number) => {
+const useZoom = () => {
   const [stageScale, setStageScale] = useState({
-    stageScale: bgRatio / 8,
+    stageScale: 1,
     stageX: 0,
     stageY: 0,
   });

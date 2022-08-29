@@ -57,16 +57,24 @@ const useRect = (
     if (newAnnotation.length === 1) {
       const sx = newAnnotation[0].x || 0;
       const sy = newAnnotation[0].y || 0;
-
       const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+      const width = x - sx;
+      const height = y - sy;
+
+      const bg = event.target.getStage()?.find('#canvasBackground');
+      if (!bg || bg.length === 0) return;
+      const { x: bgX, y: bgY, width: bgWidth } = bg[0].attrs;
+
+      // const isValidX = x > bgX ? x + width <= bgX + bgWidth : width - x > bgX;
+
       if (x != null && y != null) {
         setNewAnnotation([
           {
             ...rectConfig,
             x: sx,
             y: sy,
-            width: x - sx,
-            height: y - sy,
+            width,
+            height,
           },
         ]);
       }

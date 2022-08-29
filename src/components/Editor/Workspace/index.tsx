@@ -100,9 +100,7 @@ const Workspace: any = ({
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
-  const { stageScale, handleWheel, zooming } = useZoom(
-    Math.min(widthRatio, heightRatio)
-  );
+  const { stageScale, handleWheel, zooming } = useZoom();
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
@@ -166,24 +164,20 @@ const Workspace: any = ({
               width={width}
               height={height}
               background={background}
-              backgroundStatus={backgroundStatus}
-              widthRatio={widthRatio}
-              heightRatio={heightRatio}
               x={bgX}
               y={bgY}
-              // rotation={rotation}
             />
           </Layer>
           <Layer>
             <TempShapes lines={lines} rects={rects} />
             {tooltip.text.length > 0 && (
-              <Group y={-80}>
+              <Group y={-20}>
                 <Rect
                   x={tooltip.x - 8}
                   y={tooltip.y + 20}
-                  scaleX={5}
-                  scaleY={5}
-                  offsetY={8}
+                  scaleX={2}
+                  scaleY={2}
+                  offsetY={15}
                   offsetX={2}
                   width={tooltip.rectWidth}
                   height={24}
@@ -197,7 +191,7 @@ const Workspace: any = ({
                   shadowOpacity={0.2}
                   cornerRadius={5}
                 />
-                <Text {...tooltip} scaleX={5} scaleY={5} />
+                <Text {...tooltip} scaleX={2} scaleY={2} />
               </Group>
             )}
 
