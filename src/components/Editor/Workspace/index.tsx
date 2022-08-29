@@ -61,6 +61,7 @@ const Workspace: any = ({
     heightRatio,
     bgX,
     bgY,
+    rotation,
   } = useBackground({
     url: src,
     stageWidth: WIDTH,
@@ -158,7 +159,7 @@ const Workspace: any = ({
           draggable={stageDragging}
           onDragEnd={() => {}}
         >
-          <Layer ref={bgLayerRef} id="background_layer">
+          <Layer ref={bgLayerRef} id="background_layer" x={width} y={0}>
             <BackgroundImage
               width={width}
               height={height}
@@ -168,6 +169,7 @@ const Workspace: any = ({
               heightRatio={heightRatio}
               x={bgX}
               y={bgY}
+              rotation={rotation}
             />
           </Layer>
           <Layer>
