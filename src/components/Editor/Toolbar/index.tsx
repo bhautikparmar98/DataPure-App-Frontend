@@ -1,20 +1,20 @@
 // MUI
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormatShapesIcon from '@mui/icons-material/FormatShapes';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import { styled } from '@mui/material/styles';
 // Icons
 import { Icon } from '@iconify/react';
 // Constants
-import { TOOLS, type Tool } from 'src/constants';
+import Image from 'src/components/Shared/Image';
+import { ROLES, TOOLS, type Tool } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 import { setTool } from 'src/redux/slices/editor';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import Image from 'src/components/Shared/Image';
 
 const drawerWidth = 240;
 
@@ -48,9 +48,14 @@ const ICONS = {
   // [TOOLS.PEN_TOOL]: 'bi:vector-pen',
 };
 
-function Toolbar() {
+interface ToolbarProps {
+  isAnnotatorRedo?: boolean;
+}
+
+const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   const open = false;
   const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
+  const { role } = useAuth();
 
   const dispatch = useAppDispatch();
   const handleToolClick = (newTool: Tool) => {
@@ -76,6 +81,15 @@ function Toolbar() {
         >
           {Object.values(TOOLS)
             .slice(0, 4)
+            .filter((key) => {
+              if (
+                key === TOOLS.COMMENT &&
+                role === ROLES.ANNOTATOR.value &&
+                !isAnnotatorRedo
+              )
+                return false;
+              return true;
+            })
             .map((text, index) => (
               <ListItem key={`${text}-${index}`} disablePadding>
                 <ListItemButton
@@ -112,6 +126,6 @@ function Toolbar() {
       </Drawer>
     </Box>
   );
-}
+};
 
 export default Toolbar;
