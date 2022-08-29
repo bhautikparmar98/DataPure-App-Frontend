@@ -16,7 +16,7 @@ const Editor = () => {
   const id = router.query.id as string;
   const { role } = useAuth();
 
-  const { images, removeImage } = useFetchImage(id);
+  const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
   const dispatch = useAppDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
@@ -59,6 +59,7 @@ const Editor = () => {
       );
     }
   };
+
   const getPrevImg = () => {
     if (imgIndex > 0) {
       const newIndex = imgIndex - 1;
@@ -96,7 +97,7 @@ const Editor = () => {
   const HEIGHT = window.innerHeight - indicatorsHeight;
   return (
     <div id="editor">
-      <Toolbar />
+      <Toolbar isAnnotatorRedo={isAnnotatorRedo} />
       <div style={{ marginLeft: 70 }}>
         <Workspace
           TOOLBAR_WIDTH={TOOLBAR_WIDTH}

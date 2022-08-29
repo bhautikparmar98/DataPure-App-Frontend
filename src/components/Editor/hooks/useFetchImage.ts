@@ -15,6 +15,7 @@ const useFetchImage = (projId: string | undefined, take = 1) => {
   const { role } = useAuth();
 
   const dispatch = useAppDispatch();
+  const [isAnnotatorRedo, setIsAnnotatorRedo] = useState(false);
 
   const [images, setImages] = useState([]);
 
@@ -30,8 +31,17 @@ const useFetchImage = (projId: string | undefined, take = 1) => {
           `/project/${projId}/${role.toLowerCase()}/review/images?take=${10000}`
         );
       } else {
+        let redoQuery = '';
+        if (ROLES.ANNOTATOR.value === role) {
+          const item = localStorage.getItem('redo');
+          if (item) {
+            redoQuery = '&redo=true';
+            setIsAnnotatorRedo(true);
+          }
+        }
+
         fetchedData = await axios.get(
-          `/project/${projId}/${role.toLowerCase()}/images?take=${take}`
+          `/project/${projId}/${role.toLowerCase()}/images?take=${take}${redoQuery}`
         );
       }
 
@@ -58,6 +68,7 @@ const useFetchImage = (projId: string | undefined, take = 1) => {
   return {
     images,
     removeImage,
+    isAnnotatorRedo,
   };
 };
 
