@@ -1,7 +1,17 @@
 import Cookies from 'js-cookie';
-import { ReactNode, createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 // utils
-import getColorPresets, { colorPresets, defaultPreset } from 'src/utils/getColorPresets';
+import getColorPresets, {
+  colorPresets,
+  defaultPreset,
+} from 'src/utils/getColorPresets';
 // @type
 import {
   ThemeMode,
@@ -59,14 +69,16 @@ function SettingsProvider({
   const onChangeDirection = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSettings({
       ...settings,
-      themeDirection: (event.target as HTMLInputElement).value as ThemeDirection,
+      themeDirection: (event.target as HTMLInputElement)
+        .value as ThemeDirection,
     });
   };
 
   const onChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSettings({
       ...settings,
-      themeColorPresets: (event.target as HTMLInputElement).value as ThemeColorPresets,
+      themeColorPresets: (event.target as HTMLInputElement)
+        .value as ThemeColorPresets,
     });
   };
 
@@ -133,9 +145,13 @@ function useSettingCookies(
   const [settings, setSettings] = useState<SettingsValueProps>(defaultSettings);
 
   const onChangeSetting = () => {
-    Cookies.set(cookiesKey.themeMode, settings.themeMode, { expires: cookiesExpires });
+    Cookies.set(cookiesKey.themeMode, settings.themeMode, {
+      expires: cookiesExpires,
+    });
 
-    Cookies.set(cookiesKey.themeDirection, settings.themeDirection, { expires: cookiesExpires });
+    Cookies.set(cookiesKey.themeDirection, settings.themeDirection, {
+      expires: cookiesExpires,
+    });
 
     Cookies.set(cookiesKey.themeColorPresets, settings.themeColorPresets, {
       expires: cookiesExpires,
@@ -145,9 +161,13 @@ function useSettingCookies(
       expires: cookiesExpires,
     });
 
-    Cookies.set(cookiesKey.themeStretch, JSON.stringify(settings.themeStretch), {
-      expires: cookiesExpires,
-    });
+    Cookies.set(
+      cookiesKey.themeStretch,
+      JSON.stringify(settings.themeStretch),
+      {
+        expires: cookiesExpires,
+      }
+    );
   };
 
   useEffect(() => {

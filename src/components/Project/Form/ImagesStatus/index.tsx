@@ -117,11 +117,7 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
       <DialogContent>
         <Box mt={3}>
           {numberOfAnnotationsWithOutImages > 0 && (
-            <Alert severity="warning">
-              You have #{numberOfAnnotationsWithOutImages} annotations with no
-              image uploaded and we will not consider them, please make sure you
-              upload correct images
-            </Alert>
+            <Alert severity="warning">We have detected a missing image</Alert>
           )}
         </Box>
         <Box minWidth={800}>

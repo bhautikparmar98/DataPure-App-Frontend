@@ -6,6 +6,16 @@ import { ThemeColorPresets } from 'src/components/Shared/settings/type';
 // ----------------------------------------------------------------------
 
 export const colorPresets = [
+  // BLUE
+  {
+    name: 'blue',
+    lighter: '#D1E9FC',
+    light: '#76B0F1',
+    main: '#2065D1',
+    dark: '#103996',
+    darker: '#061B64',
+    contrastText: '#fff',
+  },
   // DEFAULT
   {
     name: 'default',
@@ -30,16 +40,6 @@ export const colorPresets = [
     dark: '#0E77B7',
     darker: '#053D7A',
     contrastText: palette.light.grey[800],
-  },
-  // BLUE
-  {
-    name: 'blue',
-    lighter: '#D1E9FC',
-    light: '#76B0F1',
-    main: '#2065D1',
-    dark: '#103996',
-    darker: '#061B64',
-    contrastText: '#fff',
   },
   // ORANGE
   {

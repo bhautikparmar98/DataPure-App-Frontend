@@ -2,7 +2,14 @@ import { AnimatePresence, m } from 'framer-motion';
 import { useState, useEffect } from 'react';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
-import { Backdrop, Divider, Typography, Stack, FormControlLabel, Radio } from '@mui/material';
+import {
+  Backdrop,
+  Divider,
+  Typography,
+  Stack,
+  FormControlLabel,
+  Radio,
+} from '@mui/material';
 // hooks
 import useSettings from 'src/hooks/useSettings';
 // utils
@@ -25,7 +32,10 @@ import SettingColorPresets from './SettingColorPresets';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(m.div)(({ theme }) => ({
-  ...cssStyles(theme).bgBlur({ color: theme.palette.background.paper, opacity: 0.92 }),
+  ...cssStyles(theme).bgBlur({
+    color: theme.palette.background.paper,
+    opacity: 0.92,
+  }),
   top: 0,
   right: 0,
   bottom: 0,
@@ -39,7 +49,9 @@ const RootStyle = styled(m.div)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 3,
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
   boxShadow: `-24px 12px 32px -4px ${alpha(
-    theme.palette.mode === 'light' ? theme.palette.grey[500] : theme.palette.common.black,
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[500]
+      : theme.palette.common.black,
     0.16
   )}`,
 }));
@@ -98,10 +110,19 @@ export default function Settings() {
       <Backdrop
         open={open}
         onClick={handleClose}
-        sx={{ background: 'transparent', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          background: 'transparent',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
       />
 
-      {!open && <ToggleButton open={open} notDefault={notDefault} onToggle={handleToggle} />}
+      {!open && (
+        <ToggleButton
+          open={open}
+          notDefault={notDefault}
+          onToggle={handleToggle}
+        />
+      )}
 
       <AnimatePresence>
         {open && (
@@ -143,10 +164,10 @@ export default function Settings() {
                     <SettingLayout />
                   </Stack>
 
-                  <Stack spacing={1.5}>
-                    <Typography variant="subtitle2">Presets</Typography>
-                    <SettingColorPresets />
-                  </Stack>
+                  {/* <Stack spacing={1.5}>
+                      <Typography variant="subtitle2">Presets</Typography>
+                      <SettingColorPresets />
+                    </Stack> */}
 
                   <Stack spacing={1.5}>
                     <Typography variant="subtitle2">Stretch</Typography>
