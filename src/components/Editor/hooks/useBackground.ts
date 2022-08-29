@@ -1,7 +1,7 @@
 import useImage from 'use-image';
 
 import { useCallback, useEffect } from 'react';
-import useImgRotation from './useImgRotation';
+// import useImgRotation from './useImgRotation';
 type Props = {
   url: string;
   stageWidth: number;
@@ -32,16 +32,20 @@ const calcBgPosition: CalcBgPosition = ({
   stageWidth,
   stageHeight,
 }) => {
-  stageWidth = stageWidth / STAGE_SCALE;
-  const bgWidth = width * widthRatio;
-  const maxWidth = Math.max(stageWidth, bgWidth);
+  stageWidth = stageWidth;
+  width;
+  // const bgWidth = width * widthRatio;
+  // const maxWidth = Math.max(stageWidth, width);
 
-  let bgX = (stageWidth - bgWidth) / 2;
-  bgX = bgX;
+  const scale = 8 * Math.min(widthRatio, heightRatio);
+  // stageWidth = stageWidth / scale;
+  // width = width * scale;
+  let bgX = Math.abs((stageWidth + width) / 2) * scale + toolbarAndPanelWidth;
 
-  stageHeight = stageHeight;
-  const bgHeight = height * heightRatio * STAGE_SCALE;
-  const bgY = (stageHeight - bgHeight) / STAGE_SCALE / 2 + INDICATORS_HEIGHT;
+  // const bgHeight = height;
+  // const bgHeight = height * heightRatio * STAGE_SCALE;
+  // const bgY = (stageHeight - bgHeight) / STAGE_SCALE / 2 + INDICATORS_HEIGHT;
+  const bgY = Math.min(stageHeight, height) / 2;
 
   return {
     bgX,
@@ -51,18 +55,18 @@ const calcBgPosition: CalcBgPosition = ({
 
 const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
   let [background, backgroundStatus] = useImage(url);
-  const { getRotation, rotation } = useImgRotation();
+  // const { getRotation, rotation } = useImgRotation();
 
-  const checkRotation = useCallback(() => {
-    if (backgroundStatus !== 'loaded') return;
-    getRotation(background?.src || '');
-  }, [backgroundStatus, background]);
+  // const checkRotation = useCallback(() => {
+  //   if (backgroundStatus !== 'loaded') return;
+  //   getRotation(background?.src || '');
+  // }, [backgroundStatus, background]);
 
-  useEffect(() => {
-    if (background && background.src?.length > 0) {
-      checkRotation();
-    }
-  }, [background]);
+  // useEffect(() => {
+  //   if (background && background.src?.length > 0) {
+  //     checkRotation();
+  //   }
+  // }, [background]);
 
   let widthRatio = 1,
     heightRatio = 1;
@@ -70,14 +74,9 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
   let width = 0,
     height = 0;
   if (background !== undefined) {
-    widthRatio =
-      stageWidth > background.width
-        ? stageWidth / background.width
-        : background?.width / stageWidth;
-    heightRatio =
-      stageHeight > background.height
-        ? stageHeight / background.height
-        : background.height / stageHeight;
+    widthRatio = stageWidth / background.width;
+
+    heightRatio = stageHeight / background.height;
 
     width = background.width;
     height = background.height;
@@ -98,13 +97,16 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     [width, height, heightRatio, widthRatio, stageWidth, stageHeight]
   )();
 
+  // bgX = widthRatio < 1 ? bgX + width / 3 : bgX;
+  // bgY = heightRatio < 1 ? bgY + width / 2 : bgY;
+
+  // if (rotation === 90) {
   // if img has Orientation 6 EXIF value, then it will be flipped and this is a fix for the bgX for it
-  if (rotation === 90) {
-    // [bgX, bgY] = [bgY, bgX];
-    // [height, width] = [width, height];
-    // [widthRatio, heightRatio] = [heightRatio, widthRatio];
-    // bgX = bgX + width;
-  }
+  // [bgX, bgY] = [bgY, bgX];
+  // [height, width] = [width, height];
+  // [widthRatio, heightRatio] = [heightRatio, widthRatio];
+  // bgX = bgX + width;
+  // }
 
   return {
     background,
@@ -115,7 +117,6 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     height,
     bgX,
     bgY,
-    rotation,
   };
 };
 

@@ -61,7 +61,7 @@ const Workspace: any = ({
     heightRatio,
     bgX,
     bgY,
-    rotation,
+    // rotation,
   } = useBackground({
     url: src,
     stageWidth: WIDTH,
@@ -100,7 +100,9 @@ const Workspace: any = ({
 
   const { tooltip, showTooltip, hideTooltip } = useTooltip(stageRef);
 
-  const { stageScale, handleWheel, zooming } = useZoom();
+  const { stageScale, handleWheel, zooming } = useZoom(
+    Math.min(widthRatio, heightRatio)
+  );
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
@@ -159,7 +161,7 @@ const Workspace: any = ({
           draggable={stageDragging}
           onDragEnd={() => {}}
         >
-          <Layer ref={bgLayerRef} id="background_layer" x={width} y={0}>
+          <Layer ref={bgLayerRef} id="background_layer">
             <BackgroundImage
               width={width}
               height={height}
@@ -169,7 +171,7 @@ const Workspace: any = ({
               heightRatio={heightRatio}
               x={bgX}
               y={bgY}
-              rotation={rotation}
+              // rotation={rotation}
             />
           </Layer>
           <Layer>

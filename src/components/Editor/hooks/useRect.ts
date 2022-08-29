@@ -37,7 +37,7 @@ const useRect = (
 
       let { x, y } = bg[0].getRelativePointerPosition()!;
       // We are getting the values of the x & y relative to the background coords as the background might have different coords in different user screens
-      const { x: bgX, y: bgY } = bg[0].attrs;
+      const { x: bgX, y: bgY, scaleX, scaleY } = bg[0].attrs;
 
       if (x != null && y != null) {
         setNewAnnotation([
@@ -83,7 +83,7 @@ const useRect = (
 
       const bg = event.target.getStage()?.find('#canvasBackground');
       if (!bg || bg.length === 0) return;
-      const { x: bgX, y: bgY } = bg[0].attrs;
+      const { x: bgX, y: bgY, width, height, scaleX } = bg[0].attrs;
 
       if (x != null && y != null) {
         const annotationToAdd = {

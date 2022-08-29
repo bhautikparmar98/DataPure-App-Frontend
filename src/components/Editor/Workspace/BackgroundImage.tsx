@@ -11,7 +11,7 @@ type Props = {
   heightRatio: number;
   background: HTMLImageElement | undefined;
   backgroundStatus: string;
-  rotation: number;
+  // rotation: number;
 };
 
 const BackgroundImage = ({
@@ -22,10 +22,10 @@ const BackgroundImage = ({
   background,
   widthRatio,
   heightRatio,
-  rotation,
-}: Props) => {
+}: // rotation,
+Props) => {
   const rectRef = useRef<Konva.Rect | null>(null);
-
+  // console.log({ widthRatio, heightRatio });
   return (
     <Rect
       ref={rectRef}
@@ -33,13 +33,15 @@ const BackgroundImage = ({
       // x={x + (rotation === 90 ? width : 0)}
       x={x}
       y={y}
-      width={width * widthRatio}
-      height={height * heightRatio}
-      rotation={rotation}
+      width={width}
+      height={height}
+      // rotation={90}
       fillPatternImage={background}
       fillPatternRepeat={'no-repeat'}
       // fillPatternScaleX={widthRatio}
       // fillPatternScaleY={heightRatio}
+      // scaleX={Math.max(widthRatio, heightRatio)}
+      // scaleY={Math.max(widthRatio, heightRatio)}
       id="canvasBackground"
       listening={false}
     />
