@@ -161,7 +161,7 @@ const Workspace: any = ({
           draggable={stageDragging}
           onDragEnd={() => {}}
         >
-          <Layer ref={bgLayerRef} id="background_layer">
+          <Layer ref={bgLayerRef} id="background_layer" listening={false}>
             <BackgroundImage
               width={width}
               height={height}
@@ -201,8 +201,8 @@ const Workspace: any = ({
               comments.map((comment, commendIndex) => (
                 <Image
                   key={`comment-${commendIndex}`}
-                  width={250}
-                  height={250}
+                  width={60 / stageScale.stageScale}
+                  height={60 / stageScale.stageScale}
                   image={image}
                   x={comment.x}
                   y={comment.y}

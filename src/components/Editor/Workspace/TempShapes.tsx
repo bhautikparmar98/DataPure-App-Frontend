@@ -17,7 +17,7 @@ const TempShapes = ({ lines, rects = [] }: Shapes) => (
         draggable={false}
         {...options}
         opacity={1}
-        strokeWidth={5}
+        strokeWidth={25}
         tension={0.5}
         lineCap="round"
       />

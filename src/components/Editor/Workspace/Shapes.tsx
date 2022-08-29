@@ -74,7 +74,7 @@ const Shapes = ({
                     }}
                     opacity={1}
                     stroke={classItem.color}
-                    strokeWidth={5}
+                    strokeWidth={25}
                     tension={0.5}
                     lineCap="round"
                   />
