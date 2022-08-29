@@ -97,7 +97,7 @@ const Editor = () => {
   const HEIGHT = window.innerHeight - indicatorsHeight;
   return (
     <div id="editor">
-      <Toolbar />
+      <Toolbar isAnnotatorRedo={isAnnotatorRedo} />
       <div style={{ marginLeft: 70 }}>
         <Workspace
           TOOLBAR_WIDTH={TOOLBAR_WIDTH}
