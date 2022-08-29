@@ -25,6 +25,8 @@ const initialState: State = {
 export const classesReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case EditorActionTypes.INITIALIZE_STATE:
+      if (action.payload.state?.images.length === 0) return state;
+
       const { src, project, annotations, _id } =
         action.payload.state?.images[0];
 

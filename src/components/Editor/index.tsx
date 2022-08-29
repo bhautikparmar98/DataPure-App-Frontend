@@ -16,7 +16,7 @@ const Editor = () => {
   const id = router.query.id as string;
   const { role } = useAuth();
 
-  const { images, removeImage } = useFetchImage(id);
+  const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
   const dispatch = useAppDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
@@ -59,6 +59,7 @@ const Editor = () => {
       );
     }
   };
+
   const getPrevImg = () => {
     if (imgIndex > 0) {
       const newIndex = imgIndex - 1;

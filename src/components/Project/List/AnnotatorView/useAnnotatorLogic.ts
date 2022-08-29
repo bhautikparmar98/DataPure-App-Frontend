@@ -13,11 +13,13 @@ const useAnnotatorLogic = () => {
   const [loading, setLoading] = useState(false);
 
   const startHandler = (project: IProject) => {
+    localStorage.removeItem('redo');
     router.push(`/editor/${project._id}`);
   };
 
   const redoHandler = (project: IProject) => {
-    // TODO: handle redo in the edit
+    localStorage.setItem('redo', 'true');
+    router.push(`/editor/${project._id}`);
   };
 
   useEffect(() => {
