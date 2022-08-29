@@ -1,21 +1,18 @@
 import React from 'react';
 // MUI
-import Drawer from '@mui/material/Drawer';
 import { Container } from '@mui/material';
-import Preview from './Preview';
-import Filters from './Filters';
+import Drawer from '@mui/material/Drawer';
 import Annotations from './Annotations';
-import SubmitAnnotations from './SubmitAnnotations';
+import Filters from './Filters';
+import Preview from './Preview';
 import RequestRedo from './RequestRedo';
-import useAuth from 'src/hooks/useAuth';
-import { ROLES } from 'src/constants';
+import SubmitAnnotations from './SubmitAnnotations';
 
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
 
 const ClassPanel: React.FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
-  const { role } = useAuth();
   return (
     <div style={{ cursor: 'default' }}>
       <Drawer
@@ -38,9 +35,8 @@ const ClassPanel: React.FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
             flexDirection: 'column',
           }}
         >
-          {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
-            <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
-          )}
+          <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
+
           <Preview />
           <Filters />
           <Annotations />

@@ -1,8 +1,10 @@
-import { Grid, Button, Link } from '@mui/material';
+import { Button, Grid, Link } from '@mui/material';
 import Iconify from 'src/components/Shared/Iconify';
 import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 
 import NextLink from 'next/link';
+import { ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 
 interface RequestRedoProps {
   onRequestRedoFinish: (imgId: string) => void;
@@ -10,6 +12,7 @@ interface RequestRedoProps {
 
 const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   const { requestRedo, imageId } = useAnnotationSubmit();
+  const { role } = useAuth();
 
   const requestRedoHandler = async (imgId: string) => {
     await requestRedo();
@@ -24,13 +27,15 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
       mb={5}
       sx={{ display: 'flex' }}
     >
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => requestRedoHandler(imageId)}
-      >
-        Request Redo
-      </Button>
+      {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => requestRedoHandler(imageId)}
+        >
+          Request Redo
+        </Button>
+      )}
       <NextLink href="/project/list" passHref style={{ color: '#313131' }}>
         <Link
           variant="body1"
