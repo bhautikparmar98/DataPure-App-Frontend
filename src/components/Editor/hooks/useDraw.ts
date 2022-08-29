@@ -105,6 +105,7 @@ const useDraw = (
     }
   };
 
+  // !Todo: We are not limiting users from moving shapes out of the background area
   const handleShapeMove = (
     e: any,
     classId: number,

@@ -37,9 +37,15 @@ const useRect = (
 
       let { x, y } = bg[0].getRelativePointerPosition()!;
       // We are getting the values of the x & y relative to the background coords as the background might have different coords in different user screens
-      const { x: bgX, y: bgY, scaleX, scaleY } = bg[0].attrs;
+      let { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
 
-      if (x != null && y != null) {
+      // mouse position relative to background origin(x,y)
+      const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
+
+      const xValid = mouseX >= 0 && mouseX <= bgWidth;
+      const yValid = mouseY >= 0 && mouseY <= bgHeight;
+
+      if (x != null && y != null && xValid && yValid) {
         setNewAnnotation([
           {
             ...rectConfig,
@@ -63,11 +69,14 @@ const useRect = (
 
       const bg = event.target.getStage()?.find('#canvasBackground');
       if (!bg || bg.length === 0) return;
-      const { x: bgX, y: bgY, width: bgWidth } = bg[0].attrs;
 
-      // const isValidX = x > bgX ? x + width <= bgX + bgWidth : width - x > bgX;
+      const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
 
-      if (x != null && y != null) {
+      let { width: bgWidth, height: bgHeight } = bg[0].attrs;
+      const xValid = mouseX >= 0 && mouseX <= bgWidth;
+      const yValid = mouseY >= 0 && mouseY <= bgHeight;
+
+      if (x != null && y != null && xValid && yValid) {
         setNewAnnotation([
           {
             ...rectConfig,
@@ -85,15 +94,21 @@ const useRect = (
 
   const rectHandleMouseUp = (event: KonvaEventObject<WheelEvent>) => {
     if (newAnnotation.length === 1) {
-      const sx = newAnnotation[0].x || 0;
-      const sy = newAnnotation[0].y || 0;
+      const sx = newAnnotation[0].x!;
+      const sy = newAnnotation[0].y!;
       const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
 
       const bg = event.target.getStage()?.find('#canvasBackground');
       if (!bg || bg.length === 0) return;
-      const { x: bgX, y: bgY, width, height, scaleX } = bg[0].attrs;
+      const { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
 
-      if (x != null && y != null) {
+      // mouse position relative to background origin(x,y)
+      const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
+
+      const xValid = mouseX >= 0 && mouseX <= bgWidth;
+      const yValid = mouseY >= 0 && mouseY < bgHeight;
+
+      if (x != null && y != null && xValid && yValid) {
         const annotationToAdd = {
           type: TOOLS.RECTANGLE,
           // saving x & y without bg coords and we will add them later while drawing as these are dynamic values

@@ -25,6 +25,17 @@ const useLine = (
   } as const;
 
   const lineHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
+    const bg = event.target.getStage()?.find('#canvasBackground');
+    if (!bg || bg.length === 0) return;
+    let { width: bgWidth, height: bgHeight } = bg[0].attrs;
+
+    // mouse position relative to background origin(x,y)
+    const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
+
+    const xValid = mouseX >= 0 && mouseX <= bgWidth;
+    const yValid = mouseY >= 0 && mouseY <= bgHeight;
+    if (!xValid || !yValid) return;
+
     //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
     setLines([...lines, { ...lineConfig, points: [x, y] }]);
@@ -36,7 +47,17 @@ const useLine = (
     const lastLine = lines[lines.length - 1] || [];
 
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-    // add point
+
+    const bg = event.target.getStage()?.find('#canvasBackground');
+    if (!bg || bg.length === 0) return;
+    let { width: bgWidth, height: bgHeight } = bg[0].attrs;
+
+    // mouse position relative to background origin(x,y)
+    const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
+
+    const xValid = mouseX >= 0 && mouseX <= bgWidth;
+    const yValid = mouseY >= 0 && mouseY <= bgHeight;
+    if (!xValid || !yValid) return;
 
     //make it a straight line
     if (lastLine?.points?.length >= 2) {
@@ -51,7 +72,7 @@ const useLine = (
 
   const lineHandleMouseUp = () => {
     // checks that it's not a dot, but a line
-    if (lines[0].points?.length > 2) {
+    if (lines[0]?.points?.length > 2) {
       const linesWithoutStoke = lines.map(({ stroke, ...rest }) => rest);
 
       dispatch(
