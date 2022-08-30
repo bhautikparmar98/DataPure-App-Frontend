@@ -27,6 +27,8 @@ interface IProps {
   LAYERS_PANEL_WIDTH: number;
   WIDTH: number;
   HEIGHT: number;
+  onAddComment: (text: string, x: number, y: number) => void;
+  onDeleteComment: (commentId: string) => void;
 }
 
 const Workspace: any = ({
@@ -34,6 +36,8 @@ const Workspace: any = ({
   LAYERS_PANEL_WIDTH,
   WIDTH,
   HEIGHT,
+  onAddComment,
+  onDeleteComment,
 }: IProps) => {
   const dispatch = useAppDispatch();
 
@@ -94,7 +98,9 @@ const Workspace: any = ({
     bgLayerRef,
     currentTool,
     stageDragging,
-    width
+    width,
+    onAddComment,
+    onDeleteComment
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 

@@ -2,7 +2,8 @@ import Konva from 'konva';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import { setComments as setCommentsAction } from 'src/redux/slices/classes/classes.actions';
-import { Tool } from 'src/constants';
+import { ROLES, Tool } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 interface Comment {
   text: string;
   x: number;
@@ -12,9 +13,12 @@ interface Comment {
 const useComment = (
   bgLayerRef: React.RefObject<Konva.Layer>,
   currentTool: Tool,
-  backgroundWidth: number
+  backgroundWidth: number,
+  onAddComment: (text: string, x: number, y: number) => void,
+  onDeleteComment: (commentId: string) => void
 ) => {
   const storedComments = useAppSelector(({ classes }) => classes.comments);
+  const { role } = useAuth();
   const [comments, setComments] = useState<Comment[]>(
     storedComments?.length > 0 ? storedComments : []
   );
@@ -22,11 +26,16 @@ const useComment = (
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (comments.length > 0) {
-      dispatch(setCommentsAction(comments));
-    }
     return () => document.querySelector('.editor-comment-popup')?.remove();
-  }, [dispatch, comments]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const updateComments = () => {
+      setComments(storedComments);
+    };
+
+    updateComments();
+  }, [storedComments]);
 
   useEffect(() => {
     document.querySelector('.editor-comment-popup')?.remove();
@@ -38,10 +47,10 @@ const useComment = (
     const textarea = document.createElement('textarea');
     document.body!.appendChild(textarea);
     textarea.style.position = 'fixed';
-    textarea.style.top = '50%';
-    textarea.style.left = 'calc(50% - 300px)';
+    textarea.style.top = `${y + 40}px`;
+    textarea.style.left = `${x + 50}px`;
     textarea.style.width = '250px';
-    textarea.style.height = '36px';
+    textarea.style.minHeight = '36px';
     textarea.style.resize = 'none';
     textarea.style.borderRadius = '8px';
     textarea.style.outline = 'none';
@@ -49,8 +58,18 @@ const useComment = (
     textarea.placeholder = 'Add a comment';
     textarea.value = value;
     textarea.classList.add('editor-comment-popup');
+    if (role === ROLES.ANNOTATOR.value) {
+      textarea.disabled = true;
+      textarea.style.backgroundColor = '#fff';
+    }
     textarea.focus();
     return textarea;
+  };
+
+  const canAddComments = () => {
+    console.log('role', role);
+    if (role === ROLES.QA.value || role === ROLES.CLIENT.value) return true;
+    return false;
   };
 
   const handleCommentClick = (
@@ -70,7 +89,8 @@ const useComment = (
           if (i === commendIndex) comment.text = textarea.value;
           return comment;
         });
-        setComments(newComments);
+
+        dispatch(setCommentsAction(newComments));
 
         document.body!.removeChild(textarea);
       } else if (
@@ -93,20 +113,27 @@ const useComment = (
       const { x = 0, y = 0 } = bg!.getStage()!.getRelativePointerPosition();
 
       // create textarea and style it
-      const textarea = createStyledTextarea(x, y);
+      if (canAddComments()) {
+        const textarea = createStyledTextarea(x, y);
 
-      textarea.addEventListener('keydown', function (e) {
-        if (e.code === 'Enter' && textarea.value.length > 0) {
-          setComments((prev) => [...prev, { text: textarea.value, x, y }]);
+        textarea.addEventListener('keydown', function (e) {
+          if (e.code === 'Enter' && textarea.value.length > 0) {
+            try {
+            } catch (error) {}
+            const newComments = [...comments, { text: textarea.value, x, y }];
 
-          document.body!.removeChild(textarea);
-        } else if (
-          e.code === 'Escape' || //cancel comment
-          (e.code === 'Enter' && textarea.value.length === 0) //empty textarea
-        ) {
-          document.body!.removeChild(textarea);
-        }
-      });
+            onAddComment(textarea.value, x, y);
+            dispatch(setCommentsAction(newComments));
+
+            document.body!.removeChild(textarea);
+          } else if (
+            e.code === 'Escape' || //cancel comment
+            (e.code === 'Enter' && textarea.value.length === 0) //empty textarea
+          ) {
+            document.body!.removeChild(textarea);
+          }
+        });
+      }
     }
   };
 

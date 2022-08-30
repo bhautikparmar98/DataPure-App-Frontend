@@ -18,7 +18,9 @@ const useDraw = (
   bgLayerRef: React.RefObject<Konva.Layer>,
   currentTool: Tool,
   stageDragging: boolean,
-  backgroundWidth: number
+  backgroundWidth: number,
+  onAddComment: (text: string, x: number, y: number) => void,
+  onDeleteComment: (commentId: string) => void
 ) => {
   const dispatch = useAppDispatch();
   // const updateCount = useRef(0);
@@ -37,7 +39,9 @@ const useDraw = (
   const { handleComment, handleCommentClick, comments } = useComment(
     bgLayerRef,
     currentTool,
-    backgroundWidth
+    backgroundWidth,
+    onAddComment,
+    onDeleteComment
   );
 
   // Update workspace preview

@@ -8,7 +8,7 @@ type State = {
   classes: Class[];
   selectedClassIndex: number;
   currentAnnotationId: number | null;
-  comments: { text: string; x: number; y: number }[];
+  comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
 };
@@ -25,7 +25,12 @@ const initialState: State = {
 export const classesReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case EditorActionTypes.INITIALIZE_STATE:
-      if (action.payload.state?.images.length === 0) return state;
+      if (
+        !action.payload.state?.images ||
+        action.payload.state?.images.length === 0 ||
+        !action.payload?.state?.images[0]
+      )
+        return state;
 
       const { src, project, annotations, _id } =
         action.payload.state?.images[0];
@@ -57,6 +62,7 @@ export const classesReducer = (state = initialState, action: any) => {
       state = {
         ...state,
         classes,
+        comments: [],
         src,
         imageId: _id,
       };

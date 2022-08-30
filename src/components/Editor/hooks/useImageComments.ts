@@ -1,0 +1,63 @@
+import { useEffect, useState } from 'react';
+import { ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
+import { setComments } from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch } from 'src/redux/store';
+import axiosInstance from 'src/utils/axios';
+
+const useImageComments = ({
+  isAnnotatorRedo,
+  imageId,
+}: {
+  isAnnotatorRedo?: boolean;
+  imageId: string;
+}) => {
+  const { role } = useAuth();
+  const dispatch = useAppDispatch();
+
+  const canSeeComments = () => {
+    if (
+      (role === ROLES.ANNOTATOR.value && isAnnotatorRedo) ||
+      role === ROLES.QA.value
+    )
+      return true;
+    return false;
+  };
+
+  const canAddComments = () => {
+    if (role === ROLES.QA.value || role === ROLES.CLIENT.value) return true;
+    return false;
+  };
+
+  const canDeleteComment = () => {
+    // TODO: handle delete
+    return false;
+  };
+
+  useEffect(() => {
+    const getAllComments = async () => {
+      const response = await axiosInstance.get(`/image/${imageId}/comment`);
+      const { comments } = response.data;
+
+      dispatch(setComments(comments));
+    };
+
+    if (canSeeComments() && imageId?.length > 0) {
+      getAllComments();
+    }
+  }, [role, isAnnotatorRedo, imageId]);
+
+  const addComment = async (text: string, x: number, y: number) => {
+    if (!canAddComments()) return;
+    await axiosInstance.post(`image/${imageId}/comment`, { text, x, y });
+  };
+
+  const deleteComment = async (commentId: string) => {
+    if (commentId?.length > 0 && canDeleteComment())
+      await axiosInstance.delete(`comment/${commentId}`);
+  };
+
+  return { addComment, deleteComment };
+};
+
+export default useImageComments;

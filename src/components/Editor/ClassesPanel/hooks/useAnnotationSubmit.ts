@@ -110,6 +110,9 @@ const useAnnotationSubmit = () => {
           },
         });
         dispatch(resetState());
+        setTimeout(() => {
+          router.reload();
+        }, 2000);
       } else {
         throw new Error('Request has not been successful');
       }

@@ -5,9 +5,10 @@ import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { initializeState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import ClassesPanel from './ClassesPanel';
 import useFetchImage from './hooks/useFetchImage';
+import useImageComments from './hooks/useImageComments';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 
@@ -15,8 +16,15 @@ const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
+  const imageId = useAppSelector((state) => state.classes.imageId);
 
   const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
+
+  const { addComment, deleteComment } = useImageComments({
+    isAnnotatorRedo,
+    imageId,
+  });
+
   const dispatch = useAppDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
@@ -104,6 +112,8 @@ const Editor = () => {
           LAYERS_PANEL_WIDTH={LAYERS_PANEL_WIDTH}
           WIDTH={WIDTH}
           HEIGHT={HEIGHT}
+          onAddComment={addComment}
+          onDeleteComment={deleteComment}
         />
       </div>
       <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
