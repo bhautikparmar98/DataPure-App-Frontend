@@ -3,11 +3,16 @@ import { Annotation } from 'src/constants';
 
 const clientApproveAnnotations = async (
   annotations: Annotation[],
-  imageId: string
+  imageId: string,
+  done: boolean
 ) => {
-  return await axios.put(`image/${imageId}/annotation/approve`, {
+  let response = await axios.post(`image/${imageId}/annotation`, {
     annotations,
   });
+
+  if (done) return await axios.put(`image/${imageId}/client/approve`);
+
+  return response;
 };
 
 const clientRequestRedo = async (imageId: string) => {

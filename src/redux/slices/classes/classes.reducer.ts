@@ -106,6 +106,31 @@ export const classesReducer = (state = initialState, action: any) => {
 
       annotation.classId = classId;
 
+      const newShapes = annotation.shapes?.map((s: any) => {
+        if (s.type !== TOOLS.RECTANGLE) return s;
+
+        if (s.width > 0 && s.height > 0) return s;
+
+        let newWidth = s.width;
+        let newHeight = s.height;
+        let newX = s.x;
+        let newY = s.y;
+
+        if (s.width < 0) {
+          newX = s.x + s.width;
+          newWidth = Math.abs(s.width);
+        }
+
+        if (s.height < 0) {
+          newY = s.y + s.height;
+          newHeight = Math.abs(s.height);
+        }
+
+        return { ...s, width: newWidth, height: newHeight, x: newX, y: newY };
+      });
+
+      annotation.shapes = newShapes;
+
       classes[classIndex].annotations.push(annotation);
       return {
         ...state,

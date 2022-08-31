@@ -62,7 +62,8 @@ const useAnnotationSubmit = () => {
         case ROLES.CLIENT.value:
           response = await clientApproveAnnotations(
             purifiedAnnotations,
-            imageId
+            imageId,
+            done
           );
           break;
         default:
