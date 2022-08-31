@@ -42,6 +42,7 @@ const useAnnotationSubmit = () => {
       const purifiedAnnotations: Annotation[] = [];
       classes.forEach((cls) => {
         cls.annotations.forEach((anno) => {
+          delete anno.fill;
           delete anno.id;
           purifiedAnnotations.push(anno);
         });
@@ -73,7 +74,7 @@ const useAnnotationSubmit = () => {
         enqueueSnackbar('Annotation has been saved', {
           variant: 'success',
         });
-        if (done) {
+        if (done && role !== ROLES.QA.value) {
           setTimeout(() => {
             router.reload();
           }, 3000);

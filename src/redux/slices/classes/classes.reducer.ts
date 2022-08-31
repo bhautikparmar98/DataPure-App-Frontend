@@ -39,6 +39,7 @@ export const classesReducer = (state = initialState, action: any) => {
         const { id, classId, shapes, visible } = anno;
         const purifiedShapes = shapes.map((shape: any) => {
           delete shape._id;
+          delete shape.fill;
           return shape;
         });
         anno = {

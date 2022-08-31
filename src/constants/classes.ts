@@ -25,6 +25,7 @@ export interface Annotation {
   visible: boolean;
   id?: string;
   _id?: string;
+  fill?: string;
   classId?: string;
   shapes: (Rectangle | Line)[];
 }
