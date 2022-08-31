@@ -174,6 +174,32 @@ const Workspace: any = ({
               y={bgY}
             />
           </Layer>
+
+          {backgroundStatus === 'loaded' && (
+            <Layer>
+              <Group
+                ref={shapesRef}
+                onClick={(e) => handleShapesCaching(false, e)}
+              >
+                <Shapes
+                  classes={classes}
+                  handleRectChange={handleRectChange}
+                  showTooltip={showTooltip}
+                  selectShape={selectShape}
+                  hideShapeTemporarily={hideShapeTemporarily}
+                  handleShapeMove={handleShapeMove}
+                  currentTool={currentTool}
+                  selectedId={selectedId}
+                  stageDragging={stageDragging}
+                  hideTooltip={hideTooltip}
+                  zooming={zooming}
+                  bgX={bgX}
+                  bgY={bgY}
+                />
+              </Group>
+            </Layer>
+          )}
+
           <Layer>
             <TempShapes
               lines={lines}
@@ -225,30 +251,6 @@ const Workspace: any = ({
                 />
               ))}
           </Layer>
-          {backgroundStatus === 'loaded' && (
-            <Layer>
-              <Group
-                ref={shapesRef}
-                onClick={(e) => handleShapesCaching(false, e)}
-              >
-                <Shapes
-                  classes={classes}
-                  handleRectChange={handleRectChange}
-                  showTooltip={showTooltip}
-                  selectShape={selectShape}
-                  hideShapeTemporarily={hideShapeTemporarily}
-                  handleShapeMove={handleShapeMove}
-                  currentTool={currentTool}
-                  selectedId={selectedId}
-                  stageDragging={stageDragging}
-                  hideTooltip={hideTooltip}
-                  zooming={zooming}
-                  bgX={bgX}
-                  bgY={bgY}
-                />
-              </Group>
-            </Layer>
-          )}
         </Stage>
       ) : (
         <div
