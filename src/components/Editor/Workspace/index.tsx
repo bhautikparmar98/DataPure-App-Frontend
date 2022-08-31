@@ -175,7 +175,11 @@ const Workspace: any = ({
             />
           </Layer>
           <Layer>
-            <TempShapes lines={lines} rects={rects} />
+            <TempShapes
+              lines={lines}
+              rects={rects}
+              classColor={classes[selectedClassIndex]?.color}
+            />
             {tooltip.text.length > 0 && (
               <Group y={-20}>
                 <Rect

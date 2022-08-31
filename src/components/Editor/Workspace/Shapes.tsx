@@ -86,7 +86,6 @@ const Shapes = ({
                       fill: classItem.color
                         .replace(')', ', 0.6)')
                         .replace('rgb', 'rgba'),
-                      opacity: 0.8,
                       stroke: classItem.color,
                     }}
                     classItemName={classItem.name}

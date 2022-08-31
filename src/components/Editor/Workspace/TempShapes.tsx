@@ -5,11 +5,18 @@ import Konva from 'konva';
 interface Shapes {
   lines: LineType[];
   rects: Konva.ShapeConfig[];
+  classColor: string;
 }
 
-const TempShapes = ({ lines, rects = [] }: Shapes) => (
+const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
   <>
-    {rects.length > 0 && <Rect {...rects[0]} key={'temp-rect'} />}
+    {rects.length > 0 && (
+      <Rect
+        {...rects[0]}
+        key={'temp-rect'}
+        fill={classColor.replace(')', ', 0.6)').replace('rgb', 'rgba')}
+      />
+    )}
     {lines.map((options, l) => (
       <Line
         key={'temp-line' + l}

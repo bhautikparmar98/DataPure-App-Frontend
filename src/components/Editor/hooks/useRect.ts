@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/redux/store';
 import uniqid from 'uniqid';
 
 const config = {
-  opacity: 0.7,
+  opacity: 0.8,
   strokeWidth: 2,
 } as const;
 
@@ -22,9 +22,6 @@ const useRect = (
 
   const rectConfig = {
     ...config,
-    fill:
-      selectedClassColor?.replace(')', ', 0.3)').replace('rgb', 'rgba') ||
-      'rgba(0,0,0,0.3)',
     stroke: selectedClassColor,
   };
 
