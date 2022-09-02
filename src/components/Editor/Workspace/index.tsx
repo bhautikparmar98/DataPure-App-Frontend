@@ -159,7 +159,7 @@ const Workspace: any = ({
           }}
           onClick={(e) => {
             checkDeselect(e);
-            // hideTooltip();
+            hideTooltip();
             // e.cancelBubble = true;
           }}
           draggable={stageDragging}

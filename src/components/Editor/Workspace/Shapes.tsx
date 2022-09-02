@@ -71,6 +71,7 @@ const Shapes = ({
                         selectShape(shape.id);
                       }
                       showTooltip(e);
+                      e.cancelBubble = true; // to not trigger parents click
                     }}
                     opacity={1}
                     stroke={classItem.color}
@@ -95,6 +96,7 @@ const Shapes = ({
                         selectShape(shape.id);
                       }
                       showTooltip(e);
+                      e.cancelBubble = true; // to not trigger parents click
                     }}
                     onChange={handleRectChange}
                     onDblClick={hideShapeTemporarily}
