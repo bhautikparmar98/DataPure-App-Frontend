@@ -13,8 +13,11 @@ import { Box } from '@mui/system';
 import _ from 'lodash';
 import { Class } from 'src/constants';
 import { useAppSelector } from 'src/redux/store';
-import styles from './annotations.module.css';
 import Annotation from './Annotation';
+import styles from './annotations.module.css';
+import useActions from './hooks/useActions';
+
+// Styled Components
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -42,9 +45,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
   },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(0),
-  },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
@@ -52,8 +52,23 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
+// Types
+
+enum AllChecked {
+  'allUnchecked',
+  'someChecked',
+  'allChecked',
+}
+
 function Annotations() {
-  const { classes } = useAppSelector(({ classes }) => classes);
+  const { classes, selectedClassIndex } = useAppSelector(
+    ({ classes }) => classes
+  );
+
+  const { checks, allChecked, toggleOne, toggleAll } = useActions({
+    classes,
+    selectedClassIndex,
+  });
 
   const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
 
@@ -69,9 +84,12 @@ function Annotations() {
   return (
     <div className={styles.list}>
       {memoisedClass.length > 0 &&
-        memoisedClass.map((classItem, classId) => (
+        memoisedClass.map((classItem, index) => (
           <Accordion
-            key={`class-accordion-${classId}`}
+            className={
+              selectedClassIndex === index ? styles.activeAccordion : ''
+            }
+            key={`class-accordion-${index}`}
             sx={{ marginBottom: 3 }}
           >
             <AccordionSummary
@@ -79,7 +97,13 @@ function Annotations() {
               id="panel1d-header"
             >
               <Box className={styles.classTitle}>
-                <Checkbox />
+                {selectedClassIndex === index && (
+                  <Checkbox
+                    indeterminate={allChecked === AllChecked['someChecked']}
+                    checked={allChecked === AllChecked['allChecked']}
+                    onChange={toggleAll}
+                  />
+                )}
                 <div
                   className={styles.circle}
                   style={{ background: classItem.color }}
@@ -107,10 +131,13 @@ function Annotations() {
                   classItem.annotations.map(({ visible, id }, i) => (
                     <Annotation
                       id={id!}
-                      classId={classId}
+                      classIndex={index}
+                      selectedClassIndex={selectedClassIndex}
                       visible={visible}
-                      index={i}
+                      annoIndex={i}
                       key={`annotation-${id}`}
+                      toggleOne={toggleOne}
+                      checked={id ? checks[id!] : false}
                     />
                   ))
                 ) : (

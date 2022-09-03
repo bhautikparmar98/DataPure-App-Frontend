@@ -23,7 +23,7 @@ export interface Rectangle {
 // shapes are array and each array element will represent Konva.Group. This is done to so if there are erased parts, they will be grouped together with their rectangle/polygon and when the shape is dragged, the erased part is dragged too
 export interface Annotation {
   visible: boolean;
-  id?: string;
+  id: string;
   _id?: string;
   fill?: string;
   classId?: string;

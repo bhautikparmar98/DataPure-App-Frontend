@@ -47,7 +47,6 @@ const useAnnotationSubmit = () => {
           purifiedAnnotations.push(anno);
         });
       });
-
       let response;
       switch (role) {
         case ROLES.QA.value:

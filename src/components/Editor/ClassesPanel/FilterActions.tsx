@@ -34,9 +34,13 @@ const FilterActions = memo(() => (
         }}
         sx={{ height: 40 }}
       >
-        <MenuItem value={0}>Hide</MenuItem>
-        <MenuItem value={1}>Delete</MenuItem>
-        <MenuItem value={2}>Change Class</MenuItem>
+        <MenuItem value={0} sx={{ display: 'none' }}>
+          Choose Action
+        </MenuItem>
+
+        <MenuItem value={1}>Hide</MenuItem>
+        <MenuItem value={2}>Delete</MenuItem>
+        <MenuItem value={3}>Change Class</MenuItem>
       </Select>
     </Grid>
     <div>
@@ -56,9 +60,12 @@ const FilterActions = memo(() => (
         }}
         sx={{ height: 40 }}
       >
-        <MenuItem value={0}>Class A-Z</MenuItem>
-        <MenuItem value={1}>Newest</MenuItem>
-        <MenuItem value={2}>Oldest</MenuItem>
+        <MenuItem value={0} sx={{ display: 'none' }}>
+          Sort By
+        </MenuItem>
+        <MenuItem value={1}>Class A-Z</MenuItem>
+        <MenuItem value={2}>Newest</MenuItem>
+        <MenuItem value={3}>Oldest</MenuItem>
       </Select>
     </div>
   </Box>

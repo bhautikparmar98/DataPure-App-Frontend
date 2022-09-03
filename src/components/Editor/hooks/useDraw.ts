@@ -139,14 +139,8 @@ const useDraw = (
       });
       const { x: shapeX, y: shapeY } = e.target.attrs;
 
-      console.log(`shaprX${shapeX} shaكpey${shapeY}`);
-      console.log(`x ${x} y ${y}`);
-      console.log(`bgX ${bgX} bgY ${bgY}`);
-
       shape.x = shapeX + x - bgX + 1;
       shape.y = shapeY + y - bgY + 1;
-
-      console.log(shape);
 
       shapes = [{ ...shape }];
       e.target.children[0].destroy();
