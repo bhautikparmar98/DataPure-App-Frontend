@@ -1,20 +1,14 @@
-import { paramCase } from 'change-case';
 // next
-import NextLink from 'next/link';
 // @mui
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Checkbox, Stack, Typography } from '@mui/material';
 // routes
-// utils
-import { fCurrency } from '../../../../utils/formatNumber';
 // @types
-import { Product } from '../../../../@types/product';
 // components
-import Label from 'src/components/Shared/Label';
 import Image from 'src/components/Shared/Image';
-import { ColorPreview } from 'src/components/Shared/color-utils';
-import { IImage } from '../types';
+import Label from 'src/components/Shared/Label';
 import { IMAGE_STATUS } from 'src/constants/ImageStatus';
-import { fDate, fDateTime } from 'src/utils/formatTime';
+import { fDate } from 'src/utils/formatTime';
+import { IImage } from '../types';
 
 // ----------------------------------------------------------------------
 
@@ -22,18 +16,38 @@ type DataSetCardProps = {
   image: IImage;
   index: number;
   totalLength: number;
+  isChecked: (id: string) => boolean;
+  onSelectCard: (id: string) => void;
 };
 
 export const DataSetCard: React.FC<DataSetCardProps> = ({
   image,
   index,
   totalLength,
+  isChecked,
+  onSelectCard,
 }) => {
-  const { fileName, src, status } = image;
+  const { fileName, src, status, _id } = image;
+
+  const validStatusToDelete = () =>
+    status === IMAGE_STATUS.PENDING_ANNOTATION.value;
 
   return (
     <Card>
       <Box sx={{ position: 'relative' }}>
+        {_id && validStatusToDelete() && (
+          <Checkbox
+            sx={{
+              position: 'absolute',
+              top: 16,
+              left: 16,
+              zIndex: 10,
+              backgroundColor: 'background.paper',
+            }}
+            checked={isChecked(_id)}
+            onClick={() => onSelectCard(_id)}
+          />
+        )}
         {status && (
           <Label
             variant="filled"
@@ -45,6 +59,7 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
               right: 16,
               zIndex: 9,
               position: 'absolute',
+              maxWidth: 200,
               textTransform: 'uppercase',
             }}
           >
@@ -90,4 +105,3 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
 };
 
 export default DataSetCard;
-
