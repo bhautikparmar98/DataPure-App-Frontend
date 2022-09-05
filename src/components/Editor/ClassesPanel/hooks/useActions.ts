@@ -1,91 +1,88 @@
-import { useState, ChangeEvent, useEffect } from 'react';
-import { Class } from 'src/constants';
+import { useState } from 'react';
+import {
+  changeAnnotationsClass,
+  deleteAnnotations,
+  toggleAnnotationsVisibility,
+} from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch } from 'src/redux/store';
 
 interface Checks {
   [instanceId: string]: boolean;
 }
 
-enum AllChecked {
-  'allUnchecked',
-  'someChecked',
-  'allChecked',
-}
-
 type Props = {
+  checks: Checks;
   selectedClassIndex: number;
-  classes: Class[];
 };
 
-const useActions = ({ classes, selectedClassIndex }: Props) => {
-  const [checks, setChecks] = useState<Checks>({});
+const useActions = ({ checks, selectedClassIndex }: Props) => {
+  const [deleteModalVisible, setDeleteModelVisible] = useState(false);
+  const [changeClassModalVisible, setChangeClassModalVisible] = useState(false);
 
-  const [allChecked, setAllChecked] = useState<AllChecked>(
-    AllChecked['allUnchecked']
-  );
+  const [newClassIndex, setNewClassIndex] = useState<number>();
 
-  const toggleOne = (e: ChangeEvent<HTMLInputElement>, id: string) => {
-    const newChecks = { ...checks };
-    const checked = e.target.checked;
-    newChecks[id] = checked;
-    setChecks(newChecks);
+  const dispatch = useAppDispatch();
+
+  const getCheckedIds = () => {
+    const ids: string[] = [];
+    for (const [key, checked] of Object.entries(checks)) {
+      if (checked) ids.push(key);
+    }
+    return ids;
   };
 
-  //toggle all checkboxes
-  const toggleAll = (e: ChangeEvent<HTMLInputElement>) => {
-    const instancesIds: string[] = classes[selectedClassIndex].annotations.map(
-      (anno) => anno.id
+  // Bulk changes (delete, hide, change class) for global redux classes' state
+
+  const hideInstances = () => {
+    const checkedIds = getCheckedIds();
+    dispatch(
+      toggleAnnotationsVisibility(selectedClassIndex, checkedIds, false)
     );
-
-    const checksStatus = e.target.checked;
-
-    if (checksStatus === true) {
-      setAllChecked(AllChecked['allChecked']);
-      const newChecks: Checks = {};
-      instancesIds.forEach((id: string) => {
-        newChecks[id] = true;
-      });
-
-      setChecks(newChecks);
-
-      return;
-    }
-
-    setAllChecked(AllChecked['allUnchecked']);
-    setChecks({});
+  };
+  const deleteInstances = () => {
+    const checkedIds = getCheckedIds();
+    dispatch(deleteAnnotations(selectedClassIndex, checkedIds));
+    setDeleteModelVisible(false);
   };
 
-  const shouldChangeAllChecked = () => {
-    const annosCount = classes[selectedClassIndex].annotations.length;
-    const checkedIds = Object.keys(checks).filter((id: string) => checks[id]);
-
-    if (checkedIds.length === 0) {
-      setAllChecked(AllChecked['allUnchecked']);
-      return;
+  const changeClass = () => {
+    if (typeof newClassIndex === 'number' && newClassIndex >= 0) {
+      const checkedIds = getCheckedIds();
+      dispatch(
+        changeAnnotationsClass(selectedClassIndex, newClassIndex, checkedIds)
+      );
+      handleChangeClassModalVisibility();
     }
-
-    if (checkedIds.length === annosCount) {
-      setAllChecked(AllChecked['allChecked']);
-      return;
-    }
-
-    setAllChecked(AllChecked['someChecked']);
   };
 
-  useEffect(() => {
-    shouldChangeAllChecked();
-  }, [checks]);
+  // Modals Handling:
 
-  // reset checks when class changes
-  useEffect(() => {
-    setChecks({});
-    setAllChecked(AllChecked['allChecked']);
-  }, [selectedClassIndex]);
+  const handleDeleteModalVisibility = (open = false) =>
+    setDeleteModelVisible(open);
+
+  const handleChangeClassModalVisibility = (open = false) =>
+    setChangeClassModalVisible(open);
+
+  // set the target class that we want instances to be moved to
+  const handleNewClassChange = (
+    _: any,
+    classItem: { label: string; classId: number } | null
+  ) => {
+    if (classItem && classItem?.classId >= 0) {
+      classItem?.classId >= 0 && setNewClassIndex(classItem.classId);
+    }
+  };
 
   return {
-    checks,
-    allChecked,
-    toggleOne,
-    toggleAll,
+    hideInstances,
+    deleteInstances,
+    changeClass,
+    deleteModalVisible,
+    changeClassModalVisible,
+    handleChangeClassModalVisibility,
+    handleDeleteModalVisibility,
+    handleNewClassChange,
+    newClassIndex,
   };
 };
 

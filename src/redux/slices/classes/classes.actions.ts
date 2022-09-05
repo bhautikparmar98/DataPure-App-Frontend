@@ -59,6 +59,38 @@ export function updateAnnotation(
       payload: { classId, annotationId, update },
     });
 }
+
+export function toggleAnnotationsVisibility(
+  classId: number,
+  annotationIds: string[],
+  visible: boolean
+) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.TOGGLE_ANNOTATION_VISIBILITY,
+      payload: { classId, annotationIds, visible },
+    });
+}
+
+export function deleteAnnotations(classId: number, annotationIds: string[]) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.DELETE_ANNOTATIONS,
+      payload: { classId, annotationIds },
+    });
+}
+
+export function changeAnnotationsClass(
+  oldClassIndex: number,
+  newClassIndex: number,
+  annotationIds: string[]
+) {
+  return () =>
+    dispatch({
+      type: EditorActionTypes.CHANGE_ANNOTATIONS_CLASS,
+      payload: { oldClassIndex, newClassIndex, annotationIds },
+    });
+}
 export function moveAnnotation(
   classId: number,
   annotationId: string,

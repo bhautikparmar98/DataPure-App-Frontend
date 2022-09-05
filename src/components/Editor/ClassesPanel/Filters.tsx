@@ -15,7 +15,15 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-const Filters = () => {
+interface Checks {
+  [instanceId: string]: boolean;
+}
+
+type Props = {
+  checks: Checks;
+};
+
+const Filters = ({ checks }: Props) => {
   const { classes, selectedClassIndex, classesFilters, handleClassSelect } =
     useFilters();
 
@@ -45,7 +53,11 @@ const Filters = () => {
         renderInput={(params) => <StyledTextField {...params} />}
         isOptionEqualToValue={(option, value) => option.label === value.label}
       />
-      <FilterActions />
+      <FilterActions
+        checks={checks}
+        selectedClassIndex={selectedClassIndex}
+        classesFilters={classesFilters}
+      />
     </Box>
   );
 };

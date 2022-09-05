@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useState } from 'react';
 // MUI
 import { Container } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
@@ -12,7 +12,27 @@ interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
 
-const ClassPanel: React.FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
+interface Checks {
+  [instanceId: string]: boolean;
+}
+
+enum AllChecked {
+  'allUnchecked',
+  'someChecked',
+  'allChecked',
+}
+
+const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
+  const [checks, setChecks] = useState<Checks>({});
+
+  const [allChecked, setAllChecked] = useState<AllChecked>(
+    AllChecked['allUnchecked']
+  );
+
+  const handleChecks = (newChecks: Checks) => setChecks(newChecks);
+  const handleAllChecks = (newAllChecked: AllChecked) =>
+    setAllChecked(newAllChecked);
+
   return (
     <div style={{ cursor: 'default' }}>
       <Drawer
@@ -38,8 +58,13 @@ const ClassPanel: React.FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
           <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
 
           <Preview />
-          <Filters />
-          <Annotations />
+          <Filters checks={checks} />
+          <Annotations
+            allChecked={allChecked}
+            checks={checks}
+            handleChecks={handleChecks}
+            handleAllChecks={handleAllChecks}
+          />
           <SubmitAnnotations />
         </Container>
       </Drawer>

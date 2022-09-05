@@ -168,6 +168,68 @@ export const classesReducer = (state = initialState, action: any) => {
       };
     }
 
+    //used for class panel bulk action
+    case EditorActionTypes.TOGGLE_ANNOTATION_VISIBILITY: {
+      const { classes } = state;
+      const { classId, annotationIds, visible } = action.payload;
+      const annotations = classes[classId]?.annotations || [];
+      const newAnnotations = annotations.map((anno) => {
+        if (annotationIds.includes(anno.id)) {
+          anno.visible = visible;
+        }
+        return anno;
+      });
+      classes[classId].annotations = newAnnotations;
+
+      return {
+        ...state,
+        classes,
+      };
+    }
+
+    //used for class panel bulk action
+    case EditorActionTypes.DELETE_ANNOTATIONS: {
+      const { classes } = state;
+      const { classId, annotationIds } = action.payload;
+      const annotations = classes[classId]?.annotations || [];
+      const newAnnotations = annotations.filter(
+        (anno) => !annotationIds.includes(anno.id)
+      );
+      classes[classId].annotations = newAnnotations;
+
+      return {
+        ...state,
+        classes,
+      };
+    }
+
+    //used for class panel bulk action
+    case EditorActionTypes.CHANGE_ANNOTATIONS_CLASS: {
+      const { classes } = state;
+      const { oldClassIndex, newClassIndex, annotationIds } = action.payload;
+      let oldClassAnnotations = classes[oldClassIndex]?.annotations || [];
+      let newClassAnnotations = classes[newClassIndex]?.annotations || [];
+
+      const newAnnos: Annotation[] = [];
+      oldClassAnnotations = oldClassAnnotations.filter((anno) => {
+        if (annotationIds.includes(anno.id)) {
+          newAnnos.push(anno);
+          return false;
+        }
+        return true;
+      });
+
+      classes[oldClassIndex].annotations = oldClassAnnotations;
+
+      newClassAnnotations = [...newClassAnnotations, ...newAnnos];
+      classes[newClassIndex].annotations = [...newClassAnnotations];
+
+      return {
+        ...state,
+        classes,
+      };
+    }
+
     case EditorActionTypes.UPDATE_SHAPE: {
       const { classes } = state;
       const {

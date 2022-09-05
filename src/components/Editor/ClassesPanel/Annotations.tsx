@@ -15,7 +15,7 @@ import { Class } from 'src/constants';
 import { useAppSelector } from 'src/redux/store';
 import Annotation from './Annotation';
 import styles from './annotations.module.css';
-import useActions from './hooks/useActions';
+import useChecks from './hooks/useChecks';
 
 // Styled Components
 
@@ -54,20 +54,39 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 // Types
 
+interface Checks {
+  [instanceId: string]: boolean;
+}
+
 enum AllChecked {
   'allUnchecked',
   'someChecked',
   'allChecked',
 }
 
-function Annotations() {
+type Props = {
+  checks: Checks;
+  allChecked: AllChecked;
+  handleChecks: (checks: Checks) => void;
+  handleAllChecks: (allChecked: AllChecked) => void;
+};
+
+function Annotations({
+  checks,
+  handleChecks,
+  handleAllChecks,
+  allChecked,
+}: Props) {
   const { classes, selectedClassIndex } = useAppSelector(
     ({ classes }) => classes
   );
 
-  const { checks, allChecked, toggleOne, toggleAll } = useActions({
+  const { toggleOne, toggleAll } = useChecks({
     classes,
     selectedClassIndex,
+    handleChecks,
+    handleAllChecks,
+    checks,
   });
 
   const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
@@ -97,13 +116,20 @@ function Annotations() {
               id="panel1d-header"
             >
               <Box className={styles.classTitle}>
-                {selectedClassIndex === index && (
-                  <Checkbox
-                    indeterminate={allChecked === AllChecked['someChecked']}
-                    checked={allChecked === AllChecked['allChecked']}
-                    onChange={toggleAll}
-                  />
-                )}
+                <Box sx={{ width: 46, display: 'inline-block' }}>
+                  {selectedClassIndex === index &&
+                    classItem.annotations.length > 0 && (
+                      <Checkbox
+                        indeterminate={allChecked === AllChecked['someChecked']}
+                        checked={
+                          allChecked === AllChecked['allChecked'] &&
+                          Object.keys(checks).filter((id: string) => checks[id])
+                            .length > 0
+                        }
+                        onChange={toggleAll}
+                      />
+                    )}
+                </Box>
                 <div
                   className={styles.circle}
                   style={{ background: classItem.color }}
