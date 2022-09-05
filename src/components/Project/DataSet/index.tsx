@@ -147,6 +147,9 @@ export const ProjectDataSetComponent: React.FC<
         prev.filter((img: any) => !selectedImages.includes(img._id))
       );
       setSelectedImages([]);
+      enqueueSnackbar('Images is deleted successfully.', {
+        variant: 'info',
+      });
     } catch (error) {
       console.log('error');
       enqueueSnackbar('Something went wrong with deleting images', {
