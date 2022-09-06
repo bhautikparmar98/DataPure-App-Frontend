@@ -67,7 +67,6 @@ const useComment = (
   };
 
   const canAddComments = () => {
-    console.log('role', role);
     if (role === ROLES.QA.value || role === ROLES.CLIENT.value) return true;
     return false;
   };

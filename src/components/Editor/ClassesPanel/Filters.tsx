@@ -21,9 +21,10 @@ interface Checks {
 
 type Props = {
   checks: Checks;
+  sortBy: (sortType: 'a-z' | 'newest' | 'oldest') => void;
 };
 
-const Filters = ({ checks }: Props) => {
+const Filters = ({ checks, sortBy }: Props) => {
   const { classes, selectedClassIndex, classesFilters, handleClassSelect } =
     useFilters();
 
@@ -57,6 +58,7 @@ const Filters = ({ checks }: Props) => {
         checks={checks}
         selectedClassIndex={selectedClassIndex}
         classesFilters={classesFilters}
+        sortBy={sortBy}
       />
     </Box>
   );

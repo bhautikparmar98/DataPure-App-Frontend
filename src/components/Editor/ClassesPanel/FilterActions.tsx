@@ -45,15 +45,17 @@ type Props = {
     label: string;
     classId: number;
   }[];
+  sortBy: (sortType: 'a-z' | 'newest' | 'oldest') => void;
 };
 
 const FilterActions = ({
   checks,
   selectedClassIndex,
   classesFilters,
+  sortBy,
 }: Props) => {
   const {
-    hideInstances,
+    toggleInstancesVisibility,
     deleteInstances,
     changeClass,
     deleteModalVisible,
@@ -100,18 +102,21 @@ const FilterActions = ({
             Choose Action
           </MenuItem>
 
-          <MenuItem onClick={hideInstances} value={1}>
+          <MenuItem onClick={(e) => toggleInstancesVisibility(false)} value={1}>
             Hide
+          </MenuItem>
+          <MenuItem onClick={(e) => toggleInstancesVisibility(true)} value={2}>
+            Unhide
           </MenuItem>
           <MenuItem
             onClick={(_e) => handleDeleteModalVisibility(true)}
-            value={2}
+            value={3}
           >
             Delete
           </MenuItem>
           <MenuItem
             onClick={(_e) => handleChangeClassModalVisibility(true)}
-            value={3}
+            value={4}
           >
             Change Class
           </MenuItem>
@@ -137,9 +142,15 @@ const FilterActions = ({
           <MenuItem value={0} sx={{ display: 'none' }}>
             Sort By
           </MenuItem>
-          <MenuItem value={1}>Class A-Z</MenuItem>
-          <MenuItem value={2}>Newest</MenuItem>
-          <MenuItem value={3}>Oldest</MenuItem>
+          <MenuItem value={1} onClick={(_e) => sortBy('a-z')}>
+            Class A-Z
+          </MenuItem>
+          <MenuItem value={2} onClick={(_e) => sortBy('newest')}>
+            Newest
+          </MenuItem>
+          <MenuItem value={3} onClick={(_e) => sortBy('oldest')}>
+            Oldest
+          </MenuItem>
         </Select>
       </div>
 

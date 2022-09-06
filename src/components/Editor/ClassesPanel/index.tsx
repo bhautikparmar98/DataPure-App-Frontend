@@ -8,6 +8,8 @@ import Preview from './Preview';
 import RequestRedo from './RequestRedo';
 import SubmitAnnotations from './SubmitAnnotations';
 
+import useSortedClasses from './hooks/useSortedClasses';
+
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
@@ -23,12 +25,13 @@ enum AllChecked {
 }
 
 const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
-  const [checks, setChecks] = useState<Checks>({});
+  const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
 
+  // checks management
+  const [checks, setChecks] = useState<Checks>({});
   const [allChecked, setAllChecked] = useState<AllChecked>(
     AllChecked['allUnchecked']
   );
-
   const handleChecks = (newChecks: Checks) => setChecks(newChecks);
   const handleAllChecks = (newAllChecked: AllChecked) =>
     setAllChecked(newAllChecked);
@@ -58,12 +61,14 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
           <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
 
           <Preview />
-          <Filters checks={checks} />
+          <Filters checks={checks} sortBy={sortBy} />
           <Annotations
+            classes={sortedClasses}
             allChecked={allChecked}
             checks={checks}
             handleChecks={handleChecks}
             handleAllChecks={handleAllChecks}
+            lastSortType={lastSortType}
           />
           <SubmitAnnotations />
         </Container>

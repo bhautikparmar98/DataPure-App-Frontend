@@ -65,20 +65,24 @@ enum AllChecked {
 }
 
 type Props = {
+  classes: Class[];
   checks: Checks;
   allChecked: AllChecked;
   handleChecks: (checks: Checks) => void;
   handleAllChecks: (allChecked: AllChecked) => void;
+  lastSortType: string;
 };
 
 function Annotations({
+  classes,
   checks,
   handleChecks,
   handleAllChecks,
   allChecked,
+  lastSortType,
 }: Props) {
-  const { classes, selectedClassIndex } = useAppSelector(
-    ({ classes }) => classes
+  const selectedClassIndex = useAppSelector(
+    ({ classes }) => classes.selectedClassIndex
   );
 
   const { toggleOne, toggleAll } = useChecks({
@@ -98,7 +102,7 @@ function Annotations({
   useEffect(() => {
     handleClasses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classes]);
+  }, [lastSortType, classes]);
 
   return (
     <div className={styles.list}>
@@ -108,7 +112,7 @@ function Annotations({
             className={
               selectedClassIndex === index ? styles.activeAccordion : ''
             }
-            key={`class-accordion-${index}`}
+            key={`${classItem.name}-${index}`}
             sx={{ marginBottom: 3 }}
           >
             <AccordionSummary

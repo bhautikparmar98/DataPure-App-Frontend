@@ -43,7 +43,7 @@ const Annotation = memo(
     };
     return (
       <ListItem
-        key={`${classIndex}-listItem-${annoIndex}`}
+        key={`${id}-listItem`}
         sx={{
           marginTop: -1,
           paddingBottom: 0,
@@ -65,20 +65,17 @@ const Annotation = memo(
         ) : (
           <ListItemText primary={`Instance ${annoIndex + 1}`} />
         )}
-        <IconButton>
+        <IconButton
+          onClick={(e) => handleAnnotationToggle(classIndex, id, !visible)}
+        >
           {visible ? (
             <Icon
               icon="majesticons:eye"
               className={styles.eyeIcon}
-              onClick={(e) => handleAnnotationToggle(classIndex, id, false)}
               fontSize={20}
             />
           ) : (
-            <Icon
-              icon="eva:eye-off-fill"
-              className={styles.eyeIcon}
-              onClick={(_e) => handleAnnotationToggle(classIndex, id, true)}
-            />
+            <Icon icon="eva:eye-off-fill" className={styles.eyeIcon} />
           )}
         </IconButton>
       </ListItem>

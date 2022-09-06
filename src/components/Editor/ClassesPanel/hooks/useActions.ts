@@ -33,10 +33,10 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
 
   // Bulk changes (delete, hide, change class) for global redux classes' state
 
-  const hideInstances = () => {
+  const toggleInstancesVisibility = (visible = false) => {
     const checkedIds = getCheckedIds();
     dispatch(
-      toggleAnnotationsVisibility(selectedClassIndex, checkedIds, false)
+      toggleAnnotationsVisibility(selectedClassIndex, checkedIds, visible)
     );
   };
   const deleteInstances = () => {
@@ -74,7 +74,7 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
   };
 
   return {
-    hideInstances,
+    toggleInstancesVisibility,
     deleteInstances,
     changeClass,
     deleteModalVisible,
