@@ -15,6 +15,7 @@ interface IShapes {
   zooming: boolean;
   bgX: number;
   bgY: number;
+  bgScale: { width: number; height: number };
   handleShapeMove: (
     e: any,
     classId: number,
@@ -39,6 +40,7 @@ const Shapes = ({
   zooming,
   bgX,
   bgY,
+  bgScale,
 }: IShapes) => (
   <>
     {classes.map((classItem: Class, i) =>
@@ -88,6 +90,8 @@ const Shapes = ({
                         .replace(')', ', 0.6)')
                         .replace('rgb', 'rgba'),
                       stroke: classItem.color,
+                      width: shape.width * bgScale.width,
+                      height: shape.height * bgScale.height,
                     }}
                     classItemName={classItem.name}
                     isSelected={shape.id === selectedId}
@@ -103,6 +107,7 @@ const Shapes = ({
                     hideTransformer={stageDragging || zooming}
                     bgX={bgX}
                     bgY={bgY}
+                    bgScale={bgScale}
                   />
                 )}
               </Group>

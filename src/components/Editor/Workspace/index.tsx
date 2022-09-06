@@ -65,7 +65,7 @@ const Workspace: any = ({
     heightRatio,
     bgX,
     bgY,
-    // rotation,
+    bgScale,
   } = useBackground({
     url: src,
     stageWidth: WIDTH,
@@ -99,6 +99,7 @@ const Workspace: any = ({
     currentTool,
     stageDragging,
     width,
+    bgScale,
     onAddComment,
     onDeleteComment
   );
@@ -195,6 +196,7 @@ const Workspace: any = ({
                   zooming={zooming}
                   bgX={bgX}
                   bgY={bgY}
+                  bgScale={bgScale}
                 />
               </Group>
             </Layer>

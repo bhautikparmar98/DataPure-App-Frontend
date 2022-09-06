@@ -14,6 +14,7 @@ interface IRectangle {
   onChange: (e: Konva.ShapeConfig) => void;
   onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
   otherProps?: any;
+  bgScale: { width: number; height: number };
 }
 
 const Rectangle = ({
@@ -26,6 +27,7 @@ const Rectangle = ({
   classItemName,
   bgX,
   bgY,
+  bgScale,
   ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
@@ -47,12 +49,12 @@ const Rectangle = ({
       node.scaleY(1);
       onChange({
         ...shapeProps,
-        // reset x,y pair to be without the coords of the background in redux state
-        x: node.x() - bgX,
-        y: node.y() - bgY,
+        // reset x,y pair to be without the (coords * scale) of the background in redux state
+        x: (node.x() - bgX) / bgScale.width,
+        y: (node.y() - bgY) / bgScale.height,
         // set minimal value
-        width: Math.max(5, node.width() * scaleX),
-        height: Math.max(node.height() * scaleY),
+        width: Math.max(5, (node.width() * scaleX) / bgScale.width),
+        height: Math.max((node.height() * scaleY) / bgScale.height),
       });
     }
   };
@@ -78,8 +80,8 @@ const Rectangle = ({
         onTap={onClick}
         ref={shapeRef}
         {...shapeProps}
-        x={(shapeProps.x || 0) + bgX}
-        y={(shapeProps.y || 0) + bgY}
+        x={(shapeProps.x || 0) * bgScale.width + bgX}
+        y={(shapeProps.y || 0) * bgScale.height + bgY}
         class={classItemName}
         onDblClick={onDblClick}
         onDragEnd={(e: any) => {

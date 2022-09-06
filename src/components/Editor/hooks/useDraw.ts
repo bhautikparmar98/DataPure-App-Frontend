@@ -19,6 +19,7 @@ const useDraw = (
   currentTool: Tool,
   stageDragging: boolean,
   backgroundWidth: number,
+  bgScale: { width: number; height: number },
   onAddComment: (text: string, x: number, y: number) => void,
   onDeleteComment: (commentId: string) => void
 ) => {
@@ -30,7 +31,7 @@ const useDraw = (
 
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedClassIndex, classId, selectedClassColor);
+    useRect(selectedClassIndex, classId, selectedClassColor, bgScale);
 
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
@@ -43,22 +44,6 @@ const useDraw = (
     onAddComment,
     onDeleteComment
   );
-
-  // Update workspace preview
-  // const updatePreview = (forceUpdate: boolean) => {
-  //   if (forceUpdate || updateCount.current === 0) {
-  //     updateCount.current = updateCount.current + 1;
-  //     const SCALE = 1 / 4;
-  //     const src = stageRef?.current?.toDataURL({ pixelRatio: SCALE });
-  //     if (src) dispatch(setPreview({ src }));
-  //   }
-  // };
-
-  // updatePreview(false);
-
-  /* 
-      >>> Workspace events handlers
-  */
 
   const handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {
     if (stageDragging) return;
@@ -139,8 +124,9 @@ const useDraw = (
       });
       const { x: shapeX, y: shapeY } = e.target.attrs;
 
-      shape.x = shapeX + x - bgX + 1;
-      shape.y = shapeY + y - bgY + 1;
+      //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
+      shape.x = (shapeX + x - bgX) / bgScale.width + 1;
+      shape.y = (shapeY + y - bgY) / bgScale.height + 1;
 
       shapes = [{ ...shape }];
       e.target.children[0].destroy();

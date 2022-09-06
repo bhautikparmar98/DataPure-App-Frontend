@@ -98,6 +98,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
+                  onClick={(e) => handleToolClick(text)}
                 >
                   <ListItemIcon
                     sx={{
@@ -116,7 +117,6 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                             ? 'rotate(45deg)'
                             : 'rotate(0deg)',
                       }}
-                      onClick={(e) => handleToolClick(text)}
                     />
                   </ListItemIcon>
                 </ListItemButton>

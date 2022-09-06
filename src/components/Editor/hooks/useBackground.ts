@@ -19,6 +19,12 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
 
   let width = 0,
     height = 0;
+
+  let bgScale = {
+    width: 1,
+    height: 1,
+  };
+
   if (background !== undefined) {
     widthRatio = stageWidth / background.width;
 
@@ -30,7 +36,14 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     //if width > height ==> set width to the stageWidth and use its ratio to set the height and the vice versa
     width = background.width >= height ? stageWidth : heightRatio * width;
     height = background.width >= height ? widthRatio * height : stageHeight;
+
+    //this scale is used to make shapes responsive on user screens. Used to scale shapes according to the background dimensions
+    bgScale = {
+      width: width / background.width,
+      height: height / background.height,
+    };
   }
+
   let bgX = (stageWidth - width) / 2;
   const bgY = (stageHeight - height) / 2;
 
@@ -43,6 +56,7 @@ const useBackground = ({ url, stageWidth, stageHeight }: Props) => {
     height,
     bgX,
     bgY,
+    bgScale,
   };
 };
 

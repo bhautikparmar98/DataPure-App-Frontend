@@ -79,6 +79,8 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
             annotations: imgAnnotations,
             count: 0,
           };
+
+          // debugger;
         } else imagesWithNoData.push(img);
       });
 

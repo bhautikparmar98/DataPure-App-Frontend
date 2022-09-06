@@ -14,7 +14,8 @@ const config = {
 const useRect = (
   selectedClassIndex: number,
   classId: string,
-  selectedClassColor: string
+  selectedClassColor: string,
+  bgScale: { width: number; height: number }
 ) => {
   const dispatch = useAppDispatch();
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
@@ -108,11 +109,11 @@ const useRect = (
       if (x != null && y != null && xValid && yValid) {
         const annotationToAdd = {
           type: TOOLS.RECTANGLE,
-          // saving x & y without bg coords and we will add them later while drawing as these are dynamic values
-          x: sx - bgX,
-          y: sy - bgY,
-          width: x - sx,
-          height: y - sy,
+          // saving x & y without bg (coords & scale) and we will add them later while drawing as these are dynamic values
+          x: (sx - bgX) / bgScale.width,
+          y: (sy - bgY) / bgScale.height,
+          width: (x - sx) / bgScale.width,
+          height: (y - sy) / bgScale.height,
           id: uniqid(),
         };
 
