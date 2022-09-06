@@ -141,7 +141,7 @@ const Workspace: any = ({
       tabIndex={0}
       onKeyUp={handleKeyUp}
     >
-      {classes.length > 0 ? (
+      {backgroundStatus === 'loaded' && classes.length > 0 ? (
         <Stage
           width={WIDTH}
           height={HEIGHT}
@@ -176,31 +176,29 @@ const Workspace: any = ({
             />
           </Layer>
 
-          {backgroundStatus === 'loaded' && (
-            <Layer>
-              <Group
-                ref={shapesRef}
-                onClick={(e) => handleShapesCaching(false, e)}
-              >
-                <Shapes
-                  classes={classes}
-                  handleRectChange={handleRectChange}
-                  showTooltip={showTooltip}
-                  selectShape={selectShape}
-                  hideShapeTemporarily={hideShapeTemporarily}
-                  handleShapeMove={handleShapeMove}
-                  currentTool={currentTool}
-                  selectedId={selectedId}
-                  stageDragging={stageDragging}
-                  hideTooltip={hideTooltip}
-                  zooming={zooming}
-                  bgX={bgX}
-                  bgY={bgY}
-                  bgScale={bgScale}
-                />
-              </Group>
-            </Layer>
-          )}
+          <Layer>
+            <Group
+              ref={shapesRef}
+              onClick={(e) => handleShapesCaching(false, e)}
+            >
+              <Shapes
+                classes={classes}
+                handleRectChange={handleRectChange}
+                showTooltip={showTooltip}
+                selectShape={selectShape}
+                hideShapeTemporarily={hideShapeTemporarily}
+                handleShapeMove={handleShapeMove}
+                currentTool={currentTool}
+                selectedId={selectedId}
+                stageDragging={stageDragging}
+                hideTooltip={hideTooltip}
+                zooming={zooming}
+                bgX={bgX}
+                bgY={bgY}
+                bgScale={bgScale}
+              />
+            </Group>
+          </Layer>
 
           <Layer>
             <TempShapes
