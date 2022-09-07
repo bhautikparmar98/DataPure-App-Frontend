@@ -6,11 +6,7 @@ import ClassForm from './ClassForm';
 interface AddClassProps {
   open: boolean;
   onClose: () => void;
-  onFinishAddingClass: (data: {
-    name: string;
-    color: string;
-    id: string;
-  }) => void;
+  onFinishAddingClass: (data: { name: string; color: string }) => void;
 }
 
 const AddClassDialog: React.FC<AddClassProps> = ({
@@ -20,7 +16,7 @@ const AddClassDialog: React.FC<AddClassProps> = ({
 }) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const submitHandler = (data: { name: string; color: string; id: string }) => {
+  const submitHandler = (data: { name: string; color: string }) => {
     try {
       onFinishAddingClass(data);
       onClose();

@@ -43,6 +43,8 @@ import { IMAGE_STATUS } from 'src/constants/ImageStatus';
 import { parseJsonFile } from 'src/utils/parseJsonFile';
 import { availableColors } from 'src/constants/availableColors';
 import ImagesStatus from './ImagesStatus';
+//Utils
+import uniqid from 'uniqid';
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -223,12 +225,14 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
       await uploadHandler(files, data.images);
 
+      const classesWithIds = classes.map((c) => ({ ...c, id: uniqid() }));
+
       await axiosInstance.post('/project', {
         name: data.name,
         dueAt: data.dueAt,
         type: data.type,
         images: files.map((f: any) => ({ url: f.url, fileName: f.fileName })),
-        classes,
+        classes: classesWithIds,
       });
 
       reset();
