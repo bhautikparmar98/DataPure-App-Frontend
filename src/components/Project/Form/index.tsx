@@ -334,7 +334,8 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       loading ||
       values.name === '' ||
       values.type === '' ||
-      values.dueAt === null
+      values.dueAt === null ||
+      values.images.length === 0
     )
       return true;
 
@@ -342,7 +343,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     if (isImageAnnotationSelected && values.dataType === '') return true;
 
     // if data type is pre-annotated and there is no review status should return true;
-    if (isReviewStatusShown && values.reviewStatus === '') return true;
+    if (isReviewStatusShown && !values.reviewStatus) return true;
 
     // if data type is pre-annotated and there is no json file uploaded return true;
     if (isReviewStatusShown && !values.annotationFile) return true;
