@@ -15,11 +15,13 @@ import { RHFTextField } from 'src/components/Shared/hook-form';
 //validation
 import { availableColors } from 'src/constants/availableColors';
 import { useSnackbar } from 'notistack';
+// Utils
+import uniqid from 'uniqid';
 
 // ----------------------------------------------------------------------
 
 interface ClassFormProps {
-  onSubmit: (data: { name: string; color: string }) => void;
+  onSubmit: (data: { name: string; color: string; id: string }) => void;
 }
 
 const ClassForm: React.FC<ClassFormProps> = ({ onSubmit }) => {
@@ -29,7 +31,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit }) => {
 
   const submitHandler = async () => {
     try {
-      await onSubmit({ name, color });
+      await onSubmit({ name, color, id: uniqid() });
     } catch (error) {
       console.log('error ', error);
       enqueueSnackbar('Something went wrong', { variant: 'error' });

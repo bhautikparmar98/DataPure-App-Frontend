@@ -43,8 +43,6 @@ import { IMAGE_STATUS } from 'src/constants/ImageStatus';
 import { parseJsonFile } from 'src/utils/parseJsonFile';
 import { availableColors } from 'src/constants/availableColors';
 import ImagesStatus from './ImagesStatus';
-//Utils
-import uniqid from 'uniqid';
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -180,6 +178,8 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
       await uploadHandler(files, values.images);
 
+      debugger;
+
       const imgAnnoMap: any = {};
       rows.forEach((element) => {
         imgAnnoMap[element.name] = element.annotations;
@@ -225,7 +225,11 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
       await uploadHandler(files, data.images);
 
-      const classesWithIds = classes.map((c) => ({ ...c, id: uniqid() }));
+      //IDs are added for predefined-annotations only
+      const classesWithIds = classes.map((c: any) => {
+        delete c.id;
+        return c;
+      });
 
       await axiosInstance.post('/project', {
         name: data.name,
