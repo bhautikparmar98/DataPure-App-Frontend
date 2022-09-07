@@ -13,6 +13,8 @@ import { useForm } from 'react-hook-form';
 import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
 import { FormProvider } from 'src/components/Shared/hook-form';
 import Iconify from 'src/components/Shared/Iconify';
+import { ROLES } from 'src/constants';
+import useAuth from 'src/hooks/useAuth';
 import useSettings from 'src/hooks/useSettings';
 import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
 import axiosInstance from 'src/utils/axios';
@@ -39,6 +41,7 @@ export const ProjectDataSetComponent: React.FC<
 > = ({ projectId }) => {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
+  const { role } = useAuth();
 
   const NewProjectSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -133,6 +136,13 @@ export const ProjectDataSetComponent: React.FC<
     return index > -1;
   };
 
+  const canDelete = () => {
+    if (role === ROLES.CLIENT.value) return true;
+    if (role === ROLES.SUPER_ADMIN.value) return true;
+    if (role === ROLES.ADMIN.value) return true;
+    return false;
+  };
+
   const deleteImagesHandler = async () => {
     try {
       setDeleteImageLoading(true);
@@ -201,16 +211,18 @@ export const ProjectDataSetComponent: React.FC<
         ]}
         action={
           <>
-            <Button
-              variant="outlined"
-              startIcon={<Iconify icon="akar-icons:trash-can" />}
-              onClick={deleteImagesHandler}
-              disabled={selectedImages.length === 0 || deleteImageLoading}
-              color="error"
-              sx={{ mx: 1 }}
-            >
-              Delete
-            </Button>
+            {canDelete() && (
+              <Button
+                variant="outlined"
+                startIcon={<Iconify icon="akar-icons:trash-can" />}
+                onClick={deleteImagesHandler}
+                disabled={selectedImages.length === 0 || deleteImageLoading}
+                color="error"
+                sx={{ mx: 1 }}
+              >
+                Delete
+              </Button>
+            )}
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
