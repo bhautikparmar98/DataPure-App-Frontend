@@ -1,18 +1,65 @@
 import { Button, Grid, Link } from '@mui/material';
 import Iconify from 'src/components/Shared/Iconify';
-import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import { clientRequestRedo } from 'src/components/Editor/utils/clientRequests';
+import { qaRequestRedo } from 'src/components/Editor/utils/qaRequests';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
+import { resetState } from 'src/redux/slices/classes/classes.actions';
+import { useAppDispatch, useAppSelector } from 'src/redux/store';
 
 interface RequestRedoProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
 
 const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
-  const { requestRedo, imageId } = useAnnotationSubmit();
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const { imageId } = useAppSelector(({ classes }) => classes);
   const { role } = useAuth();
+
+  const requestRedo = async () => {
+    try {
+      let response;
+      if (role === ROLES.QA.value) {
+        response = await qaRequestRedo(imageId);
+      } else if (role === ROLES.CLIENT.value) {
+        response = await clientRequestRedo(imageId);
+      }
+
+      if (response?.status === 200) {
+        enqueueSnackbar('We will review the annotations again. Thank you', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+        });
+        dispatch(resetState());
+        setTimeout(() => {
+          router.reload();
+        }, 2000);
+      } else {
+        throw new Error('Request has not been successful');
+      }
+    } catch (err) {
+      enqueueSnackbar(
+        `We couldn't process your request now. Please try again later`,
+        {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+        }
+      );
+    }
+  };
 
   const requestRedoHandler = async (imgId: string) => {
     await requestRedo();

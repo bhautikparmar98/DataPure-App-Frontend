@@ -6,7 +6,7 @@ import { PATH_AUTH } from 'src/routes/auth/paths';
 // API
 // ----------------------------------------------------------------------
 
-export const APP_AUTHOR = 'HAMMOQ';
+export const APP_AUTHOR = 'DATAPURE';
 
 export const FIREBASE_API = {
   apiKey: process.env.FIREBASE_API_KEY,

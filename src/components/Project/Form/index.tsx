@@ -178,8 +178,6 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
       await uploadHandler(files, values.images);
 
-      debugger;
-
       const imgAnnoMap: any = {};
       rows.forEach((element) => {
         imgAnnoMap[element.name] = element.annotations;

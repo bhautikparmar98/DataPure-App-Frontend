@@ -5,15 +5,8 @@ import { Annotation, ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { useAppSelector } from 'src/redux/store';
 import { annotatorSubmitAnnotations } from '../../utils/annotatorRequests';
-import {
-  qaSubmitAnnotations,
-  qaRequestRedo,
-  qaApproveImage,
-} from '../../utils/qaRequests';
-import {
-  clientApproveAnnotations,
-  clientRequestRedo,
-} from '../../utils/clientRequests';
+import { clientApproveAnnotations } from '../../utils/clientRequests';
+import { qaApproveImage, qaSubmitAnnotations } from '../../utils/qaRequests';
 
 import { resetState } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
@@ -35,18 +28,24 @@ const useAnnotationSubmit = () => {
         clearInterval(interval);
       };
     }
-  }, []);
+  }, [classes]);
 
   const handleSubmit = async (done = false) => {
     try {
+      const updatedClasses = [...classes];
+
       const purifiedAnnotations: Annotation[] = [];
-      classes.forEach((cls) => {
-        cls.annotations.forEach((anno) => {
-          delete anno.fill;
-          delete anno.id;
-          purifiedAnnotations.push(anno);
+      updatedClasses.forEach((cls) => {
+        const newAnnotations = [...cls.annotations];
+        newAnnotations.forEach((anno) => {
+          const newAnno = { ...anno };
+          delete newAnno.fill;
+          delete (newAnno as any).id;
+
+          purifiedAnnotations.push(newAnno);
         });
       });
+
       let response;
       switch (role) {
         case ROLES.QA.value:
@@ -93,44 +92,6 @@ const useAnnotationSubmit = () => {
 
   const handleReset = () => {};
 
-  const requestRedo = async () => {
-    try {
-      let response;
-      if (role === ROLES.QA.value) {
-        response = await qaRequestRedo(imageId);
-      } else if (role === ROLES.CLIENT.value) {
-        response = await clientRequestRedo(imageId);
-      }
-
-      if (response?.status === 200) {
-        enqueueSnackbar('We will review the annotations again. Thank you', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-        });
-        dispatch(resetState());
-        setTimeout(() => {
-          router.reload();
-        }, 2000);
-      } else {
-        throw new Error('Request has not been successful');
-      }
-    } catch (err) {
-      enqueueSnackbar(
-        `We couldn't process your request now. Please try again later`,
-        {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-        }
-      );
-    }
-  };
-
   const handleApproveImage = async () => {
     const response = await qaApproveImage(imageId);
     if (response?.status === 200) {
@@ -154,7 +115,6 @@ const useAnnotationSubmit = () => {
   return {
     handleSubmit,
     handleReset,
-    requestRedo,
     handleApproveImage,
     imageId,
   };

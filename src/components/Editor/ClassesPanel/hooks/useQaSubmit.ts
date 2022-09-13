@@ -1,24 +1,13 @@
 import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
 import { Annotation } from 'src/constants';
 import { useAppSelector } from 'src/redux/store';
 import axios from 'src/utils/axios';
-import { useSnackbar } from 'notistack';
-import { useEffect } from 'react';
 
 const useQaSubmit = () => {
   const { classes, imageId } = useAppSelector(({ classes }) => classes);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (classes.length > 0) handleQaSubmit();
-    }, 1000 * 60 * 5);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
 
   const handleQaSubmit = async (done = false) => {
     try {

@@ -42,11 +42,11 @@ const classesPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  // editor: editorReducer,
-  // classes: classesReducer,
+  editor: editorReducer,
+  classes: classesReducer,
   // !comment the next line for debugging purposes
-  editor: persistReducer(editorPersistConfig, editorReducer),
-  classes: persistReducer(classesPersistConfig, classesReducer),
+  // editor: persistReducer(editorPersistConfig, editorReducer),
+  // classes: persistReducer(classesPersistConfig, classesReducer),
 });
 
 export { rootPersistConfig, rootReducer };
