@@ -82,7 +82,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     name: Yup.string().required('Name is required'),
     dueAt: Yup.date().required('Due Date is required'),
     type: Yup.string().required('Type is required'),
-    images: Yup.array().min(1, 'Images is required'),
+    // images: Yup.array().min(1, 'Images is required'),
     // statusType: Yup.string().optional(),
     // dataType: Yup.string().optional(),
     // annotationFile: Yup.array().optional(),
@@ -247,6 +247,36 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     setLoading(false);
   };
 
+  // human in loop type has no images and will redirect client to page for getting their token
+  const onSubmitHumanInLoop = async (data: FormValuesProps) => {
+    setLoading(true);
+
+    try {
+      //IDs are added for predefined-annotations only
+      const classesWithIds = classes.map((c: any) => {
+        delete c.id;
+        return c;
+      });
+
+      await axiosInstance.post('/project/humanInLoop', {
+        name: data.name,
+        dueAt: data.dueAt,
+        type: data.type,
+        dataType: data.dataType,
+        classes: classesWithIds,
+      });
+
+      reset();
+      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
+      // !TODO Redirect to token page instead
+      push(PATH_DASHBOARD.project.list);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar('Something went wrong.', { variant: 'error' });
+    }
+    setLoading(false);
+  };
+
   const handleDrop = useCallback(
     (acceptedFiles: any[]) => {
       setValue(
@@ -340,20 +370,25 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       loading ||
       values.name === '' ||
       values.type === '' ||
-      values.dueAt === null ||
-      values.images.length === 0
+      values.dueAt === null
     )
       return true;
 
     // selected image annotation and data type not selected should return true;
     if (isImageAnnotationSelected && values.dataType === '') return true;
 
+    // selected image annotation for non `human in the loop` and no images added
+    if (
+      values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value &&
+      values.images.length === 0
+    )
+      return true;
+
     // if data type is pre-annotated and there is no review status should return true;
     if (isReviewStatusShown && !values.reviewStatus) return true;
 
     // if data type is pre-annotated and there is no json file uploaded return true;
     if (isReviewStatusShown && !values.annotationFile) return true;
-
     return false;
   };
 
@@ -362,7 +397,9 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       <FormProvider
         methods={methods}
         onSubmit={
-          isReviewStatusShown
+          values.dataType === IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value
+            ? handleSubmit(onSubmitHumanInLoop)
+            : isReviewStatusShown
             ? handleSubmit(onSubmitPreAnnotated)
             : handleSubmit(onSubmit)
         }
@@ -439,24 +476,29 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                   <Grid container spacing={2}>
                     <Grid item md={8} xs={12}>
                       <Grid container spacing={2}>
-                        <Grid item xs={gridXsValueForUploader}>
-                          <div>
-                            <RHFUploadMultiFile
-                              name="images"
-                              showPreview={false}
-                              accept="image/*"
-                              minHeight={400}
-                              maxSize={31045728555}
-                              onDrop={handleDrop}
-                              onRemove={handleRemove}
-                              onRemoveAll={handleRemoveAll}
-                              uploading={uploading}
-                              label="Drop or Select Images file"
-                              progress={progress}
-                              buffer={progress + 5}
-                            />
-                          </div>
-                        </Grid>
+                        {isImageAnnotationSelected &&
+                          values.dataType !==
+                            IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && (
+                            <Grid item xs={gridXsValueForUploader}>
+                              <div>
+                                <RHFUploadMultiFile
+                                  name="images"
+                                  showPreview={false}
+                                  accept="image/*"
+                                  minHeight={400}
+                                  maxSize={31045728555}
+                                  onDrop={handleDrop}
+                                  onRemove={handleRemove}
+                                  onRemoveAll={handleRemoveAll}
+                                  uploading={uploading}
+                                  label="Drop or Select Images file"
+                                  progress={progress}
+                                  buffer={progress + 5}
+                                />
+                              </div>
+                            </Grid>
+                          )}
+
                         {isReviewStatusShown && (
                           <Grid item xs={gridXsValueForUploader}>
                             <div>
@@ -503,6 +545,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                             </RHFSelect>
                           </Box>
                         )}
+
                         <Box mb={2}>
                           <Grid container>
                             <Grid item md={6} xs={12}>
@@ -534,17 +577,20 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                           justifyContent="space-between"
                           flex={1}
                           position="relative"
-                          style={{ overflowY: 'auto', overflowX: 'hidden' }}
+                          style={{
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                          }}
                         >
                           <Box
                             minHeight="min-content"
                             display="flex"
                             flexDirection="column"
-                            position="absolute"
-                            top={0}
-                            left={0}
-                            right={0}
-                            bottom={0}
+                            // position="absolute"
+                            // top={0}
+                            // left={0}
+                            // right={0}
+                            // bottom={0}
                           >
                             {classes.map((c, index) => (
                               <Box

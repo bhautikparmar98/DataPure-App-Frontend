@@ -46,7 +46,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   );
   if (calcProgress) progress = calcProgress(project);
   if (progress > 100) progress = 100; //!remove this later
-
+  if (isNaN(progress)) progress = 0;
   return (
     <Card>
       <CardContent>
