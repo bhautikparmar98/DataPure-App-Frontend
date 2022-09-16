@@ -110,7 +110,7 @@ export const ProjectDataSetComponent: React.FC<
   const addClassHandler = async (data: { name: string; color: string }) => {
     try {
       await axiosInstance.put(`/project/${projectId}/addClasses`, {
-        classes: [data],
+        classes: [{ name: data.name, color: data.color }],
       });
 
       setRerenderProject((prev) => prev + 1);
