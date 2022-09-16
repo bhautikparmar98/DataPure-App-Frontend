@@ -207,12 +207,16 @@ export const classesReducer = (state = initialState, action: any) => {
     case EditorActionTypes.CHANGE_ANNOTATIONS_CLASS: {
       const { classes } = state;
       const { oldClassIndex, newClassIndex, annotationIds } = action.payload;
+
+      const newClassId = classes[newClassIndex]._id;
+
       let oldClassAnnotations = classes[oldClassIndex]?.annotations || [];
       let newClassAnnotations = classes[newClassIndex]?.annotations || [];
 
       const newAnnos: Annotation[] = [];
       oldClassAnnotations = oldClassAnnotations.filter((anno) => {
         if (annotationIds.includes(anno.id)) {
+          anno.classId = newClassId;
           newAnnos.push(anno);
           return false;
         }
