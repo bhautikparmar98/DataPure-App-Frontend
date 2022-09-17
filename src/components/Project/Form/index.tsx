@@ -19,6 +19,7 @@ import {
   MenuItem,
   Stack,
   Typography,
+  Modal,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -75,6 +76,10 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
   const [isImageStatusModalOpened, setIsImageStatusModalOpened] =
     useState(false);
   const [jsonData, setJsonData] = useState([]);
+
+  const [tokenModalOpen, setTokenModalOpen] = useState(false);
+  //sdk token for human in the loop project
+  const [sdkToken, setSdkToken] = useState('');
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -258,19 +263,27 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
         return c;
       });
 
-      await axiosInstance.post('/project/humanInLoop', {
+      const response = await axiosInstance.post('/project/humanInLoop', {
         name: data.name,
         dueAt: data.dueAt,
         type: data.type,
         dataType: data.dataType,
         classes: classesWithIds,
       });
+      let token: string = response.data?.project?.sdkToken || '';
+      if (token.length > 0) {
+        setSdkToken(token);
+        setTokenModalOpen(true);
+      }
 
       reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      // !TODO Redirect to token page instead
-      push(PATH_DASHBOARD.project.list);
+      setClasses([]);
+      enqueueSnackbar(
+        `Human in The Loop Project has been created successfully.`
+      );
+      // push(PATH_DASHBOARD.project.list);
     } catch (error) {
+      if (sdkToken !== '') setSdkToken('');
       console.error(error);
       enqueueSnackbar('Something went wrong.', { variant: 'error' });
     }
@@ -626,6 +639,40 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
           </Grid>
         </Grid>
       </FormProvider>
+      <Modal
+        open={tokenModalOpen}
+        onClose={() => setTokenModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Your SDK Token
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Use this token with our SDK to upload images to this project.
+            <br />
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ wordBreak: 'break-all', fontSize: 10 }}
+          >
+            {sdkToken}
+          </Typography>
+        </Box>
+      </Modal>
     </Container>
   );
 };
