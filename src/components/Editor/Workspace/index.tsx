@@ -207,16 +207,16 @@ const Workspace: any = ({
               classColor={classes[selectedClassIndex]?.color}
             />
             {tooltip.text.length > 0 && (
-              <Group y={-20}>
+              <Group y={10}>
                 <Rect
-                  x={tooltip.x - 8}
-                  y={tooltip.y + 20}
-                  scaleX={2}
-                  scaleY={2}
-                  offsetY={15}
-                  offsetX={2}
+                  listening={false}
+                  x={tooltip.x}
+                  y={tooltip.y}
+                  offsetX={5}
+                  scaleX={1 / stageScale.stageScale}
+                  scaleY={1 / stageScale.stageScale}
                   width={tooltip.rectWidth}
-                  height={24}
+                  height={18}
                   stroke={'rgba(0,0,0,0.4)'}
                   strokeWidth={2}
                   fill={'rgba(103,58,183, 0.8)'}
@@ -227,7 +227,11 @@ const Workspace: any = ({
                   shadowOpacity={0.2}
                   cornerRadius={5}
                 />
-                <Text {...tooltip} scaleX={2} scaleY={2} />
+                <Text
+                  {...tooltip}
+                  scaleX={2 / stageScale.stageScale}
+                  scaleY={2 / stageScale.stageScale}
+                />
               </Group>
             )}
 

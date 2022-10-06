@@ -7,10 +7,10 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
     x: 0,
     y: 0,
     text: '',
-    fontSize: 14,
+    fontSize: 8,
     fill: 'rgba(0,0,0,1)',
     fontFamily: 'Calibri',
-    rectWidth: 40,
+    rectWidth: 25,
   });
 
   const showTooltip = (e: Konva.KonvaEventObject<DragEvent>) => {
@@ -47,8 +47,8 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         actualX = points[correspondXIndex + minYIndex];
 
         const { x = 0, y = 0 } = e.target.attrs;
-        actualX = actualX + x + 10;
-        actualY = minY + y - 20;
+        actualX = actualX + x;
+        actualY = minY + y;
       }
 
       // !FIX: srcElements is deprecated, change it
@@ -56,7 +56,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         (e.evt?.srcElement as any)?.getContext('2d')?.measureText(classTitle)
           ?.width *
           1.4 +
-          10 || 40;
+          15 || 25;
 
       setTooltip((prev) => ({
         ...prev,
@@ -70,15 +70,12 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
   };
 
   const hideTooltip = () => {
-    setTooltip({
+    setTooltip((prev) => ({
+      ...prev,
       x: 0,
       y: 0,
       text: '',
-      fontSize: 14,
-      fill: 'rgba(0,0,0,1)',
-      fontFamily: 'Calibri',
-      rectWidth: 40,
-    });
+    }));
   };
 
   return {
