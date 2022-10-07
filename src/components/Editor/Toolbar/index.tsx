@@ -91,7 +91,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               return true;
             })
             .map((text, index) => (
-              <ListItem key={`${text}-${index}`} disablePadding>
+              <ListItem key={index} disablePadding>
                 <ListItemButton
                   sx={{
                     minHeight: 48,

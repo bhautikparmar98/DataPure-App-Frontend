@@ -165,6 +165,12 @@ const useDraw = (
     comments,
     handleCommentClick,
     handleShapeMove,
+    rectHandleMouseDown,
+    rectHandleMouseUp,
+    rectHandleMouseMove,
+    lineHandleMouseDown,
+    lineHandleMouseUp,
+    lineHandleMouseMove,
   };
 };
 

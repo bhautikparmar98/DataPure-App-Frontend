@@ -93,7 +93,7 @@ function Annotations({
     checks,
   });
 
-  console.log(classes);
+  // console.log(classes);
 
   // const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
 
@@ -114,7 +114,7 @@ function Annotations({
             className={
               selectedClassIndex === index ? styles.activeAccordion : ''
             }
-            key={`${classItem.name}-${index}`}
+            key={classItem._id}
             sx={{ marginBottom: 3 }}
           >
             <AccordionSummary
@@ -167,7 +167,7 @@ function Annotations({
                       selectedClassIndex={selectedClassIndex}
                       visible={visible}
                       annoIndex={i}
-                      key={`annotation-${id}`}
+                      key={id}
                       toggleOne={toggleOne}
                       checked={id ? checks[id!] : false}
                     />
@@ -193,8 +193,9 @@ function Annotations({
 }
 
 const preventRenders = (prev: Props, next: Props) => {
-  console.log(_.isEqual(prev, next), next);
+  // console.log(_.isEqual(prev, next), next);
   return _.isEqual(prev, next);
 };
 
 export default memo(Annotations, preventRenders);
+// export default Annotations;

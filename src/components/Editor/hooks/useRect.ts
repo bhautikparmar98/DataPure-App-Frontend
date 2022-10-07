@@ -118,15 +118,15 @@ const useRect = (
         };
 
         //min width & height
-        if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
-          dispatch(
-            addAnnotation(selectedClassIndex, classId, {
-              visible: true,
-              id: uniqid(),
-              shapes: [{ ...annotationToAdd }],
-            })
-          );
-        }
+        // if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
+        dispatch(
+          addAnnotation(selectedClassIndex, classId, {
+            visible: true,
+            id: uniqid(),
+            shapes: [{ ...annotationToAdd }],
+          })
+        );
+        // }
 
         setNewAnnotation([]);
         setAnnotations([]);

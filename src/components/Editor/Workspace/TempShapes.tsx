@@ -13,6 +13,7 @@ const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
     {rects.length > 0 && (
       <Rect
         {...rects[0]}
+        listening={false}
         key={'temp-rect'}
         fill={classColor.replace(')', ', 0.6)').replace('rgb', 'rgba')}
       />

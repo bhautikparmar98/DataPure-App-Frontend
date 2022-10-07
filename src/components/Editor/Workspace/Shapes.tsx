@@ -68,7 +68,7 @@ const Shapes = ({
                 {shape.type === TOOLS.LINE ? (
                   <Line
                     {...shape}
-                    key={m}
+                    key={shape.id + '-line'}
                     draggable
                     class={classItem.name}
                     isSelected={shape.id === selectedId}
@@ -87,7 +87,7 @@ const Shapes = ({
                   />
                 ) : (
                   <Rectangle
-                    key={m}
+                    key={shape.id + '-rect'}
                     shapeProps={{
                       ...shape,
                       fill: classItem.color

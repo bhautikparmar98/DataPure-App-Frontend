@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useCallback, useEffect, useRef } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { TOOLS, Class } from 'src/constants';
@@ -11,6 +11,7 @@ import useCursor from '../hooks/useCursor';
 import useDraw from '../hooks/useDraw';
 import useKeyboard from '../hooks/useKeyboard';
 import useSelectShape from '../hooks/useSelectShape';
+import useShapesCache from '../hooks/useShapesCache';
 import useTooltip from '../hooks/useTooltip';
 import BackgroundImage from './BackgroundImage';
 import Shapes from './Shapes';
@@ -54,6 +55,7 @@ const Workspace: any = ({
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const shapesRef = useRef<Konva.Group>(null);
+  const shapesLayerRef = useRef<Konva.Layer>(null);
   const bgLayerRef = useRef<Konva.Layer>(null);
 
   const {
@@ -61,8 +63,6 @@ const Workspace: any = ({
     backgroundStatus,
     width,
     height,
-    widthRatio,
-    heightRatio,
     bgX,
     bgY,
     bgWidthScale,
@@ -91,6 +91,12 @@ const Workspace: any = ({
     handleShapeMove,
     comments,
     handleCommentClick,
+    rectHandleMouseDown,
+    rectHandleMouseUp,
+    rectHandleMouseMove,
+    lineHandleMouseDown,
+    lineHandleMouseUp,
+    lineHandleMouseMove,
   } = useDraw(
     selectedClassIndex,
     classId,
@@ -111,6 +117,13 @@ const Workspace: any = ({
 
   const { stageScale, handleWheel, zooming } = useZoom();
 
+  const { cachedVisible } = useShapesCache({
+    stageRef,
+    zooming,
+    stageDragging,
+    classes,
+  });
+
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
   // For Rectangle transformation (size & rotation)
@@ -122,18 +135,6 @@ const Workspace: any = ({
     },
     [selectedClassIndex]
   );
-
-  const handleShapesCaching = (shouldCache = true, e?: any) => {
-    shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
-  };
-
-  useEffect(() => {
-    if (shapesRef.current) {
-      stageDragging || zooming
-        ? handleShapesCaching(true)
-        : handleShapesCaching(false);
-    }
-  }, [stageDragging, zooming]);
 
   return (
     <div
@@ -156,13 +157,27 @@ const Workspace: any = ({
           scaleY={stageScale.stageScale}
           x={stageScale.stageX}
           y={stageScale.stageY}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseDown={(e: any) => {
-            checkDeselect(e);
-            if (stageDragging) return;
-            handleMouseDown(e);
-          }}
+          onMouseMove={
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseMove
+              : lineHandleMouseMove
+          }
+          onMouseUp={
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseUp
+              : lineHandleMouseUp
+          }
+          onMouseDown={
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseDown
+              : lineHandleMouseDown
+          }
+          // onMouseUp={handleMouseUp}
+          // onMouseDown={(e: any) => {
+          //   checkDeselect(e);
+          //   if (stageDragging) return;
+          //   handleMouseDown(e);
+          // }}
           onClick={(e) => {
             checkDeselect(e);
             hideTooltip();
@@ -180,31 +195,29 @@ const Workspace: any = ({
               y={bgY}
             />
           </Layer>
-
-          <Layer>
-            <Group
-              ref={shapesRef}
-              onClick={(e) => handleShapesCaching(false, e)}
-            >
-              <Shapes
-                classes={classes}
-                handleRectChange={handleRectChange}
-                showTooltip={showTooltip}
-                selectShape={selectShape}
-                hideShapeTemporarily={hideShapeTemporarily}
-                handleShapeMove={handleShapeMove}
-                currentTool={currentTool}
-                selectedId={selectedId}
-                stageDragging={stageDragging}
-                hideTooltip={hideTooltip}
-                zooming={zooming}
-                bgX={bgX}
-                bgY={bgY}
-                bgWidthScale={bgWidthScale}
-                bgHeightScale={bgHeightScale}
-              />
-            </Group>
-          </Layer>
+          {!cachedVisible && (
+            <Layer id="shapes_layer" ref={shapesLayerRef}>
+              <Group ref={shapesRef} id="shapes_group">
+                <Shapes
+                  classes={classes}
+                  handleRectChange={handleRectChange}
+                  showTooltip={showTooltip}
+                  selectShape={selectShape}
+                  hideShapeTemporarily={hideShapeTemporarily}
+                  handleShapeMove={handleShapeMove}
+                  currentTool={currentTool}
+                  selectedId={selectedId}
+                  stageDragging={stageDragging}
+                  hideTooltip={hideTooltip}
+                  zooming={false}
+                  bgX={bgX}
+                  bgY={bgY}
+                  bgWidthScale={bgWidthScale}
+                  bgHeightScale={bgHeightScale}
+                />
+              </Group>
+            </Layer>
+          )}
 
           <Layer>
             <TempShapes
@@ -244,7 +257,7 @@ const Workspace: any = ({
             {currentTool === TOOLS.COMMENT &&
               comments.map((comment, commendIndex) => (
                 <Image
-                  key={`comment-${commendIndex}`}
+                  key={commendIndex}
                   width={60 / stageScale.stageScale}
                   height={60 / stageScale.stageScale}
                   image={image}

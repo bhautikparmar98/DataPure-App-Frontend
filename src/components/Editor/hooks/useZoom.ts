@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // import { setPreview } from 'src/redux/slices/editor/editor.actions';
 // import { useAppDispatch } from 'src/redux/store';
 
-const SCALE_BY =1.8;
+const SCALE_BY = 1.8;
 const MIN_SCALE = 0.005;
 // const MAX_SCALE = 20;
 // const PREVIEW_SCALE = 1 / 4;
@@ -21,16 +21,14 @@ const useZoom = () => {
 
   const stageRef = useRef<Stage | null>(null);
 
-  const updateZoom = useCallback(() => {
-    if (zooming) {
-      setZooming(false);
-    }
-  }, [zooming]);
-
-  const debouncedZoom = _.debounce(updateZoom, 400);
+  const updateZoom = useCallback(
+    _.debounce(() => {
+      if (zooming) setZooming(false);
+    }, 1000),
+    [zooming]
+  );
 
   useEffect(() => {
-    // debouncedZoom();
     updateZoom();
   }, [stageScale]);
 
