@@ -15,23 +15,19 @@ const useRect = (
   selectedClassIndex: number,
   classId: string,
   selectedClassColor: string,
-  bgScale: { width: number; height: number }
+  bgWidthScale: number,
+  bgHeightScale: number
 ) => {
   const dispatch = useAppDispatch();
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 
-  const rectConfig = {
-    ...config,
-    stroke: selectedClassColor,
-  };
-
   const rectHandleMouseDown = (event: KonvaEventObject<WheelEvent>) => {
     if (newAnnotation.length === 0) {
       //using getRelativePointerPosition instead of getPointerPosition as it respects the Stage current scale
       // const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-      const bg = event.target.getStage()?.find('#canvasBackground');
-      if (!bg || bg.length === 0) return;
+      const bg = event.target.getStage()?.find('#canvasBackground')!;
+      // if (!bg || bg.length === 0) return;
 
       let { x, y } = bg[0].getRelativePointerPosition()!;
       // We are getting the values of the x & y relative to the background coords as the background might have different coords in different user screens
@@ -43,10 +39,12 @@ const useRect = (
       const xValid = mouseX >= 0 && mouseX <= bgWidth;
       const yValid = mouseY >= 0 && mouseY <= bgHeight;
 
-      if (x != null && y != null && xValid && yValid) {
+      if (xValid && yValid) {
         setNewAnnotation([
           {
-            ...rectConfig,
+            opacity: 0.8,
+            strokeWidth: 2,
+            stroke: selectedClassColor,
             x: x + bgX,
             y: y + bgY,
             width: 0,
@@ -74,10 +72,12 @@ const useRect = (
       const xValid = mouseX >= 0 && mouseX <= bgWidth;
       const yValid = mouseY >= 0 && mouseY <= bgHeight;
 
-      if (x != null && y != null && xValid && yValid) {
+      if (xValid && yValid) {
         setNewAnnotation([
           {
-            ...rectConfig,
+            opacity: 0.8,
+            strokeWidth: 2,
+            stroke: selectedClassColor,
             x: sx,
             y: sy,
             width,
@@ -96,8 +96,8 @@ const useRect = (
       const sy = newAnnotation[0].y!;
       const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
 
-      const bg = event.target.getStage()?.find('#canvasBackground');
-      if (!bg || bg.length === 0) return;
+      const bg = event.target.getStage()?.find('#canvasBackground')!;
+      // if (!bg || bg.length === 0) return;
       const { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
 
       // mouse position relative to background origin(x,y)
@@ -106,19 +106,19 @@ const useRect = (
       const xValid = mouseX >= 0 && mouseX <= bgWidth;
       const yValid = mouseY >= 0 && mouseY < bgHeight;
 
-      if (x != null && y != null && xValid && yValid) {
+      if (xValid && yValid) {
         const annotationToAdd = {
           type: TOOLS.RECTANGLE,
           // saving x & y without bg (coords & scale) and we will add them later while drawing as these are dynamic values
-          x: (sx - bgX) / bgScale.width,
-          y: (sy - bgY) / bgScale.height,
-          width: (x - sx) / bgScale.width,
-          height: (y - sy) / bgScale.height,
+          x: (sx - bgX) / bgWidthScale,
+          y: (sy - bgY) / bgHeightScale,
+          width: (x - sx) / bgWidthScale,
+          height: (y - sy) / bgHeightScale,
           id: uniqid(),
         };
 
         //min width & height
-        if (Math.abs(x - sx) > 5 && Math.abs(y - sy) > 5) {
+        if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
           dispatch(
             addAnnotation(selectedClassIndex, classId, {
               visible: true,

@@ -135,7 +135,7 @@ const Editor = () => {
             onClick={(e) => getPrevImg()}
           />
           <span style={{ padding: '10px 15px' }}>
-            {imgIndex + 1} of {images.length}
+            {imgIndex + 1} of {images.length || 1}
           </span>
           <Iconify
             icon={'bi:arrow-right-circle'}

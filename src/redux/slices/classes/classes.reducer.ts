@@ -152,20 +152,21 @@ export const classesReducer = (state = initialState, action: any) => {
               update?.shapes[0]?.type === TOOLS.LINE)
           ) {
             //id is important to change here as it's the key for the anno to be updated
-            update.shapes[0].id = uniqid();
-            classes[classId].annotations[i].shapes[0] = update.shapes[0];
+            // update.shapes[0].id = uniqid();
+            state.classes[classId].annotations[i].shapes[0] = update.shapes[0];
           } else {
-            classes[classId].annotations[i] = {
+            state.classes[classId].annotations[i] = {
               ...annotations[i],
               ...update,
             };
           }
         }
       }
-      return {
-        ...state,
-        classes,
-      };
+      return state;
+      // return {
+      //   ...state,
+      //   classes,
+      // };
     }
 
     //used for class panel bulk action

@@ -1,5 +1,8 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
+import _ from 'lodash';
+import next from 'next';
+import { memo } from 'react';
 import { Group, Line } from 'react-konva';
 import { Class, Tool, TOOLS } from 'src/constants';
 import Rectangle from './Rectangle';
@@ -15,7 +18,8 @@ interface IShapes {
   zooming: boolean;
   bgX: number;
   bgY: number;
-  bgScale: { width: number; height: number };
+  bgWidthScale: number;
+  bgHeightScale: number;
   handleShapeMove: (
     e: any,
     classId: number,
@@ -40,7 +44,8 @@ const Shapes = ({
   zooming,
   bgX,
   bgY,
-  bgScale,
+  bgWidthScale,
+  bgHeightScale,
 }: IShapes) => (
   <>
     {classes.map((classItem: Class, i) =>
@@ -49,7 +54,7 @@ const Shapes = ({
           (shape, m) =>
             annotation.visible && (
               <Group
-                key={`group-${m}-${shape.id}`}
+                key={shape.id}
                 x={0}
                 y={0}
                 draggable={currentTool === TOOLS.SELECT && !stageDragging}
@@ -63,9 +68,8 @@ const Shapes = ({
                 {shape.type === TOOLS.LINE ? (
                   <Line
                     {...shape}
-                    key={`line-${m}-${i}`}
-                    listening={shape.type === TOOLS.LINE}
-                    draggable={shape.type === TOOLS.LINE}
+                    key={m}
+                    draggable
                     class={classItem.name}
                     isSelected={shape.id === selectedId}
                     onClick={(e: any) => {
@@ -83,15 +87,15 @@ const Shapes = ({
                   />
                 ) : (
                   <Rectangle
-                    key={`rect-${m}-${i}`}
+                    key={m}
                     shapeProps={{
                       ...shape,
                       fill: classItem.color
                         .replace(')', ', 0.6)')
                         .replace('rgb', 'rgba'),
                       stroke: classItem.color,
-                      width: shape.width * bgScale.width,
-                      height: shape.height * bgScale.height,
+                      width: shape.width * bgWidthScale,
+                      height: shape.height * bgHeightScale,
                     }}
                     classItemName={classItem.name}
                     isSelected={shape.id === selectedId}
@@ -107,7 +111,8 @@ const Shapes = ({
                     hideTransformer={stageDragging || zooming}
                     bgX={bgX}
                     bgY={bgY}
-                    bgScale={bgScale}
+                    bgWidthScale={bgWidthScale}
+                    bgHeightScale={bgHeightScale}
                   />
                 )}
               </Group>

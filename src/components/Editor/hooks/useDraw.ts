@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from 'src/redux/store';
 import useLine from './useLine';
 import useRect from './useRect';
 // import { useRef } from 'react';
+import { useCallback } from 'react';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
 import useComment from './useComment';
 
@@ -19,19 +20,23 @@ const useDraw = (
   currentTool: Tool,
   stageDragging: boolean,
   backgroundWidth: number,
-  bgScale: { width: number; height: number },
+  bgWidthScale: number,
+  bgHeightScale: number,
   onAddComment: (text: string, x: number, y: number) => void,
   onDeleteComment: (commentId: string) => void
 ) => {
   const dispatch = useAppDispatch();
   // const updateCount = useRef(0);
 
-  // State
-  const { classes } = useAppSelector(({ classes }) => classes);
-
   // Rectangle
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(selectedClassIndex, classId, selectedClassColor, bgScale);
+    useRect(
+      selectedClassIndex,
+      classId,
+      selectedClassColor,
+      bgWidthScale,
+      bgHeightScale
+    );
 
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
@@ -45,94 +50,110 @@ const useDraw = (
     onDeleteComment
   );
 
-  const handleMouseDown = (e: KonvaEventObject<WheelEvent>) => {
-    if (stageDragging) return;
-    if (currentTool === TOOLS.RECTANGLE) {
-      return rectHandleMouseDown(e);
-    }
+  const handleMouseDown = useCallback(
+    (e: KonvaEventObject<WheelEvent>) => {
+      if (stageDragging) return;
+      if (currentTool === TOOLS.RECTANGLE) {
+        return rectHandleMouseDown(e);
+      }
 
-    if (currentTool === TOOLS.LINE) {
-      return lineHandleMouseDown(e);
-    }
-    if (currentTool === TOOLS.COMMENT) {
-      return handleComment(e);
-    }
-  };
+      if (currentTool === TOOLS.LINE) {
+        return lineHandleMouseDown(e);
+      }
+      if (currentTool === TOOLS.COMMENT) {
+        return handleComment(e);
+      }
+    },
+    [stageDragging, currentTool, rects.length, lines.length]
+  );
 
-  const handleMouseUp = (e: KonvaEventObject<WheelEvent>) => {
-    if (stageDragging) return;
+  const handleMouseUp = useCallback(
+    (e: KonvaEventObject<WheelEvent>) => {
+      if (stageDragging) return;
 
-    // updatePreview(true);
+      // updatePreview(true);
 
-    if (currentTool === TOOLS.RECTANGLE) {
-      return rectHandleMouseUp(e);
-    }
+      if (currentTool === TOOLS.RECTANGLE) {
+        return rectHandleMouseUp(e);
+      }
 
-    if (currentTool === TOOLS.LINE) {
-      return lineHandleMouseUp();
-    }
-  };
-  const handleMouseMove = (e: KonvaEventObject<WheelEvent>) => {
-    if (stageDragging) return;
-    if (currentTool === TOOLS.RECTANGLE) {
-      return rectHandleMouseMove(e);
-    }
+      if (currentTool === TOOLS.LINE) {
+        return lineHandleMouseUp();
+      }
+    },
+    [stageDragging, currentTool, rects.length, lines.length]
+  );
+  const handleMouseMove = useCallback(
+    (e: KonvaEventObject<WheelEvent>) => {
+      if (stageDragging) return;
+      if (currentTool === TOOLS.RECTANGLE) {
+        rectHandleMouseMove(e);
+        return;
+      }
 
-    if (currentTool === TOOLS.LINE) {
-      return lineHandleMouseMove(e);
-    }
-  };
+      if (currentTool === TOOLS.LINE) {
+        lineHandleMouseMove(e);
+        return;
+      }
+    },
+    [stageDragging, currentTool, rects.length, lines.length]
+  );
 
-  const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
-    if (e.target.attrs?.fill) {
-      e.target.attrs.fill =
-        e.target.attrs.fill === 'rgba(0,0,0,0)'
-          ? classes[selectedClassIndex].color
-              .replace(')', ', 0.3)')
-              .replace('rgb', 'rgba')
-          : 'rgba(0,0,0,0)';
-    }
-  };
+  const hideShapeTemporarily = useCallback(
+    (e: KonvaEventObject<MouseEvent>) => {
+      if (e.target.attrs?.fill) {
+        let originalFill = e.target.attrs.originalFill || e.target.attrs.fill;
 
+        e.target.attrs.fill =
+          e.target.attrs.fill === 'rgba(0,0,0,0)'
+            ? originalFill
+            : 'rgba(0,0,0,0)';
+
+        e.target.attrs.originalFill = originalFill;
+      }
+    },
+    []
+  );
+
+  //!fix: ClassesPanel rerender with each update and we need to just update properties when shapes move without updating the `classes` reference in state
   // !Todo: We are not limiting users from moving shapes out of the background area
-  const handleShapeMove = (
-    e: any,
-    classId: number,
-    group: any,
-    annotationId: string
-  ) => {
-    if (stageDragging || !stageRef.current) return;
-    const shape = _.cloneDeep(group);
-    let shapes = [];
-    if (shape.type === TOOLS.LINE) {
-      // line
-      let { points } = e.target.attrs;
-      const { x = 0, y = 0 } = e.target.attrs;
-      points = points.map((point: number, i: number) => {
-        if (i % 2 === 0) return point + x;
-        return point + y;
-      });
-      shape.points = points;
-      shapes = [{ ...shape }];
-    } else {
-      const bg = e.target.getStage()?.find('#canvasBackground');
-      if (!bg || bg.length === 0) return;
-      const { x: bgX, y: bgY } = bg[0].attrs;
+  const handleShapeMove = useCallback(
+    (e: any, classId: number, group: any, annotationId: string) => {
+      if (stageDragging || !stageRef.current) return;
+      const shape = _.cloneDeep(group);
+      let shapes = [];
 
-      const { x, y } = e.target.children[0].getClientRect({
-        relativeTo: e.target,
-      });
-      const { x: shapeX, y: shapeY } = e.target.attrs;
+      if (shape.type === TOOLS.LINE) {
+        // line
+        let { points } = e.target.attrs;
+        const { x = 0, y = 0 } = e.target.attrs;
+        points = points.map((point: number, i: number) => {
+          if (i % 2 === 0) return point + x;
+          return point + y;
+        });
+        shape.points = points;
 
-      //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
-      shape.x = (shapeX + x - bgX) / bgScale.width + 1;
-      shape.y = (shapeY + y - bgY) / bgScale.height + 1;
+        shapes = [{ ...shape }];
+      } else {
+        const bg = e.target.getStage()?.find('#canvasBackground');
+        if (!bg || bg.length === 0) return;
+        const { x: bgX, y: bgY } = bg[0].attrs;
 
-      shapes = [{ ...shape }];
-      e.target.children[0].destroy();
-    }
-    dispatch(updateAnnotation(classId, annotationId, { shapes }));
-  };
+        const { x, y } = e.target.children[0]?.getClientRect({
+          relativeTo: e.target,
+        });
+        const { x: shapeX, y: shapeY } = e.target.attrs;
+
+        //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
+        shape.x = (shapeX + x - bgX) / bgWidthScale;
+        shape.y = (shapeY + y - bgY) / bgHeightScale;
+        shapes = [{ ...shape }];
+        // e.target.children[0].destroy();
+      }
+      dispatch(updateAnnotation(classId, annotationId, { shapes }));
+    },
+    []
+  );
 
   return {
     rects,

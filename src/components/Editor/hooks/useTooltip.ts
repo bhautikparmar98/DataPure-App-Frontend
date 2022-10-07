@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { TOOLS } from 'src/constants';
 
 const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
@@ -13,7 +13,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
     rectWidth: 25,
   });
 
-  const showTooltip = (e: Konva.KonvaEventObject<DragEvent>) => {
+  const showTooltip = useCallback((e: Konva.KonvaEventObject<DragEvent>) => {
     if (!stageRef.current) return;
     const classTitle: string = e.target?.attrs?.class;
     const { type, points } = e.target.attrs;
@@ -67,16 +67,16 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
         rectWidth,
       }));
     }
-  };
+  }, []);
 
-  const hideTooltip = () => {
+  const hideTooltip = useCallback(() => {
     setTooltip((prev) => ({
       ...prev,
       x: 0,
       y: 0,
       text: '',
     }));
-  };
+  }, []);
 
   return {
     tooltip,

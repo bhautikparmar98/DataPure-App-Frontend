@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { TOOLS, Class } from 'src/constants';
@@ -65,7 +65,8 @@ const Workspace: any = ({
     heightRatio,
     bgX,
     bgY,
-    bgScale,
+    bgWidthScale,
+    bgHeightScale,
   } = useBackground({
     url: src,
     stageWidth: WIDTH,
@@ -99,7 +100,8 @@ const Workspace: any = ({
     currentTool,
     stageDragging,
     width,
-    bgScale,
+    bgWidthScale,
+    bgHeightScale,
     onAddComment,
     onDeleteComment
   );
@@ -112,11 +114,14 @@ const Workspace: any = ({
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
   // For Rectangle transformation (size & rotation)
-  const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
-    if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape(selectedClassIndex, newAttrs));
-    }
-  };
+  const handleRectChange = useCallback(
+    (newAttrs: Konva.ShapeConfig) => {
+      if (newAttrs?.id && newAttrs?.id?.length > 0) {
+        dispatch(updateShape(selectedClassIndex, newAttrs));
+      }
+    },
+    [selectedClassIndex]
+  );
 
   const handleShapesCaching = (shouldCache = true, e?: any) => {
     shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
@@ -195,7 +200,8 @@ const Workspace: any = ({
                 zooming={zooming}
                 bgX={bgX}
                 bgY={bgY}
-                bgScale={bgScale}
+                bgWidthScale={bgWidthScale}
+                bgHeightScale={bgHeightScale}
               />
             </Group>
           </Layer>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 // MUI
 import { Container } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
@@ -32,9 +32,9 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
   const [allChecked, setAllChecked] = useState<AllChecked>(
     AllChecked['allUnchecked']
   );
-  const handleChecks = (newChecks: Checks) => setChecks(newChecks);
-  const handleAllChecks = (newAllChecked: AllChecked) =>
-    setAllChecked(newAllChecked);
+  const handleChecks = useCallback((newChecks: Checks) => setChecks(newChecks),[]);
+  const handleAllChecks = useCallback((newAllChecked: AllChecked) =>
+    setAllChecked(newAllChecked),[]);
 
   return (
     <div style={{ cursor: 'default' }}>

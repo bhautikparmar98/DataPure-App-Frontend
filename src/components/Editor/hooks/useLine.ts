@@ -1,6 +1,6 @@
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useState } from 'react';
-import { TOOLS, Line } from 'src/constants';
+import { Line, TOOLS } from 'src/constants';
 import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
 import { useAppDispatch } from 'src/redux/store';
 import uniqid from 'uniqid';
@@ -48,8 +48,8 @@ const useLine = (
 
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
 
-    const bg = event.target.getStage()?.find('#canvasBackground');
-    if (!bg || bg.length === 0) return;
+    const bg = event.target.getStage()?.find('#canvasBackground')!;
+    // if (!bg || bg.length === 0) return;
     let { width: bgWidth, height: bgHeight } = bg[0].attrs;
 
     // mouse position relative to background origin(x,y)

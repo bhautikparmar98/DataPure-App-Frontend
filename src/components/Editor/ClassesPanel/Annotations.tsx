@@ -7,7 +7,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { Box } from '@mui/system';
 import _ from 'lodash';
@@ -93,21 +93,23 @@ function Annotations({
     checks,
   });
 
-  const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
+  console.log(classes);
 
-  const handleClasses = _.debounce(() => {
-    setMemoisedClass(classes);
-  }, 2000);
+  // const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
 
-  useEffect(() => {
-    handleClasses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastSortType, classes]);
+  // // const handleClasses = _.debounce(() => {
+  // //   setMemoisedClass(classes);
+  // // }, 2000);
+
+  // // useEffect(() => {
+  // //   // handleClasses();
+  // //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // // }, [lastSortType, classes]);
 
   return (
     <div className={styles.list}>
-      {memoisedClass.length > 0 &&
-        memoisedClass.map((classItem, index) => (
+      {classes.length > 0 &&
+        classes.map((classItem, index) => (
           <Accordion
             className={
               selectedClassIndex === index ? styles.activeAccordion : ''
@@ -190,4 +192,9 @@ function Annotations({
   );
 }
 
-export default Annotations;
+const preventRenders = (prev: Props, next: Props) => {
+  console.log(_.isEqual(prev, next), next);
+  return _.isEqual(prev, next);
+};
+
+export default memo(Annotations, preventRenders);
