@@ -1,10 +1,11 @@
 import Konva from 'konva';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
+import { useDispatch, useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
-import { TOOLS, Class } from 'src/constants';
+import { Class, TOOLS } from 'src/constants';
 import { updateShape } from 'src/redux/slices/classes/classes.slice';
-import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 import useImage from 'use-image';
 import useBackground from '../hooks/useBackground';
 import useCursor from '../hooks/useCursor';
@@ -16,7 +17,6 @@ import useTooltip from '../hooks/useTooltip';
 import BackgroundImage from './BackgroundImage';
 import Shapes from './Shapes';
 import TempShapes from './TempShapes';
-import { RootState } from 'src/redux/store';
 
 interface Layer {
   classes: Class[];
@@ -110,7 +110,8 @@ const Workspace: any = ({
     bgWidthScale,
     bgHeightScale,
     onAddComment,
-    onDeleteComment
+    onDeleteComment,
+    selectedId
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -128,13 +129,11 @@ const Workspace: any = ({
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
   // For Rectangle transformation (size & rotation)
-  const handleRectChange = useCallback(
-    (newAttrs: Konva.ShapeConfig) => {
-      if (newAttrs?.id && newAttrs?.id?.length > 0) {
-        dispatch(updateShape({ selectedClassIndex, newAttrs }));
-      }
-    },[]
-  );
+  const handleRectChange = useCallback((newAttrs: Konva.ShapeConfig) => {
+    if (newAttrs?.id && newAttrs?.id?.length > 0) {
+      dispatch(updateShape({ selectedClassIndex, newAttrs }));
+    }
+  }, []);
 
   return (
     <div
