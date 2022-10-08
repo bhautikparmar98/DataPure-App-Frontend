@@ -3,18 +3,15 @@ import { useEffect, useState } from 'react';
 
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import {
-  initializeState,
-  resetState,
-} from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { initState, resetState } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 import axios from 'src/utils/axios';
 
 const useFetchImage = (projId: string | undefined, take = 1) => {
   const router = useRouter();
   const { role } = useAuth();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [isAnnotatorRedo, setIsAnnotatorRedo] = useState(false);
 
   const [images, setImages] = useState([]);
@@ -40,13 +37,18 @@ const useFetchImage = (projId: string | undefined, take = 1) => {
           }
         }
 
-        fetchedData = await axios.get(
+        fetchedData = (await axios.get(
           `/project/${projId}/${role.toLowerCase()}/images?take=${take}${redoQuery}`
-        );
+        )) as any;
       }
 
       if (fetchedData?.data!.images?.length > 0) {
-        dispatch(initializeState(fetchedData?.data));
+        dispatch(
+          initState({
+            state: fetchedData.data,
+          })
+        );
+
         if (ROLES.CLIENT.value === role) setImages(fetchedData.data.images);
       } else {
         dispatch(resetState());

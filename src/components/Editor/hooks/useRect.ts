@@ -2,8 +2,8 @@ import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useState } from 'react';
 import { TOOLS } from 'src/constants';
-import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { addAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 import uniqid from 'uniqid';
 
 const config = {
@@ -18,7 +18,7 @@ const useRect = (
   bgWidthScale: number,
   bgHeightScale: number
 ) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
 
@@ -120,13 +120,16 @@ const useRect = (
         //min width & height
         // if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
         dispatch(
-          addAnnotation(selectedClassIndex, classId, {
-            visible: true,
-            id: uniqid(),
-            shapes: [{ ...annotationToAdd }],
+          addAnnotation({
+            classIndex: selectedClassIndex,
+            classId,
+            annotation: {
+              visible: true,
+              id: uniqid(),
+              shapes: [{ ...annotationToAdd }],
+            },
           })
         );
-        // }
 
         setNewAnnotation([]);
         setAnnotations([]);

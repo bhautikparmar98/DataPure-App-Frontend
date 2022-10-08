@@ -13,9 +13,9 @@ import { Icon } from '@iconify/react';
 import Image from 'src/components/Shared/Image';
 import { ROLES, TOOLS, type Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { setTool } from 'src/redux/slices/editor';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-
+import { setTool } from 'src/redux/slices/editor/editor.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -54,12 +54,14 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   const open = false;
-  const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
+  const currentTool = useSelector((state: RootState) => {
+    return state.editor.tool;
+  });
   const { role } = useAuth();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const handleToolClick = (newTool: Tool) => {
-    dispatch(setTool(newTool));
+    dispatch(setTool({ tool: newTool }));
   };
 
   return (

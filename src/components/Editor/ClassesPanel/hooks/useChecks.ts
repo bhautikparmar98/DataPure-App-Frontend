@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, useCallback, useEffect } from 'react';
 import { Class } from 'src/constants';
 
 interface Checks {

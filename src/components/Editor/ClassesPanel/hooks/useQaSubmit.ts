@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import { useSelector } from 'react-redux';
 import { Annotation } from 'src/constants';
-import { useAppSelector } from 'src/redux/store';
 import axios from 'src/utils/axios';
-
+import { RootState } from 'src/redux/store';
 const useQaSubmit = () => {
-  const { classes, imageId } = useAppSelector(({ classes }) => classes);
+  const { classes, imageId } = useSelector<RootState>(({ classes }) => classes);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 

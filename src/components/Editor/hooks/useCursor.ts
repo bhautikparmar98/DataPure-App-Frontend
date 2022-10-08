@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { TOOLS } from 'src/constants';
-import { useAppSelector } from 'src/redux/store';
-
+import { RootState } from 'src/redux/store';
 const useCursor = (workspaceRef: React.RefObject<HTMLDivElement>) => {
-  const currentTool = useAppSelector((state) => state.editor.tool);
+  const currentTool = useSelector<RootState>((state) => state.editor.tool);
 
   // const toolName =
   // currentTool === TOOLS.ERASER ? 'eraser-working' : currentTool;

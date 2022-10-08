@@ -1,11 +1,11 @@
-import { selectClass } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-
+import { selectClass } from 'src/redux/slices/classes/classes.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 const useFilters = () => {
-  const { classes, selectedClassIndex } = useAppSelector(
+  const { classes, selectedClassIndex } = useSelector<RootState>(
     ({ classes }) => classes
   );
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const classesFilters = classes.map((classItem, i) => ({
     label: classItem.name,
@@ -17,7 +17,7 @@ const useFilters = () => {
     classItem: { label: string; classId: number } | null
   ) => {
     if (classItem) {
-      classItem.classId >= 0 ? dispatch(selectClass(classItem.classId)) : null;
+      classItem.classId >= 0 ? dispatch(selectClass({ classId })) : null;
     }
   };
 

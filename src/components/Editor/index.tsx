@@ -1,22 +1,25 @@
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { initializeState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { initState } from 'src/redux/slices/classes/classes.slice';
 import ClassesPanel from './ClassesPanel';
 import useFetchImage from './hooks/useFetchImage';
 import useImageComments from './hooks/useImageComments';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
+import { RootState } from 'src/redux/store';
 
 const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
-  const imageId = useAppSelector((state) => state.classes.imageId);
+  const imageId: string = useSelector(
+    (state: RootState) => state.classes.imageId
+  );
 
   const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
 
@@ -25,7 +28,7 @@ const Editor = () => {
     imageId,
   });
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -44,8 +47,10 @@ const Editor = () => {
 
           // initialize state with requested image
           dispatch(
-            initializeState({
-              images: [images[foundIndex]],
+            initState({
+              state: {
+                images: [images[foundIndex]],
+              },
             })
           );
         }
@@ -61,8 +66,10 @@ const Editor = () => {
       setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
-        initializeState({
-          images: [images[newIndex]],
+        initState({
+          state: {
+            images: [images[newIndex]],
+          },
         })
       );
     }
@@ -74,8 +81,10 @@ const Editor = () => {
       setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
-        initializeState({
-          images: [images[newIndex]],
+        initState({
+          state: {
+            images: [images[newIndex]],
+          },
         })
       );
     }
@@ -93,8 +102,10 @@ const Editor = () => {
     const newImages = removeImage(imgId);
 
     dispatch(
-      initializeState({
-        images: [newImages[ind]],
+      initState({
+        state: {
+          images: [newImages[ind]],
+        },
       })
     );
   };
@@ -116,7 +127,8 @@ const Editor = () => {
           onDeleteComment={deleteComment}
         />
       </div>
-      <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
+      {/* //!Fix: This component children re-render with each redux state change */}
+      {/* <ClassesPanel onRequestRedoFinish={requestRedoHandler} /> */}
       {ROLES.CLIENT.value === role && (
         <Grid
           container

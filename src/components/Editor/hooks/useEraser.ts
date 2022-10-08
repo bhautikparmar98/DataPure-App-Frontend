@@ -1,8 +1,8 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useRef, useState } from 'react';
-import { addEraserLines } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { addEraserLines } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 
 /* 
   TODO: 
@@ -11,7 +11,7 @@ import { useAppDispatch } from 'src/redux/store';
 */
 
 const useEraser = (selectedClassIndex: number, selectedClassColor: string) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const rectId = useRef('');
   const [lines, setLines] = useState<Konva.ShapeConfig[]>([]);

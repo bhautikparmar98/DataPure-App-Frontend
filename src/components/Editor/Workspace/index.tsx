@@ -3,8 +3,8 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { TOOLS, Class } from 'src/constants';
-import { updateShape } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { updateShape } from 'src/redux/slices/classes/classes.slice';
+import { useSelector, useDispatch } from 'react-redux';
 import useImage from 'use-image';
 import useBackground from '../hooks/useBackground';
 import useCursor from '../hooks/useCursor';
@@ -16,6 +16,7 @@ import useTooltip from '../hooks/useTooltip';
 import BackgroundImage from './BackgroundImage';
 import Shapes from './Shapes';
 import TempShapes from './TempShapes';
+import { RootState } from 'src/redux/store';
 
 interface Layer {
   classes: Class[];
@@ -40,15 +41,15 @@ const Workspace: any = ({
   onAddComment,
   onDeleteComment,
 }: IProps) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
-  const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
+  const currentTool = useSelector(({ editor }: RootState) => editor.tool);
 
   const {
     classes = [],
     selectedClassIndex = 0,
     src,
-  } = useAppSelector(({ classes }) => classes);
+  } = useSelector(({ classes }: RootState) => classes);
 
   const classId: string = classes[selectedClassIndex]?._id;
 
@@ -130,7 +131,7 @@ const Workspace: any = ({
   const handleRectChange = useCallback(
     (newAttrs: Konva.ShapeConfig) => {
       if (newAttrs?.id && newAttrs?.id?.length > 0) {
-        dispatch(updateShape(selectedClassIndex, newAttrs));
+        dispatch(updateShape({ selectedClassIndex, newAttrs }));
       }
     },
     [selectedClassIndex]
@@ -160,7 +161,9 @@ const Workspace: any = ({
           onMouseMove={
             currentTool === TOOLS.RECTANGLE
               ? rectHandleMouseMove
-              : lineHandleMouseMove
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseMove
+              : () => {}
           }
           onMouseUp={
             currentTool === TOOLS.RECTANGLE

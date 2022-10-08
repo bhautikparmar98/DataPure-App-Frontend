@@ -8,19 +8,19 @@ import { clientRequestRedo } from 'src/components/Editor/utils/clientRequests';
 import { qaRequestRedo } from 'src/components/Editor/utils/qaRequests';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { resetState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-
+import { resetState } from 'src/redux/slices/classes/classes.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 interface RequestRedoProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
 
 const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  const { imageId } = useAppSelector(({ classes }) => classes);
+  const imageId = useSelector(({ classes }: RootState) => classes.imageId);
   const { role } = useAuth();
 
   const requestRedo = async () => {

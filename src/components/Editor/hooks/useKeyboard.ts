@@ -1,8 +1,8 @@
 import Konva from 'konva';
 import { useState } from 'react';
 import { TOOLS } from 'src/constants';
-import { deleteAnnotation } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { deleteAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 import useCursor from './useCursor';
 
 const useKeyboard = (
@@ -13,7 +13,7 @@ const useKeyboard = (
   const [stageDragging, setStageDragging] = useState(false);
   const { setCursorStyle } = useCursor(workspaceRef);
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const stage = stageRef.current;
 
@@ -42,7 +42,7 @@ const useKeyboard = (
     const { classId, annotationId } =
       stage.find('#' + selectedId)[0]?.parent?.attrs || {};
     if (classId >= 0 && annotationId?.length > 0) {
-      dispatch(deleteAnnotation(classId, annotationId));
+      dispatch(deleteAnnotation({ classId, annotationId }));
     }
   };
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { setComments } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { setComments } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 
 const useImageComments = ({
@@ -13,7 +13,7 @@ const useImageComments = ({
   imageId: string;
 }) => {
   const { role } = useAuth();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const canSeeComments = () => {
     if (
@@ -39,7 +39,7 @@ const useImageComments = ({
       const response = await axiosInstance.get(`/image/${imageId}/comment`);
       const { comments } = response.data;
 
-      dispatch(setComments(comments));
+      dispatch(setComments( {comments} ));
     };
 
     if (canSeeComments() && imageId?.length > 0) {

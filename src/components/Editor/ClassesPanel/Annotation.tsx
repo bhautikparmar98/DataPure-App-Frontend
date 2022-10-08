@@ -7,9 +7,9 @@ import {
   ListItemText,
 } from '@mui/material';
 import { memo, ChangeEvent } from 'react';
-import { updateAnnotation } from 'src/redux/slices/classes/classes.actions';
+import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
 
-import { useAppDispatch } from 'src/redux/store';
+import { useDispatch } from 'react-redux';
 import styles from './annotations.module.css';
 
 interface Props {
@@ -32,14 +32,20 @@ const Annotation = memo(
     checked,
     toggleOne,
   }: Props) => {
-    const dispatch = useAppDispatch();
+    const dispatch = useDispatch();
 
     const handleAnnotationToggle = (
       classIndex: number,
       annotationId: string,
       visible: boolean
     ) => {
-      dispatch(updateAnnotation(classIndex, annotationId, { visible }));
+      dispatch(
+        updateAnnotation({
+          classId: classIndex,
+          annotationId,
+          update: { visible },
+        })
+      );
     };
     return (
       <ListItem
@@ -66,7 +72,7 @@ const Annotation = memo(
           <ListItemText primary={`Instance ${annoIndex + 1}`} />
         )}
         <IconButton
-          onClick={(e) => handleAnnotationToggle(classIndex, id, !visible)}
+          onClick={() => handleAnnotationToggle(classIndex, id, !visible)}
         >
           {visible ? (
             <Icon

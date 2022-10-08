@@ -3,7 +3,7 @@ import { Stage } from 'konva/lib/Stage';
 import _ from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // import { setPreview } from 'src/redux/slices/editor/editor.actions';
-// import { useAppDispatch } from 'src/redux/store';
+// import { useDispatch } from 'react-redux';
 
 const SCALE_BY = 1.8;
 const MIN_SCALE = 0.005;

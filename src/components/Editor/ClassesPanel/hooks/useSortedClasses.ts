@@ -1,12 +1,12 @@
-import { Class } from 'src/constants';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from 'src/redux/store';
-
+import { useSelector } from 'react-redux';
+import { Class } from 'src/constants';
+import { RootState } from 'src/redux/store';
 type SortType = 'a-z' | 'newest' | 'oldest';
 
 const useSortedClasses = () => {
   // classes management
-  const { classes } = useAppSelector(({ classes }) => classes);
+  const classes = useSelector<RootState>((state) => state.classes.classes);
   const [sortedClasses, setSortedClasses] = useState<Class[]>([]);
 
   //using this primitive string value to rerender classes list

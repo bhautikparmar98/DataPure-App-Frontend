@@ -1,23 +1,25 @@
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Annotation, ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { useAppSelector } from 'src/redux/store';
 import { annotatorSubmitAnnotations } from '../../utils/annotatorRequests';
 import { clientApproveAnnotations } from '../../utils/clientRequests';
 import { qaApproveImage, qaSubmitAnnotations } from '../../utils/qaRequests';
-
-import { resetState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { RootState } from 'src/redux/store';
+import { resetState } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 
 const useAnnotationSubmit = () => {
-  const { classes, imageId } = useAppSelector(({ classes }) => classes);
+  const { classes, imageId } = useSelector(
+    ({ classes }: RootState) => classes
+  );
   const router = useRouter();
   const { role } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     if (ROLES.CLIENT.value !== role) {
       const interval = setInterval(() => {

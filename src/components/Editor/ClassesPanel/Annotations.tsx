@@ -7,16 +7,15 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
-import { memo, useEffect, useState } from 'react';
 
 import { Box } from '@mui/system';
 import _ from 'lodash';
+import { shallowEqual, useSelector } from 'react-redux';
 import { Class } from 'src/constants';
-import { useAppSelector } from 'src/redux/store';
 import Annotation from './Annotation';
 import styles from './annotations.module.css';
 import useChecks from './hooks/useChecks';
-
+import { RootState } from 'src/redux/store';
 // Styled Components
 
 const Accordion = styled((props: AccordionProps) => (
@@ -81,8 +80,8 @@ function Annotations({
   allChecked,
   lastSortType,
 }: Props) {
-  const selectedClassIndex = useAppSelector(
-    ({ classes }) => classes.selectedClassIndex
+  const selectedClassIndex = useSelector(
+    ({ classes }: RootState) => classes.selectedClassIndex
   );
 
   const { toggleOne, toggleAll } = useChecks({
@@ -93,7 +92,10 @@ function Annotations({
     checks,
   });
 
-  // console.log(classes);
+  // const annos = useSelector(
+  //   ({ classes }) => classes.classes.map((c) => c.annotations),
+  //   shallowEqual
+  // );
 
   // const [memoisedClass, setMemoisedClass] = useState<Class[] | []>([]);
 
@@ -162,12 +164,12 @@ function Annotations({
                 {classItem.annotations.length > 0 ? (
                   classItem.annotations.map(({ visible, id }, i) => (
                     <Annotation
-                      id={id!}
+                      id={id}
                       classIndex={index}
                       selectedClassIndex={selectedClassIndex}
                       visible={visible}
                       annoIndex={i}
-                      key={id}
+                      key={`${classItem._id}-${i}`}
                       toggleOne={toggleOne}
                       checked={id ? checks[id!] : false}
                     />
@@ -197,5 +199,5 @@ const preventRenders = (prev: Props, next: Props) => {
   return _.isEqual(prev, next);
 };
 
-export default memo(Annotations, preventRenders);
-// export default Annotations;
+// export default memo(Annotations, preventRenders);
+export default Annotations;
