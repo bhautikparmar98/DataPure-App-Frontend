@@ -2,7 +2,7 @@ import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import _ from 'lodash';
 import next from 'next';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Group, Line } from 'react-konva';
 import { Class, Tool, TOOLS } from 'src/constants';
 import Rectangle from './Rectangle';
@@ -52,6 +52,8 @@ const Shapes = ({
     showTooltip(e);
     e.cancelBubble = true; // to not trigger parents click
   }, []);
+  // const currentClasses = useMemo(() => classes, []);
+
   return (
     <>
       {classes.map((classItem: Class, i) =>
@@ -120,4 +122,4 @@ const Shapes = ({
   );
 };
 
-export default Shapes;
+export default memo(Shapes);

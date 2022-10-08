@@ -117,51 +117,49 @@ const useDraw = (
 
   //!fix: ClassesPanel rerender with each update and we need to just update properties when shapes move without updating the `classes` reference in state
   // !Todo: We are not limiting users from moving shapes out of the background area
-  const handleShapeMove = (
-    e: any,
-    classId: number,
-    group: any,
-    annotationId: string
-  ) => {
-    if (stageDragging || !stageRef.current) return;
-    const shape = _.cloneDeep(group);
-    let shapes = [];
+  const handleShapeMove = useCallback(
+    (e: any, classId: number, group: any, annotationId: string) => {
+      if (stageDragging || !stageRef.current) return;
+      const shape = _.cloneDeep(group);
+      let shapes = [];
 
-    if (shape.type === TOOLS.LINE) {
-      // line
-      let { points } = e.target.attrs;
-      const { x = 0, y = 0 } = e.target.attrs;
-      points = points.map((point: number, i: number) => {
-        if (i % 2 === 0) return point + x;
-        return point + y;
-      });
-      shape.points = points;
+      if (shape.type === TOOLS.LINE) {
+        // line
+        let { points } = e.target.attrs;
+        const { x = 0, y = 0 } = e.target.attrs;
+        points = points.map((point: number, i: number) => {
+          if (i % 2 === 0) return point + x;
+          return point + y;
+        });
+        shape.points = points;
 
-      shapes = [{ ...shape }];
-    } else {
-      const bg = e.target.getStage()?.find('#canvasBackground');
-      if (!bg || bg.length === 0) return;
-      const { x: bgX, y: bgY } = bg[0].attrs;
+        shapes = [{ ...shape }];
+      } else {
+        const bg = e.target.getStage()?.find('#canvasBackground');
+        if (!bg || bg.length === 0) return;
+        const { x: bgX, y: bgY } = bg[0].attrs;
 
-      const { x, y } = e.target.children[0]?.getClientRect({
-        relativeTo: e.target,
-      });
-      const { x: shapeX, y: shapeY } = e.target.attrs;
+        const { x, y } = e.target.children[0]?.getClientRect({
+          relativeTo: e.target,
+        });
+        const { x: shapeX, y: shapeY } = e.target.attrs;
 
-      //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
-      shape.x = (shapeX + x - bgX) / bgWidthScale;
-      shape.y = (shapeY + y - bgY) / bgHeightScale;
-      shapes = [{ ...shape }];
-      e.target.children[0].destroy();
-    }
-    dispatch(
-      updateAnnotation({
-        classId,
-        annotationId,
-        update: { shapes },
-      })
-    );
-  };
+        //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
+        shape.x = (shapeX + x - bgX) / bgWidthScale;
+        shape.y = (shapeY + y - bgY) / bgHeightScale;
+        shapes = [{ ...shape }];
+        e.target.children[0].destroy();
+      }
+      dispatch(
+        updateAnnotation({
+          classId,
+          annotationId,
+          update: { shapes },
+        })
+      );
+    },
+    []
+  );
 
   return {
     rects,

@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Rect, Transformer } from 'react-konva';
 
 interface IRectangle {
@@ -35,7 +35,7 @@ const Rectangle = ({
   const shapeRef = useRef<Konva.Rect>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
-  const handleTransformEnd = (e: KonvaEventObject<Event>) => {
+  const handleTransformEnd = useCallback((e: KonvaEventObject<Event>) => {
     // transformer is changing scale of the node
     // and NOT its width or height
     // but in the store we have only width and height
@@ -59,7 +59,7 @@ const Rectangle = ({
         height: Math.max((node.height() * scaleY) / bgHeightScale),
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isSelected) {

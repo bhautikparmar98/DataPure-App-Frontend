@@ -22,71 +22,78 @@ interface Props {
   toggleOne: (e: ChangeEvent<HTMLInputElement>, instanceId: string) => void;
 }
 
-const Annotation = memo(
-  ({
-    id,
-    classIndex,
-    visible,
-    annoIndex,
-    selectedClassIndex,
-    checked,
-    toggleOne,
-  }: Props) => {
-    const dispatch = useDispatch();
+const Annotation = ({
+  id,
+  classIndex,
+  visible,
+  annoIndex,
+  selectedClassIndex,
+  checked,
+  toggleOne,
+}: Props) => {
+  const dispatch = useDispatch();
 
-    const handleAnnotationToggle = (
-      classIndex: number,
-      annotationId: string,
-      visible: boolean
-    ) => {
-      dispatch(
-        updateAnnotation({
-          classId: classIndex,
-          annotationId,
-          update: { visible },
-        })
-      );
-    };
-    return (
-      <ListItem
-        key={`${id}-listItem`}
-        sx={{
-          marginTop: -1,
-          paddingBottom: 0,
-          paddingTop: 1,
-          height: 40,
-        }}
+  const handleAnnotationToggle = (
+    classIndex: number,
+    annotationId: string,
+    visible: boolean
+  ) => {
+    dispatch(
+      updateAnnotation({
+        classId: classIndex,
+        annotationId,
+        update: { visible },
+      })
+    );
+  };
+  return (
+    <ListItem
+      key={`${id}-listItem`}
+      sx={{
+        marginTop: -1,
+        paddingBottom: 0,
+        paddingTop: 1,
+        height: 40,
+      }}
+    >
+      {selectedClassIndex === classIndex ? (
+        <FormControlLabel
+          label={`Instance ${annoIndex + 1}`}
+          sx={{ paddingLeft: 1, flex: 1 }}
+          control={
+            <Checkbox
+              checked={checked || false}
+              onChange={(e) => toggleOne(e, id)}
+            />
+          }
+        />
+      ) : (
+        <ListItemText primary={`Instance ${annoIndex + 1}`} />
+      )}
+      <IconButton
+        onClick={() => handleAnnotationToggle(classIndex, id, !visible)}
       >
-        {selectedClassIndex === classIndex ? (
-          <FormControlLabel
-            label={`Instance ${annoIndex + 1}`}
-            sx={{ paddingLeft: 1, flex: 1 }}
-            control={
-              <Checkbox
-                checked={checked || false}
-                onChange={(e) => toggleOne(e, id)}
-              />
-            }
+        {visible ? (
+          <Icon
+            icon="majesticons:eye"
+            className={styles.eyeIcon}
+            fontSize={20}
           />
         ) : (
-          <ListItemText primary={`Instance ${annoIndex + 1}`} />
+          <Icon icon="eva:eye-off-fill" className={styles.eyeIcon} />
         )}
-        <IconButton
-          onClick={() => handleAnnotationToggle(classIndex, id, !visible)}
-        >
-          {visible ? (
-            <Icon
-              icon="majesticons:eye"
-              className={styles.eyeIcon}
-              fontSize={20}
-            />
-          ) : (
-            <Icon icon="eva:eye-off-fill" className={styles.eyeIcon} />
-          )}
-        </IconButton>
-      </ListItem>
-    );
-  }
-);
+      </IconButton>
+    </ListItem>
+  );
+};
 
-export default Annotation;
+const propsAreEqual = (prev: Props, next: Props) => {
+  return (
+    prev.checked === next.checked &&
+    prev.visible === next.visible &&
+    prev.id === next.id
+  );
+};
+
+// export default Annotation;
+export default memo(Annotation, propsAreEqual);

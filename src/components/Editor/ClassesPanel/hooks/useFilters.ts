@@ -2,8 +2,8 @@ import { selectClass } from 'src/redux/slices/classes/classes.slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/redux/store';
 const useFilters = () => {
-  const { classes, selectedClassIndex } = useSelector<RootState>(
-    ({ classes }) => classes
+  const { classes, selectedClassIndex } = useSelector(
+    ({ classes }: RootState) => classes
   );
   const dispatch = useDispatch();
 
@@ -16,8 +16,8 @@ const useFilters = () => {
     _: any,
     classItem: { label: string; classId: number } | null
   ) => {
-    if (classItem) {
-      classItem.classId >= 0 ? dispatch(selectClass({ classId })) : null;
+    if (classItem && classItem.classId >= 0) {
+      dispatch(selectClass({ classId: classItem.classId }));
     }
   };
 

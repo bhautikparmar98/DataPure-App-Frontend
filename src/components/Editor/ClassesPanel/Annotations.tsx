@@ -9,13 +9,12 @@ import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
 
 import { Box } from '@mui/system';
-import _ from 'lodash';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Class } from 'src/constants';
+import { RootState } from 'src/redux/store';
 import Annotation from './Annotation';
 import styles from './annotations.module.css';
 import useChecks from './hooks/useChecks';
-import { RootState } from 'src/redux/store';
 // Styled Components
 
 const Accordion = styled((props: AccordionProps) => (
@@ -194,10 +193,9 @@ function Annotations({
   );
 }
 
-const preventRenders = (prev: Props, next: Props) => {
-  // console.log(_.isEqual(prev, next), next);
-  return _.isEqual(prev, next);
-};
+// const preventRenders = (prev: Props, next: Props) => {
+//   return _.isEqual(prev, next);
+// };
 
 // export default memo(Annotations, preventRenders);
 export default Annotations;

@@ -133,8 +133,7 @@ const Workspace: any = ({
       if (newAttrs?.id && newAttrs?.id?.length > 0) {
         dispatch(updateShape({ selectedClassIndex, newAttrs }));
       }
-    },
-    [selectedClassIndex]
+    },[]
   );
 
   return (

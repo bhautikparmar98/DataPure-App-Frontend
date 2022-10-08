@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
@@ -90,7 +90,7 @@ const Editor = () => {
     }
   };
 
-  const requestRedoHandler = (imgId: string) => {
+  const requestRedoHandler = useCallback((imgId: string) => {
     if (images.length === 1) return router.push(`/project/${id}/review`);
 
     let ind = imgIndex;
@@ -108,7 +108,7 @@ const Editor = () => {
         },
       })
     );
-  };
+  }, []);
 
   const TOOLBAR_WIDTH = 70;
   const LAYERS_PANEL_WIDTH = 300;
@@ -128,7 +128,7 @@ const Editor = () => {
         />
       </div>
       {/* //!Fix: This component children re-render with each redux state change */}
-      {/* <ClassesPanel onRequestRedoFinish={requestRedoHandler} /> */}
+      <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
       {ROLES.CLIENT.value === role && (
         <Grid
           container

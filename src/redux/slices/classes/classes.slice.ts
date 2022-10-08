@@ -100,7 +100,6 @@ const classesSlice = createSlice({
       const { classIndex, classId, annotation } = action.payload;
 
       annotation.classId = classId;
-
       const newShapes = annotation.shapes?.map((s: any) => {
         if (s.type !== TOOLS.RECTANGLE) return s;
 
@@ -136,6 +135,7 @@ const classesSlice = createSlice({
 
       for (let i = 0; i < annotations.length; i++) {
         if (annotations[i].id === annotationId) {
+          console.log('found', i);
           if (
             update?.shapes &&
             (update?.shapes[0]?.type === TOOLS.RECTANGLE ||
