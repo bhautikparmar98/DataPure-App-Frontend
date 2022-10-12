@@ -33,7 +33,7 @@ const useZoom = () => {
   }, [stageScale]);
 
   // We may need to debounce this method for big number of shapes drawn
-  const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
+  const handleWheel = useCallback((e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
     setZooming(true);
     const stage = e.target.getStage()!;
@@ -63,7 +63,7 @@ const useZoom = () => {
       stageX: -(mousePointTo.x - pointerPosition.x / newScale) * newScale,
       stageY: -(mousePointTo.y - pointerPosition.y / newScale) * newScale,
     });
-  };
+  }, []);
 
   return { stageScale, handleWheel, zooming };
 };

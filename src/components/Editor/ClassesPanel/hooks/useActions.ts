@@ -51,6 +51,7 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
         annotationIds: checkedIds,
       })
     );
+
     setDeleteModelVisible(false);
   };
 
@@ -64,6 +65,7 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
           annotationIds: checkedIds,
         })
       );
+
       handleChangeClassModalVisibility();
     }
   };

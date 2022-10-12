@@ -1,17 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { Tool, TOOLS } from 'src/constants';
-import { EditorActionTypes } from './editor.types';
 
 type State = {
   tool: Tool;
-  isDrawing: boolean;
+  stageDragging: boolean;
   preview: string;
 };
 
 const initialState: State = {
   tool: TOOLS.RECTANGLE as Tool,
-  isDrawing: true,
+  stageDragging: false,
   preview: '',
 };
 
@@ -23,11 +22,8 @@ export const editorSlice = createSlice({
       state.tool = action.payload.tool;
     },
 
-    startDrawing: (state, action) => {
-      state.isDrawing = true;
-    },
-    endDrawing: (state, action) => {
-      state.isDrawing = false;
+    startDragging: (state, action) => {
+      state.stageDragging = action.payload.stageDragging || false;
     },
 
     setPreview: (state, action) => {
@@ -37,6 +33,5 @@ export const editorSlice = createSlice({
   },
 });
 
-export const { setTool, startDrawing, endDrawing, setPreview } =
-  editorSlice.actions;
+export const { setTool, startDragging, setPreview } = editorSlice.actions;
 export default editorSlice.reducer;

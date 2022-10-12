@@ -1,9 +1,10 @@
-import { selectClass } from 'src/redux/slices/classes/classes.slice';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'src/redux/store';
+import { selectClass } from "src/redux/slices/classes/classes.slice";
+import { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "src/redux/store";
 const useFilters = () => {
   const { classes, selectedClassIndex } = useSelector(
-    ({ classes }: RootState) => classes
+    (state: RootState) => state.classes
   );
   const dispatch = useDispatch();
 
@@ -12,14 +13,14 @@ const useFilters = () => {
     classId: i,
   }));
 
-  const handleClassSelect = (
-    _: any,
-    classItem: { label: string; classId: number } | null
-  ) => {
-    if (classItem && classItem.classId >= 0) {
-      dispatch(selectClass({ classId: classItem.classId }));
-    }
-  };
+  const handleClassSelect = useCallback(
+    (_: any, classItem: { label: string; classId: number } | null) => {
+      if (classItem && classItem.classId >= 0) {
+        dispatch(selectClass({ classId: classItem.classId }));
+      }
+    },
+    [selectedClassIndex]
+  );
 
   return {
     classes,

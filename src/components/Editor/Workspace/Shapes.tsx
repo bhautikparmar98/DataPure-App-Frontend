@@ -4,14 +4,15 @@ import _ from 'lodash';
 import next from 'next';
 import { memo, useCallback, useMemo } from 'react';
 import { Group, Line } from 'react-konva';
+import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
+import { RootState } from 'src/redux/store';
 import Rectangle from './Rectangle';
 
 interface IShapes {
   classes: Class[];
   currentTool: Tool;
   selectedId: string;
-  stageDragging: boolean;
   handleRectChange: (newAttrs: Konva.ShapeConfig) => void;
   selectShape: (shapeId: string) => void;
   hideShapeTemporarily: (e: KonvaEventObject<MouseEvent>) => void;
@@ -39,7 +40,6 @@ const Shapes = ({
   handleShapeMove,
   currentTool,
   selectedId,
-  stageDragging,
   hideTooltip,
   zooming,
   bgX,
@@ -52,7 +52,10 @@ const Shapes = ({
     showTooltip(e);
     e.cancelBubble = true; // to not trigger parents click
   }, []);
-  // const currentClasses = useMemo(() => classes, []);
+
+  const stageDragging = useSelector(
+    (state: RootState) => state.editor.stageDragging
+  );
 
   return (
     <>

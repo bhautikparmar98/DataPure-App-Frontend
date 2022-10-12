@@ -1,4 +1,3 @@
-// MUI
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -7,9 +6,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { styled } from '@mui/material/styles';
-// Icons
 import { Icon } from '@iconify/react';
-// Constants
+import { memo } from 'react';
 import Image from 'src/components/Shared/Image';
 import { ROLES, TOOLS, type Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
@@ -130,4 +128,4 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   );
 };
 
-export default Toolbar;
+export default memo(Toolbar);

@@ -1,22 +1,22 @@
-import Konva from 'konva';
-import { useCallback, useRef } from 'react';
-import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
-import { useDispatch, useSelector } from 'react-redux';
-import useZoom from 'src/components/Editor/hooks/useZoom';
-import { Class, TOOLS } from 'src/constants';
-import { updateShape } from 'src/redux/slices/classes/classes.slice';
-import { RootState } from 'src/redux/store';
-import useImage from 'use-image';
-import useBackground from '../hooks/useBackground';
-import useCursor from '../hooks/useCursor';
-import useDraw from '../hooks/useDraw';
-import useKeyboard from '../hooks/useKeyboard';
-import useSelectShape from '../hooks/useSelectShape';
-import useShapesCache from '../hooks/useShapesCache';
-import useTooltip from '../hooks/useTooltip';
-import BackgroundImage from './BackgroundImage';
-import Shapes from './Shapes';
-import TempShapes from './TempShapes';
+import Konva from "konva";
+import { useCallback, useRef } from "react";
+import { Group, Image, Layer, Rect, Stage, Text } from "react-konva";
+import { useDispatch, useSelector } from "react-redux";
+import useZoom from "src/components/Editor/hooks/useZoom";
+import { Class, TOOLS } from "src/constants";
+import { updateShape } from "src/redux/slices/classes/classes.slice";
+import { RootState } from "src/redux/store";
+import useImage from "use-image";
+import useBackground from "../hooks/useBackground";
+import useCursor from "../hooks/useCursor";
+import useDraw from "../hooks/useDraw";
+import useKeyboard from "../hooks/useKeyboard";
+import useSelectShape from "../hooks/useSelectShape";
+import useShapesCache from "../hooks/useShapesCache";
+import useTooltip from "../hooks/useTooltip";
+import BackgroundImage from "./BackgroundImage";
+import Shapes from "./Shapes";
+import TempShapes from "./TempShapes";
 
 interface Layer {
   classes: Class[];
@@ -43,7 +43,10 @@ const Workspace: any = ({
 }: IProps) => {
   const dispatch = useDispatch();
 
-  const currentTool = useSelector(({ editor }: RootState) => editor.tool);
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
+  const stageDragging = useSelector(
+    (state: RootState) => state.editor.stageDragging
+  );
 
   const {
     classes = [],
@@ -76,7 +79,7 @@ const Workspace: any = ({
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
-  const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
+  const { handleKeyDown, handleKeyUp } = useKeyboard(
     workspaceRef,
     stageRef,
     selectedId
@@ -105,13 +108,11 @@ const Workspace: any = ({
     stageRef,
     bgLayerRef,
     currentTool,
-    stageDragging,
     width,
     bgWidthScale,
     bgHeightScale,
     onAddComment,
-    onDeleteComment,
-    selectedId
+    onDeleteComment
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -122,8 +123,6 @@ const Workspace: any = ({
   const { cachedVisible } = useShapesCache({
     stageRef,
     zooming,
-    stageDragging,
-    classes,
   });
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
@@ -138,7 +137,7 @@ const Workspace: any = ({
   return (
     <div
       ref={workspaceRef}
-      style={{ backgroundColor: '#C6C6C6' }}
+      style={{ backgroundColor: "#C6C6C6" }}
       onKeyDown={(e) => {
         hideTooltip();
         handleKeyDown(e);
@@ -146,7 +145,7 @@ const Workspace: any = ({
       tabIndex={0}
       onKeyUp={handleKeyUp}
     >
-      {backgroundStatus === 'loaded' && classes.length > 0 ? (
+      {backgroundStatus === "loaded" && classes.length > 0 ? (
         <Stage
           width={WIDTH}
           height={HEIGHT}
@@ -171,7 +170,9 @@ const Workspace: any = ({
           onMouseDown={
             currentTool === TOOLS.RECTANGLE
               ? rectHandleMouseDown
-              : lineHandleMouseDown
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseDown
+              : () => {}
           }
           // onMouseUp={handleMouseUp}
           // onMouseDown={(e: any) => {
@@ -196,29 +197,30 @@ const Workspace: any = ({
               y={bgY}
             />
           </Layer>
-          {!cachedVisible && (
-            <Layer id="shapes_layer" ref={shapesLayerRef}>
-              <Group ref={shapesRef} id="shapes_group">
-                <Shapes
-                  classes={classes}
-                  handleRectChange={handleRectChange}
-                  showTooltip={showTooltip}
-                  selectShape={selectShape}
-                  hideShapeTemporarily={hideShapeTemporarily}
-                  handleShapeMove={handleShapeMove}
-                  currentTool={currentTool}
-                  selectedId={selectedId}
-                  stageDragging={stageDragging}
-                  hideTooltip={hideTooltip}
-                  zooming={false}
-                  bgX={bgX}
-                  bgY={bgY}
-                  bgWidthScale={bgWidthScale}
-                  bgHeightScale={bgHeightScale}
-                />
-              </Group>
-            </Layer>
-          )}
+          <Layer
+            id="shapes_layer"
+            ref={shapesLayerRef}
+            listening={!cachedVisible}
+          >
+            <Group ref={shapesRef} id="shapes_group">
+              <Shapes
+                classes={classes}
+                handleRectChange={handleRectChange}
+                showTooltip={showTooltip}
+                selectShape={selectShape}
+                hideShapeTemporarily={hideShapeTemporarily}
+                handleShapeMove={handleShapeMove}
+                currentTool={currentTool}
+                selectedId={selectedId}
+                hideTooltip={hideTooltip}
+                zooming={false}
+                bgX={bgX}
+                bgY={bgY}
+                bgWidthScale={bgWidthScale}
+                bgHeightScale={bgHeightScale}
+              />
+            </Group>
+          </Layer>
 
           <Layer>
             <TempShapes
@@ -237,9 +239,9 @@ const Workspace: any = ({
                   scaleY={1 / stageScale.stageScale}
                   width={tooltip.rectWidth}
                   height={18}
-                  stroke={'rgba(0,0,0,0.4)'}
+                  stroke={"rgba(0,0,0,0.4)"}
                   strokeWidth={2}
-                  fill={'rgba(103,58,183, 0.8)'}
+                  fill={"rgba(103,58,183, 0.8)"}
                   shadowColor="rgba(0,0,0,.3)"
                   shadowBlur={2}
                   shadowOffsetX={10}
@@ -270,7 +272,7 @@ const Workspace: any = ({
                   onClick={(e) =>
                     handleCommentClick(e, comment.text, commendIndex)
                   }
-                  onMouseEnter={(_) => setCursorStyle('pointer')}
+                  onMouseEnter={(_) => setCursorStyle("pointer")}
                   onMouseLeave={(_) => setCursorStyle()}
                 />
               ))}
@@ -280,15 +282,15 @@ const Workspace: any = ({
         <div
           style={{
             height: HEIGHT - 2,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <p
             style={{
               marginLeft: -(TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH) / 2,
-              fontSize: '1.3rem',
+              fontSize: "1.3rem",
             }}
           >
             Annotations are loading...

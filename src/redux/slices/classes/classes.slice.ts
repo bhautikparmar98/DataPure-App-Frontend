@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-import Konva from 'konva';
+import Konva from "konva";
 // import _ from 'lodash';
-import { Annotation, Class, TOOLS } from 'src/constants';
-import uniqid from 'uniqid';
+import { Annotation, Class, TOOLS } from "src/constants";
+import uniqid from "uniqid";
 
 type State = {
   classes: Class[];
@@ -12,6 +12,7 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
+  lastUpdate: number;
 };
 
 const initialState = {
@@ -19,12 +20,13 @@ const initialState = {
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],
-  src: '',
-  imageId: '',
+  src: "",
+  imageId: "",
+  lastUpdate: 0,
 } as State;
 
 const classesSlice = createSlice({
-  name: 'classes',
+  name: "classes",
   initialState,
   reducers: {
     initState: (state, action) => {
@@ -69,6 +71,7 @@ const classesSlice = createSlice({
         src,
         imageId: _id,
         selectedClassIndex: 0,
+        lastUpdate: new Date().getTime(),
       };
     },
 
@@ -94,6 +97,7 @@ const classesSlice = createSlice({
         newClasses.push(item);
       });
       state.classes = newClasses;
+      state.lastUpdate = new Date().getTime();
     },
 
     addAnnotation: (state, action) => {
@@ -126,6 +130,7 @@ const classesSlice = createSlice({
       annotation.shapes = newShapes;
 
       state.classes[classIndex].annotations.push(annotation);
+      state.lastUpdate = new Date().getTime();
     },
 
     updateAnnotation: (state, action) => {
@@ -133,44 +138,23 @@ const classesSlice = createSlice({
       const { classId, annotationId, update } = action.payload;
       const annotations = classes[classId]?.annotations || [];
 
-      for (let i = 0; i < annotations.length; i++) {
-        if (annotations[i].id === annotationId) {
-          console.log('found', i);
-          if (
-            update?.shapes &&
-            (update?.shapes[0]?.type === TOOLS.RECTANGLE ||
-              update?.shapes[0]?.type === TOOLS.LINE)
-          ) {
-            //id is important to change here as it's the key for the anno to be updated
-            update.shapes[0].id = uniqid();
-            classes[classId].annotations[i].shapes[0] = update.shapes[0];
-          } else {
-            classes[classId].annotations[i] = {
-              ...annotations[i],
-              ...update,
-            };
-          }
-        }
+      const index = state.classes[classId]?.annotations.findIndex(
+        (anno) => anno.id === annotationId
+      );
+      if (index === -1) return state;
+      if (update?.shapes && update.shapes[0].type) {
+        //id is important to change here as it's the key for the anno to be updated
+        update.shapes[0].id = uniqid();
+        classes[classId].annotations[index].shapes = update.shapes;
+      } else {
+        classes[classId].annotations[index] = {
+          ...annotations[index],
+          ...update,
+        };
       }
       state.classes = classes;
+      state.lastUpdate = new Date().getTime();
     },
-
-    //       //id is important to change here as it's the key for the anno to be updated
-    //       // update.shapes[0].id = uniqid();
-    //       state.classes[classId].annotations[i].shapes[0] = update.shapes[0];
-    //     } else {
-    //       state.classes[classId].annotations[i] = {
-    //         ...annotations[i],
-    //         ...update,
-    //       };
-    //     }
-    //   }
-    // }
-    // return state;
-    // // return {
-    // //   ...state,
-    // //   classes,
-    // // };
 
     //used for class panel bulk action
     toggleAnnotationVisibility: (state, action) => {
@@ -185,6 +169,7 @@ const classesSlice = createSlice({
       });
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
+      state.lastUpdate = new Date().getTime();
     },
 
     //used for class panel bulk action
@@ -197,6 +182,7 @@ const classesSlice = createSlice({
       );
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
+      state.lastUpdate = new Date().getTime();
     },
 
     //used for class panel bulk action
@@ -224,6 +210,7 @@ const classesSlice = createSlice({
       newClassAnnotations = [...newClassAnnotations, ...newAnnos];
       classes[newClassIndex].annotations = [...newClassAnnotations];
       state.classes = classes;
+      state.lastUpdate = new Date().getTime();
     },
     updateShape: (state, action) => {
       const { classes } = state;
@@ -235,19 +222,24 @@ const classesSlice = createSlice({
       const shapeId = newAttrs?.id;
       const annotations: Annotation[] =
         classes[selectedClassIndex]?.annotations;
-      if (annotations && typeof shapeId === 'string') {
-        annotations.forEach((annotation: Annotation, i) => {
-          annotation.shapes.forEach((shape, g) => {
-            if (shape.id === shapeId) {
-              classes[selectedClassIndex].annotations[i].shapes[g] = {
-                ...shape,
-                ...newAttrs,
-              };
-            }
-          });
-        });
+      if (annotations && typeof shapeId === "string") {
+        let index = -1;
+        for (let i = 0; i < annotations.length; i++) {
+          index = annotations[i].shapes.findIndex(
+            (shape) => shape.id === shapeId
+          );
+          if (index !== -1) {
+            classes[selectedClassIndex].annotations[i].shapes[index] = {
+              ...annotations[i].shapes,
+              ...newAttrs,
+            } as any;
+            break;
+          }
+        }
+
+        state.classes = classes;
+        state.lastUpdate = new Date().getTime();
       }
-      state.classes = classes;
     },
 
     setComments: (state, action) => {
