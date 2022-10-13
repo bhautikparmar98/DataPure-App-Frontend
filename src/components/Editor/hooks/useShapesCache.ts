@@ -1,8 +1,8 @@
-import Konva from "konva";
-import _ from "lodash";
-import { useEffect, useCallback, useState, RefObject } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "src/redux/store";
+import Konva from 'konva';
+import _ from 'lodash';
+import { useEffect, useCallback, useState, RefObject } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store';
 
 interface Props {
   stageRef: RefObject<Konva.Stage>;
@@ -34,7 +34,7 @@ const useShapesCache = ({ stageRef, zooming }: Props) => {
   // )[0] as Konva.Layer | null;
 
   const [cachedShapes, setCachedShapes] = useState<Konva.Group | null>(null);
-  const [shouldCache, setShouldCache] = useState(true);
+  const [shouldCache, setShouldCache] = useState(false);
   const [cachedVisible, setCachedVisible] = useState(false);
   // const lastTimeUpdated = useSelector(
   //   (state: RootState) => state.classes.lastUpdate

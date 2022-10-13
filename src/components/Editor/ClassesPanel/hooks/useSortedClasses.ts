@@ -19,7 +19,9 @@ const useSortedClasses = () => {
   // const memoClasses = useMemo(() => sortedClasses, [classes]);
 
   const sortClassesByName = useCallback(() => {
-    const classesInOrder = classes.sort((a, b) => a.name.localeCompare(b.name));
+    const classesInOrder = [...classes].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
     setSortedClasses(classesInOrder);
   }, [classes]);
 
@@ -27,7 +29,7 @@ const useSortedClasses = () => {
     (sortType: SortType) => {
       //sorting by date needs to be dependant on `createdAt` flag in database
       if (sortType === 'newest') setSortedClasses(classes);
-      else if (sortType === 'oldest') setSortedClasses(classes.reverse());
+      else if (sortType === 'oldest') setSortedClasses([...classes].reverse());
       else if (sortType === 'a-z') sortClassesByName();
 
       if (sortType !== lastSortType) setLastSortType(sortType);

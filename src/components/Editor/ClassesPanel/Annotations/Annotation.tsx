@@ -54,8 +54,7 @@ const Annotation = ({
         paddingBottom: 0,
         paddingTop: 1,
         height: 40,
-      }}
-    >
+      }}>
       {selectedClassIndex === classIndex ? (
         <FormControlLabel
           label={`Instance ${annoIndex + 1}`}
@@ -71,8 +70,7 @@ const Annotation = ({
         <ListItemText primary={`Instance ${annoIndex + 1}`} />
       )}
       <IconButton
-        onClick={() => handleAnnotationToggle(classIndex, id, !visible)}
-      >
+        onClick={() => handleAnnotationToggle(classIndex, id, !visible)}>
         {visible ? (
           <Icon
             icon="majesticons:eye"
@@ -91,9 +89,10 @@ const propsAreEqual = (prev: Props, next: Props) => {
   return (
     prev.checked === next.checked &&
     prev.visible === next.visible &&
-    prev.id === next.id
+    prev.selectedClassIndex === next.selectedClassIndex &&
+    prev.toggleOne === next.toggleOne
   );
 };
 
 // export default Annotation;
-export default memo(Annotation, propsAreEqual);
+export default memo(Annotation);

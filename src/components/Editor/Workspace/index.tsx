@@ -1,22 +1,22 @@
-import Konva from "konva";
-import { useCallback, useRef } from "react";
-import { Group, Image, Layer, Rect, Stage, Text } from "react-konva";
-import { useDispatch, useSelector } from "react-redux";
-import useZoom from "src/components/Editor/hooks/useZoom";
-import { Class, TOOLS } from "src/constants";
-import { updateShape } from "src/redux/slices/classes/classes.slice";
-import { RootState } from "src/redux/store";
-import useImage from "use-image";
-import useBackground from "../hooks/useBackground";
-import useCursor from "../hooks/useCursor";
-import useDraw from "../hooks/useDraw";
-import useKeyboard from "../hooks/useKeyboard";
-import useSelectShape from "../hooks/useSelectShape";
-import useShapesCache from "../hooks/useShapesCache";
-import useTooltip from "../hooks/useTooltip";
-import BackgroundImage from "./BackgroundImage";
-import Shapes from "./Shapes";
-import TempShapes from "./TempShapes";
+import Konva from 'konva';
+import { useCallback, useRef } from 'react';
+import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
+import { useDispatch, useSelector } from 'react-redux';
+import useZoom from 'src/components/Editor/hooks/useZoom';
+import { Class, TOOLS } from 'src/constants';
+import { updateShape } from 'src/redux/slices/classes/classes.slice';
+import { RootState } from 'src/redux/store';
+import useImage from 'use-image';
+import useBackground from '../hooks/useBackground';
+import useCursor from '../hooks/useCursor';
+import useDraw from '../hooks/useDraw';
+import useKeyboard from '../hooks/useKeyboard';
+import useSelectShape from '../hooks/useSelectShape';
+import useShapesCache from '../hooks/useShapesCache';
+import useTooltip from '../hooks/useTooltip';
+import BackgroundImage from './BackgroundImage';
+import Shapes from './Shapes';
+import TempShapes from './TempShapes';
 
 interface Layer {
   classes: Class[];
@@ -137,15 +137,14 @@ const Workspace: any = ({
   return (
     <div
       ref={workspaceRef}
-      style={{ backgroundColor: "#C6C6C6" }}
+      style={{ backgroundColor: '#C6C6C6' }}
       onKeyDown={(e) => {
         hideTooltip();
         handleKeyDown(e);
       }}
       tabIndex={0}
-      onKeyUp={handleKeyUp}
-    >
-      {backgroundStatus === "loaded" && classes.length > 0 ? (
+      onKeyUp={handleKeyUp}>
+      {backgroundStatus === 'loaded' && classes.length > 0 ? (
         <Stage
           width={WIDTH}
           height={HEIGHT}
@@ -186,8 +185,7 @@ const Workspace: any = ({
             // e.cancelBubble = true;
           }}
           draggable={stageDragging}
-          onDragEnd={() => {}}
-        >
+          onDragEnd={() => {}}>
           <Layer ref={bgLayerRef} id="background_layer" listening={false}>
             <BackgroundImage
               width={width}
@@ -200,8 +198,7 @@ const Workspace: any = ({
           <Layer
             id="shapes_layer"
             ref={shapesLayerRef}
-            listening={!cachedVisible}
-          >
+            listening={!cachedVisible}>
             <Group ref={shapesRef} id="shapes_group">
               <Shapes
                 classes={classes}
@@ -229,7 +226,7 @@ const Workspace: any = ({
               classColor={classes[selectedClassIndex]?.color}
             />
             {tooltip.text.length > 0 && (
-              <Group y={10}>
+              <Group>
                 <Rect
                   listening={false}
                   x={tooltip.x}
@@ -239,9 +236,9 @@ const Workspace: any = ({
                   scaleY={1 / stageScale.stageScale}
                   width={tooltip.rectWidth}
                   height={18}
-                  stroke={"rgba(0,0,0,0.4)"}
+                  stroke={'rgba(0,0,0,0.4)'}
                   strokeWidth={2}
-                  fill={"rgba(103,58,183, 0.8)"}
+                  fill={'rgba(103,58,183, 0.8)'}
                   shadowColor="rgba(0,0,0,.3)"
                   shadowBlur={2}
                   shadowOffsetX={10}
@@ -272,7 +269,7 @@ const Workspace: any = ({
                   onClick={(e) =>
                     handleCommentClick(e, comment.text, commendIndex)
                   }
-                  onMouseEnter={(_) => setCursorStyle("pointer")}
+                  onMouseEnter={(_) => setCursorStyle('pointer')}
                   onMouseLeave={(_) => setCursorStyle()}
                 />
               ))}
@@ -282,17 +279,15 @@ const Workspace: any = ({
         <div
           style={{
             height: HEIGHT - 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
           <p
             style={{
               marginLeft: -(TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH) / 2,
-              fontSize: "1.3rem",
-            }}
-          >
+              fontSize: '1.3rem',
+            }}>
             Annotations are loading...
           </p>
         </div>

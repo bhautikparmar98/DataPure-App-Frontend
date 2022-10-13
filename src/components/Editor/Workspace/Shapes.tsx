@@ -76,13 +76,12 @@ const Shapes = ({
                   annotationId={annotation.id}
                   onDragEnd={(e) =>
                     handleShapeMove(e, i, shape, annotation.id!)
-                  }
-                >
+                  }>
                   {shape.type === TOOLS.LINE ? (
                     <Line
                       {...shape}
                       key={shape.id + '-line'}
-                      draggable
+                      draggable={currentTool === TOOLS.SELECT}
                       class={classItem.name}
                       isSelected={shape.id === selectedId}
                       onClick={(e) => handleShapeClick(e, shape.id)}

@@ -19,6 +19,7 @@ const useCursor = (workspaceRef: React.RefObject<HTMLDivElement>) => {
   };
   useEffect(() => {
     setCursorStyle();
+    return () => setCursorStyle('default');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTool]);
 

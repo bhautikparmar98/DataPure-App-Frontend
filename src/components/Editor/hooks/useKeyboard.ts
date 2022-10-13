@@ -1,10 +1,12 @@
-import Konva from "konva";
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { TOOLS } from "src/constants";
-import { deleteAnnotation } from "src/redux/slices/classes/classes.slice";
-import { startDragging } from "src/redux/slices/editor/editor.slice";
-import useCursor from "./useCursor";
+import Konva from 'konva';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { TOOLS } from 'src/constants';
+import { deleteAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { startDragging } from 'src/redux/slices/editor/editor.slice';
+import { RootState } from 'src/redux/store';
+import useCursor from './useCursor';
 
 const useKeyboard = (
   workspaceRef: React.RefObject<HTMLDivElement>,
@@ -12,28 +14,25 @@ const useKeyboard = (
   selectedId: string
 ) => {
   const { setCursorStyle } = useCursor(workspaceRef);
-
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
   const dispatch = useDispatch();
 
   const stage = stageRef.current;
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!stage) return;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!stage) return;
 
-      switch (e.code) {
-        case "Space":
-          return handlePanTool();
-        case "Delete":
-        case "Backspace":
-          return handleShapeDeletion();
+    switch (e.code) {
+      case 'Space':
+        return handlePanTool();
+      case 'Delete':
+      case 'Backspace':
+        return handleShapeDeletion();
 
-        default:
-          break;
-      }
-    },
-    [stage]
-  );
+      default:
+        break;
+    }
+  };
 
   const handlePanTool = useCallback(() => {
     setCursorStyle(`url("/tools/${TOOLS.PAN}.svg"),auto`);
@@ -43,17 +42,17 @@ const useKeyboard = (
   const handleShapeDeletion = useCallback(() => {
     if (!stage) return;
     const { classId, annotationId } =
-      stage.find("#" + selectedId)[0]?.parent?.attrs || {};
+      stage.find('#' + selectedId)[0]?.parent?.attrs || {};
     if (classId >= 0 && annotationId?.length > 0) {
       dispatch(deleteAnnotation({ classId, annotationId }));
     }
-  }, [stage]);
+  }, [selectedId]);
 
   const handleKeyUp = useCallback(() => {
     dispatch(startDragging({ stageDragging: false }));
 
     setCursorStyle();
-  }, [stage]);
+  }, [stage, currentTool]);
 
   return {
     handleKeyDown,

@@ -1,21 +1,14 @@
-import { KonvaEventObject } from "konva/lib/Node";
-import { Tool, TOOLS } from "src/constants";
-import Konva from "konva";
-import _ from "lodash";
-import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { updateAnnotation } from "src/redux/slices/classes/classes.slice";
-import useComment from "./useComment";
-import useLine from "./useLine";
-import useRect from "./useRect";
-import { RootState } from "src/redux/store";
-
-/*
-  //TODOS: 
-  - optimized useKeyboard ==> delete/backspace not working bcz of useCallback usage
-  - optimize stage dragging
-  - decrease the number of re-renders of classes panel 
-*/
+import { KonvaEventObject } from 'konva/lib/Node';
+import { Tool, TOOLS } from 'src/constants';
+import Konva from 'konva';
+import _ from 'lodash';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
+import useComment from './useComment';
+import useLine from './useLine';
+import useRect from './useRect';
+import { RootState } from 'src/redux/store';
 
 const getNewShapeMove = (
   e: any,
@@ -39,14 +32,14 @@ const getNewShapeMove = (
     shapes = [{ ...shape }];
     return shapes;
   } else {
-    const bg = e.target.getStage()?.find("#canvasBackground");
+    const bg = e.target.getStage()?.find('#canvasBackground');
     if (!bg || bg.length === 0) return;
     const { x: bgX, y: bgY } = bg[0].attrs;
 
     const { x, y } = e.target.children[0]?.getClientRect({
       relativeTo: e.target,
     });
-    if (typeof x !== "number") return;
+    if (typeof x !== 'number') return;
     const { x: shapeX, y: shapeY } = e.target.attrs;
 
     //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
@@ -153,9 +146,9 @@ const useDraw = (
         let originalFill = e.target.attrs.originalFill || e.target.attrs.fill;
 
         e.target.attrs.fill =
-          e.target.attrs.fill === "rgba(0,0,0,0)"
+          e.target.attrs.fill === 'rgba(0,0,0,0)'
             ? originalFill
-            : "rgba(0,0,0,0)";
+            : 'rgba(0,0,0,0)';
 
         e.target.attrs.originalFill = originalFill;
       }

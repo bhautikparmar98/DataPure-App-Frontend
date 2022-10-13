@@ -22,8 +22,9 @@ export const editorSlice = createSlice({
       state.tool = action.payload.tool;
     },
 
-    startDragging: (state, action) => {
-      state.stageDragging = action.payload.stageDragging || false;
+    startDragging: (state, { payload }) => {
+      if (state.stageDragging !== payload.stageDragging)
+        state.stageDragging = payload.stageDragging;
     },
 
     setPreview: (state, action) => {

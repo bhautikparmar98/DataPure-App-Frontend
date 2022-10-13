@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -52,15 +53,16 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   const open = false;
-  const currentTool = useSelector((state: RootState) => {
-    return state.editor.tool;
-  });
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
   const { role } = useAuth();
 
   const dispatch = useDispatch();
-  const handleToolClick = (newTool: Tool) => {
-    dispatch(setTool({ tool: newTool }));
-  };
+  const handleToolClick = useCallback(
+    (newTool: Tool) => {
+      dispatch(setTool({ tool: newTool }));
+    },
+    [currentTool]
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -77,8 +79,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
             margin: 'auto',
             position: 'relative',
             top: -88,
-          }}
-        >
+          }}>
           {Object.values(TOOLS)
             .slice(0, 4)
             .filter((key) => {
@@ -98,16 +99,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
-                  onClick={(e) => handleToolClick(text)}
-                >
+                  onClick={(e) => handleToolClick(text)}>
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: open ? 3 : 'auto',
                       justifyContent: 'center',
                       color: text === currentTool ? 'royalblue' : 'inherit',
-                    }}
-                  >
+                    }}>
                     <Icon
                       icon={ICONS[text]}
                       width="30"

@@ -27,7 +27,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
       typeof y === 'number'
     ) {
       let actualX = x;
-      let actualY = y - 25;
+      let actualY = y - 10;
       if (type === TOOLS.LINE) {
         //points odd indexes are the x values and the even ones are for the y ones
         const xArr: number[] = [];
@@ -48,7 +48,7 @@ const useTooltip = (stageRef: React.RefObject<Konva.Stage>) => {
 
         const { x = 0, y = 0 } = e.target.attrs;
         actualX = actualX + x;
-        actualY = minY + y;
+        actualY = minY + y - 10;
       }
 
       // !FIX: srcElements is deprecated, change it

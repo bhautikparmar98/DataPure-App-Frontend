@@ -23,8 +23,8 @@ const useZoom = () => {
 
   const updateZoom = useCallback(
     _.debounce(() => {
-      if (zooming) setZooming(false);
-    }, 1000),
+      setZooming(false);
+    }, 400),
     [zooming]
   );
 
