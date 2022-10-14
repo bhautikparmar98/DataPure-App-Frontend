@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
+import { ShapeConfig } from 'konva/lib/Shape';
 
-import Konva from "konva";
 // import _ from 'lodash';
-import { Annotation, Class, TOOLS } from "src/constants";
-import uniqid from "uniqid";
+import { Annotation, Class, TOOLS } from 'src/constants';
+import uniqid from 'uniqid';
 
 type State = {
   classes: Class[];
@@ -12,7 +12,7 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
-  lastUpdate: number;
+  lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
 };
 
 const initialState = {
@@ -20,13 +20,13 @@ const initialState = {
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],
-  src: "",
-  imageId: "",
-  lastUpdate: 0,
+  src: '',
+  imageId: '',
+  lastTimeUpdated: 0,
 } as State;
 
 const classesSlice = createSlice({
-  name: "classes",
+  name: 'classes',
   initialState,
   reducers: {
     initState: (state, action) => {
@@ -71,7 +71,7 @@ const classesSlice = createSlice({
         src,
         imageId: _id,
         selectedClassIndex: 0,
-        lastUpdate: new Date().getTime(),
+        lastTimeUpdated: new Date().getTime(),
       };
     },
 
@@ -80,7 +80,7 @@ const classesSlice = createSlice({
     },
 
     selectClass: (state, action) => {
-      state.selectedClassIndex = action.payload.classId;
+      state.selectedClassIndex = action.payload.classIndex;
     },
 
     deleteAnnotation: (state, action) => {
@@ -97,7 +97,7 @@ const classesSlice = createSlice({
         newClasses.push(item);
       });
       state.classes = newClasses;
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
 
     addAnnotation: (state, action) => {
@@ -130,7 +130,7 @@ const classesSlice = createSlice({
       annotation.shapes = newShapes;
 
       state.classes[classIndex].annotations.push(annotation);
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
 
     updateAnnotation: (state, action) => {
@@ -153,7 +153,7 @@ const classesSlice = createSlice({
         };
       }
       state.classes = classes;
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
 
     //used for class panel bulk action
@@ -169,7 +169,7 @@ const classesSlice = createSlice({
       });
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
 
     //used for class panel bulk action
@@ -182,7 +182,7 @@ const classesSlice = createSlice({
       );
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
 
     //used for class panel bulk action
@@ -210,19 +210,18 @@ const classesSlice = createSlice({
       newClassAnnotations = [...newClassAnnotations, ...newAnnos];
       classes[newClassIndex].annotations = [...newClassAnnotations];
       state.classes = classes;
-      state.lastUpdate = new Date().getTime();
+      state.lastTimeUpdated = new Date().getTime();
     },
     updateShape: (state, action) => {
       const { classes } = state;
       const {
         newAttrs,
         selectedClassIndex,
-      }: { newAttrs: Konva.ShapeConfig; selectedClassIndex: number } =
-        action.payload;
+      }: { newAttrs: ShapeConfig; selectedClassIndex: number } = action.payload;
       const shapeId = newAttrs?.id;
       const annotations: Annotation[] =
         classes[selectedClassIndex]?.annotations;
-      if (annotations && typeof shapeId === "string") {
+      if (annotations && typeof shapeId === 'string') {
         let index = -1;
         for (let i = 0; i < annotations.length; i++) {
           index = annotations[i].shapes.findIndex(
@@ -238,7 +237,7 @@ const classesSlice = createSlice({
         }
 
         state.classes = classes;
-        state.lastUpdate = new Date().getTime();
+        state.lastTimeUpdated = new Date().getTime();
       }
     },
 

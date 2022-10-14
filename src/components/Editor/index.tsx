@@ -111,7 +111,7 @@ const Editor = () => {
   }, []);
 
   const TOOLBAR_WIDTH = 70;
-  const LAYERS_PANEL_WIDTH = 300;
+  const LAYERS_PANEL_WIDTH = 330;
   const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
   const HEIGHT = window.innerHeight - indicatorsHeight;
   return (
@@ -135,8 +135,7 @@ const Editor = () => {
           justifyContent="center"
           alignItems="center"
           sx={{ fontSize: '1.2rem' }}
-          pr={28.5}
-        >
+          pr={28.5}>
           <Iconify
             icon={'bi:arrow-left-circle'}
             sx={{

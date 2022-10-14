@@ -27,10 +27,6 @@ const Filters = ({ checks, sortBy }: Props) => {
       sx={{
         marginTop: 2.5,
       }}>
-      <label htmlFor="editor-classes" className={styles.label}>
-        Choose Class ({classes.length})
-      </label>
-
       <Autocomplete
         classes={classes}
         selectedClassIndex={selectedClassIndex}

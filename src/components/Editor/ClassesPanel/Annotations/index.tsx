@@ -2,7 +2,7 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 import { Class } from 'src/constants';
@@ -12,22 +12,26 @@ import styles from './annotations.module.css';
 import useChecks from '../hooks/useChecks';
 import Summary from './Summary';
 
-const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&:before': {
-    display: 'none',
-  },
-}));
+const Accordion = memo(
+  styled((props: AccordionProps) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+  ))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+  }))
+);
 
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
+const AccordionDetails = memo(
+  styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+  }))
+);
 
 // Types
 
@@ -43,11 +47,10 @@ enum AllChecked {
 
 type Props = {
   classes: Class[];
-  lastSortType: string;
   updateFiltersChecks: (newChecks: Checks) => void;
 };
 
-function Annotations({ classes, updateFiltersChecks, lastSortType }: Props) {
+function Annotations({ classes, updateFiltersChecks }: Props) {
   const selectedClassIndex = useSelector(
     (state: RootState) => state.classes.selectedClassIndex
   );

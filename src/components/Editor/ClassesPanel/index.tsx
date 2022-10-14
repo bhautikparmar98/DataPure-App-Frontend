@@ -37,7 +37,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
         }}>
         <Container
           sx={{
-            width: 300,
+            width: 330,
             paddingTop: 2,
             paddingBottom: 4,
             minHeight: '100vh',
@@ -52,7 +52,6 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
           <Filters checks={checks} sortBy={sortBy} />
           <Annotations
             classes={sortedClasses}
-            lastSortType={lastSortType}
             updateFiltersChecks={updateFiltersChecks}
           />
           <SubmitAnnotations />

@@ -58,7 +58,7 @@ const Annotation = ({
       {selectedClassIndex === classIndex ? (
         <FormControlLabel
           label={`Instance ${annoIndex + 1}`}
-          sx={{ paddingLeft: 1, flex: 1 }}
+          sx={{ paddingLeft: 2, flex: 1 }}
           control={
             <Checkbox
               checked={checked || false}
@@ -67,7 +67,10 @@ const Annotation = ({
           }
         />
       ) : (
-        <ListItemText primary={`Instance ${annoIndex + 1}`} />
+        <ListItemText
+          sx={{ paddingLeft: 5.6 }}
+          primary={`Instance ${annoIndex + 1}`}
+        />
       )}
       <IconButton
         onClick={() => handleAnnotationToggle(classIndex, id, !visible)}>
@@ -89,8 +92,8 @@ const propsAreEqual = (prev: Props, next: Props) => {
   return (
     prev.checked === next.checked &&
     prev.visible === next.visible &&
-    prev.selectedClassIndex === next.selectedClassIndex
-    //&&    prev.toggleOne === next.toggleOne
+    prev.selectedClassIndex === next.selectedClassIndex &&
+    prev.toggleOne === next.toggleOne
   );
 };
 

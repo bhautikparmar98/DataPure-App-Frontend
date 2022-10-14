@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState, useEffect } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Class } from 'src/constants';
 
 interface Checks {
@@ -32,15 +32,11 @@ const useChecks = ({
     updateFiltersChecks(checks);
   }, [checks]);
 
-  useEffect(() => {
-    console.log('render');
-  }, []);
   const toggleOne = useCallback(
     (e: ChangeEvent<HTMLInputElement>, id: string) => {
       const newChecks = { ...checks };
       const checked = e.target.checked;
       newChecks[id] = checked;
-      console.log({ id, checks, newChecks });
       setChecks(newChecks);
     },
     [checks]

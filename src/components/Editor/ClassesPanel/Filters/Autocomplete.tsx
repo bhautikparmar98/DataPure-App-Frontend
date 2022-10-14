@@ -1,22 +1,12 @@
-import styled from '@emotion/styled';
-import { TextField } from '@mui/material';
-import MUIAutocomplete from '@mui/material/Autocomplete';
-import { memo } from 'react';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Class } from 'src/constants';
-
-const StyledTextField = styled(TextField)({
-  '& .MuiInputBase-input.MuiAutocomplete-input': {
-    fontSize: 14,
-  },
-});
 
 interface Props {
   classes: Class[];
   selectedClassIndex: number;
-  handleClassSelect: (
-    e: any,
-    classItem: { label: string; classId: number } | null
-  ) => void;
+  handleClassSelect: (classIndex: number) => void;
 }
 
 const Autocomplete = ({
@@ -24,31 +14,73 @@ const Autocomplete = ({
   classes,
   selectedClassIndex,
 }: Props) => {
-  const classesFilters = classes.map((classItem, i) => ({
-    label: classItem.name,
-    classId: i,
-  }));
+  const [chosenClassName, setChosenClassName] = useState(
+    'Choose class from the list'
+  );
+
+  const classesList = useMemo(
+    () => classes.map((classItem) => classItem.name),
+    [classes.length]
+  );
+
+  const handleOptionChange = useCallback(
+    (e: SelectChangeEvent) => {
+      setChosenClassName(e.target.value);
+    },
+    [chosenClassName]
+  );
+
+  useEffect(() => {
+    let newIndex = Math.max(classesList.indexOf(chosenClassName), 0);
+    newIndex !== selectedClassIndex &&
+      handleClassSelect(classesList.indexOf(chosenClassName));
+  }, [chosenClassName]);
+
+  useEffect(() => {
+    setChosenClassName(classes[selectedClassIndex]?.name);
+  }, [classes.length]);
 
   return (
-    <MUIAutocomplete
-      id="editor-classes"
-      options={classesFilters}
-      sx={{ width: 250 }}
-      value={{
-        label: classes[selectedClassIndex]?.name || 'Choose Class',
-        classId: selectedClassIndex,
-      }}
-      style={{ color: classes[selectedClassIndex]?.color || '#000' }}
-      onChange={handleClassSelect}
-      fullWidth
-      renderInput={(params) => <StyledTextField {...params} />}
-      isOptionEqualToValue={(option, value) => option.label === value.label}
-    />
+    <>
+      <label
+        htmlFor="choose_class"
+        style={{
+          fontFamily: 'Proxima Nova',
+          fontSize: 16,
+          lineHeight: 2.3,
+        }}>
+        Choose Class ({classes.length})
+      </label>
+      <Select
+        labelId="choose_class"
+        id="choose_class"
+        value={chosenClassName}
+        defaultValue={classes[selectedClassIndex]?.name}
+        fullWidth
+        MenuProps={{
+          disableScrollLock: true,
+        }}
+        onChange={handleOptionChange}
+        sx={{ height: 40 }}>
+        <MenuItem value="Choose class from the list" sx={{ display: 'none' }}>
+          Choose Class
+        </MenuItem>
+        {classesList.map((classItem: string, i) => (
+          <MenuItem key={i} value={classesList[i]}>
+            {classItem}
+          </MenuItem>
+        ))}
+      </Select>
+    </>
   );
 };
 
 const propsAreEqual = (prev: Props, next: Props) => {
-  return prev.classes.length === next.classes.length;
+  return (
+    prev.classes.length === next.classes.length &&
+    prev.selectedClassIndex === next.selectedClassIndex
+  );
 };
 
 export default memo(Autocomplete, propsAreEqual);
+// export default Autocomplete;
