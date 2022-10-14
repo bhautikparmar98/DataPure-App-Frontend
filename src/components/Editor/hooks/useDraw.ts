@@ -43,8 +43,8 @@ const getNewShapeMove = (
     const { x: shapeX, y: shapeY } = e.target.attrs;
 
     //remove background scaling from x,y values before saving them in redux state. We don't save such values with the scale as they are different according to the user screen
-    shape.x = (shapeX + x - bgX + 1) / bgWidthScale;
-    shape.y = (shapeY + y - bgY + 1) / bgHeightScale;
+    shape.x = (shapeX + x - bgX + 0.5) / bgWidthScale;
+    shape.y = (shapeY + y - bgY + 0.5) / bgHeightScale;
     shapes = [{ ...shape }];
     e.target.children[0].destroy();
     return shapes;

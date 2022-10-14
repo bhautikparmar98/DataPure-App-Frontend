@@ -39,10 +39,12 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
           sx={{
             width: 300,
             paddingTop: 2,
-            paddingBottom: 8,
+            paddingBottom: 4,
             minHeight: '100vh',
             display: 'flex',
             flexDirection: 'column',
+            overflowY: 'auto',
+            overflowX: 'hidden',
           }}>
           <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
 

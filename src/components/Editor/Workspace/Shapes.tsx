@@ -85,9 +85,9 @@ const Shapes = ({
                       class={classItem.name}
                       isSelected={shape.id === selectedId}
                       onClick={(e) => handleShapeClick(e, shape.id)}
-                      opacity={1}
+                      opacity={0.7}
                       stroke={classItem.color}
-                      strokeWidth={10}
+                      strokeWidth={3}
                       tension={0.5}
                       lineCap="round"
                     />
@@ -97,11 +97,12 @@ const Shapes = ({
                       shapeProps={{
                         ...shape,
                         fill: classItem.color
-                          .replace(')', ', 0.6)')
+                          .replace(')', ', 0.35)')
                           .replace('rgb', 'rgba'),
                         stroke: classItem.color,
                         width: shape.width * bgWidthScale,
                         height: shape.height * bgHeightScale,
+                        strokeWidth: 1,
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}

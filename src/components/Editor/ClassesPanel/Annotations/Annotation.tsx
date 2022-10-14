@@ -89,10 +89,10 @@ const propsAreEqual = (prev: Props, next: Props) => {
   return (
     prev.checked === next.checked &&
     prev.visible === next.visible &&
-    prev.selectedClassIndex === next.selectedClassIndex &&
-    prev.toggleOne === next.toggleOne
+    prev.selectedClassIndex === next.selectedClassIndex
+    //&&    prev.toggleOne === next.toggleOne
   );
 };
 
 // export default Annotation;
-export default memo(Annotation);
+export default memo(Annotation, propsAreEqual);

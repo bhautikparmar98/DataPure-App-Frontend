@@ -42,8 +42,6 @@ const useRect = (
         if (xValid && yValid) {
           setNewAnnotation([
             {
-              opacity: 0.8,
-              strokeWidth: 2,
               stroke: selectedClassColor,
               x: x + bgX,
               y: y + bgY,
@@ -78,8 +76,6 @@ const useRect = (
         if (xValid && yValid) {
           setNewAnnotation([
             {
-              opacity: 0.8,
-              strokeWidth: 2,
               stroke: selectedClassColor,
               x: sx,
               y: sy,
