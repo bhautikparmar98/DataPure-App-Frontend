@@ -36,9 +36,6 @@ const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
 
 function propsChanged(_prevProps: any, nextProps: Shapes) {
   const { lines, rects = [] } = nextProps;
-  if (lines.length > 1 || rects.length > 1) {
-    return true;
-  }
-  return false;
+  return lines.length > 1 || rects.length > 1;
 }
 export default memo(TempShapes, propsChanged);

@@ -140,22 +140,6 @@ const useDraw = (
     [stageDragging, currentTool, rects.length, lines.length]
   );
 
-  const hideShapeTemporarily = useCallback(
-    (e: KonvaEventObject<MouseEvent>) => {
-      if (e.target.attrs?.fill) {
-        let originalFill = e.target.attrs.originalFill || e.target.attrs.fill;
-
-        e.target.attrs.fill =
-          e.target.attrs.fill === 'rgba(0,0,0,0)'
-            ? originalFill
-            : 'rgba(0,0,0,0)';
-
-        e.target.attrs.originalFill = originalFill;
-      }
-    },
-    []
-  );
-
   // !Todo: We are not limiting users from moving shapes out of the background area
   const handleShapeMove = useCallback(
     (e: any, classId: number, group: any, annotationId: string) => {
@@ -179,7 +163,6 @@ const useDraw = (
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
-    hideShapeTemporarily,
     comments,
     handleCommentClick,
     handleShapeMove,

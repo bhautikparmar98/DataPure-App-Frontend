@@ -13,9 +13,7 @@ interface IShapes {
   classes: Class[];
   currentTool: Tool;
   selectedId: string;
-  handleRectChange: (newAttrs: Konva.ShapeConfig) => void;
   selectShape: (shapeId: string) => void;
-  hideShapeTemporarily: (e: KonvaEventObject<MouseEvent>) => void;
   zooming: boolean;
   bgX: number;
   bgY: number;
@@ -33,10 +31,8 @@ interface IShapes {
 
 const Shapes = ({
   classes,
-  handleRectChange,
   showTooltip,
   selectShape,
-  hideShapeTemporarily,
   handleShapeMove,
   currentTool,
   selectedId,
@@ -107,8 +103,6 @@ const Shapes = ({
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}
                       onClick={(e) => handleShapeClick(e, shape.id)}
-                      onChange={handleRectChange}
-                      onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
                       bgX={bgX}
                       bgY={bgY}
@@ -125,4 +119,5 @@ const Shapes = ({
   );
 };
 
-export default memo(Shapes);
+// export default memo(Shapes);
+export default Shapes;

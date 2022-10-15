@@ -9,7 +9,7 @@ interface Props {
   handleClassSelect: (classIndex: number) => void;
 }
 
-const Autocomplete = ({
+const ChooseClass = ({
   handleClassSelect,
   classes,
   selectedClassIndex,
@@ -37,7 +37,8 @@ const Autocomplete = ({
   }, [chosenClassName]);
 
   useEffect(() => {
-    setChosenClassName(classes[selectedClassIndex]?.name);
+    const name = classes[selectedClassIndex]?.name;
+    if (name) setChosenClassName(classes[selectedClassIndex]?.name);
   }, [classes.length]);
 
   return (
@@ -82,5 +83,4 @@ const propsAreEqual = (prev: Props, next: Props) => {
   );
 };
 
-export default memo(Autocomplete, propsAreEqual);
-// export default Autocomplete;
+export default memo(ChooseClass, propsAreEqual);

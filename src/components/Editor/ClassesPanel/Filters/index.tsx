@@ -5,7 +5,7 @@ import FilterActions from './FilterActions';
 
 import styles from './filters.module.css';
 import useFilters from '../hooks/useFilters';
-import Autocomplete from './Autocomplete';
+import ChooseClass from './ChooseClass';
 import isEqual from 'lodash/isEqual';
 
 interface Checks {
@@ -27,7 +27,7 @@ const Filters = ({ checks, sortBy }: Props) => {
       sx={{
         marginTop: 2.5,
       }}>
-      <Autocomplete
+      <ChooseClass
         classes={classes}
         selectedClassIndex={selectedClassIndex}
         handleClassSelect={handleClassSelect}

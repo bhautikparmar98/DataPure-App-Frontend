@@ -1,4 +1,4 @@
-import { FC, useEffect, memo, useState } from 'react';
+import { FC, useCallback, memo, useState } from 'react';
 // MUI
 import { Container } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
@@ -22,7 +22,10 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
 
   const [checks, setChecks] = useState<Checks>({});
 
-  const updateFiltersChecks = (newChecks: Checks) => setChecks(newChecks);
+  const updateFiltersChecks = useCallback(
+    (newChecks: Checks) => setChecks(newChecks),
+    [checks]
+  );
 
   return (
     <div style={{ cursor: 'default' }}>

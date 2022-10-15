@@ -28,7 +28,6 @@ const useChecks = ({
   );
 
   useEffect(() => {
-    console.log('update,', checks);
     updateFiltersChecks(checks);
   }, [checks]);
 

@@ -1,10 +1,9 @@
 import Konva from 'konva';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useDispatch, useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { Class, TOOLS } from 'src/constants';
-import { updateShape } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
 import useImage from 'use-image';
 import useBackground from '../hooks/useBackground';
@@ -91,7 +90,6 @@ const Workspace: any = ({
     handleMouseMove,
     rects,
     lines,
-    hideShapeTemporarily,
     handleShapeMove,
     comments,
     handleCommentClick,
@@ -126,13 +124,6 @@ const Workspace: any = ({
   });
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
-
-  // For Rectangle transformation (size & rotation)
-  const handleRectChange = useCallback((newAttrs: Konva.ShapeConfig) => {
-    if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape({ selectedClassIndex, newAttrs }));
-    }
-  }, []);
 
   return (
     <div
@@ -202,10 +193,8 @@ const Workspace: any = ({
             <Group ref={shapesRef} id="shapes_group">
               <Shapes
                 classes={classes}
-                handleRectChange={handleRectChange}
                 showTooltip={showTooltip}
                 selectShape={selectShape}
-                hideShapeTemporarily={hideShapeTemporarily}
                 handleShapeMove={handleShapeMove}
                 currentTool={currentTool}
                 selectedId={selectedId}

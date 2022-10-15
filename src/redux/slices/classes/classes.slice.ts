@@ -216,9 +216,14 @@ const classesSlice = createSlice({
       const { classes } = state;
       const {
         newAttrs,
-        selectedClassIndex,
-      }: { newAttrs: ShapeConfig; selectedClassIndex: number } = action.payload;
+        classItemName,
+      }: { newAttrs: ShapeConfig; classItemName: string } = action.payload;
       const shapeId = newAttrs?.id;
+
+      const selectedClassIndex = classes.findIndex(
+        (classItem) => classItem.name === classItemName
+      );
+      if (selectedClassIndex === -1) return state;
       const annotations: Annotation[] =
         classes[selectedClassIndex]?.annotations;
       if (annotations && typeof shapeId === 'string') {
@@ -231,6 +236,7 @@ const classesSlice = createSlice({
             classes[selectedClassIndex].annotations[i].shapes[index] = {
               ...annotations[i].shapes,
               ...newAttrs,
+              id: uniqid(),
             } as any;
             break;
           }

@@ -127,7 +127,6 @@ const Editor = () => {
           onDeleteComment={deleteComment}
         />
       </div>
-      {/* //!Fix: This component children re-render with each redux state change */}
       <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
       {ROLES.CLIENT.value === role && (
         <Grid
