@@ -119,6 +119,7 @@ const Rectangle = ({
   );
 };
 
+// this needs some optimization
 const propsAreEqual = (prev: IRectangle, next: IRectangle) => {
   return prev.isSelected === next.isSelected && isEqual(prev.shapeProps, next.shapeProps);
 };
