@@ -20,7 +20,7 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const imageId = useSelector(({ classes }: RootState) => classes.imageId);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
   const { role } = useAuth();
 
   const requestRedo = async () => {
@@ -48,16 +48,13 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
         throw new Error('Request has not been successful');
       }
     } catch (err) {
-      enqueueSnackbar(
-        `We couldn't process your request now. Please try again later`,
-        {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-        }
-      );
+      enqueueSnackbar(`We couldn't process your request now. Please try again later`, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'left',
+        },
+      });
     }
   };
 
@@ -67,19 +64,9 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   };
 
   return (
-    <Grid
-      justifyContent="space-between"
-      alignItems="center"
-      mt={3.5}
-      mb={5}
-      sx={{ display: 'flex' }}
-    >
+    <Grid justifyContent="space-between" alignItems="center" mt={3.5} mb={5} sx={{ display: 'flex' }}>
       {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => requestRedoHandler(imageId)}
-        >
+        <Button variant="contained" color="error" onClick={() => requestRedoHandler(imageId)}>
           Request Redo
         </Button>
       )}
@@ -92,8 +79,7 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             textDecoration: 'none !important',
-          }}
-        >
+          }}>
           <Iconify icon="ic:baseline-logout" />
           <span style={{ paddingLeft: 5 }}>Exit Canvas</span>
         </Link>

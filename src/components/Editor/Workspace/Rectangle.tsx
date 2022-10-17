@@ -1,10 +1,10 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import isEqual from 'lodash/isEqual';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Rect, Transformer } from 'react-konva';
 import { useDispatch } from 'react-redux';
 import { updateShape } from 'src/redux/slices/classes/classes.slice';
-import isEqual from 'lodash/isEqual';
 interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
@@ -13,6 +13,7 @@ interface IRectangle {
   bgY: number;
   classItemName: string;
   onClick: (e: KonvaEventObject<Event>) => void;
+  onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
   otherProps?: any;
   bgWidthScale: number;
   bgHeightScale: number;
@@ -23,6 +24,7 @@ const Rectangle = ({
   isSelected,
   hideTransformer,
   onClick,
+  onDblClick,
   classItemName,
   bgX,
   bgY,
@@ -69,29 +71,10 @@ const Rectangle = ({
     }
   }, []);
 
-  const hideShapeTemporarily = useCallback(
-    (_e: KonvaEventObject<MouseEvent>) => {
-      const node = shapeRef.current;
-      if (node && node.attrs?.fill) {
-        let originalFill = node.attrs.originalFill || node.attrs.fill;
-
-        node.attrs.fill =
-          node.attrs.fill === 'rgba(0,0,0,0)' ? originalFill : 'rgba(0,0,0,0)';
-
-        node.attrs.originalFill = originalFill;
-      }
-    },
-    [shapeRef]
-  );
-
   useEffect(() => {
     if (isSelected) {
       // we need to attach transformer manually
-      if (
-        trRef?.current?.nodes &&
-        trRef?.current?.getLayer &&
-        shapeRef.current
-      ) {
+      if (trRef?.current?.nodes && trRef?.current?.getLayer && shapeRef.current) {
         trRef.current.nodes([shapeRef.current]);
         trRef.current.getLayer()?.batchDraw();
       }
@@ -107,7 +90,7 @@ const Rectangle = ({
         x={(props.x || 0) * bgWidthScale + bgX}
         y={(props.y || 0) * bgHeightScale + bgY}
         class={classItemName}
-        onDblClick={hideShapeTemporarily}
+        onDblClick={onDblClick}
         onDragEnd={(e: any) => {
           handleRectChange({
             ...props,
@@ -137,10 +120,7 @@ const Rectangle = ({
 };
 
 const propsAreEqual = (prev: IRectangle, next: IRectangle) => {
-  return (
-    prev.isSelected === next.isSelected &&
-    isEqual(prev.shapeProps, next.shapeProps)
-  );
+  return prev.isSelected === next.isSelected && isEqual(prev.shapeProps, next.shapeProps);
 };
 
 export default memo(Rectangle, propsAreEqual);

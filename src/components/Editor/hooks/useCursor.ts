@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
 const useCursor = (workspaceRef: React.RefObject<HTMLDivElement>) => {
-  const currentTool = useSelector<RootState>((state) => state.editor.tool);
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
 
   // const toolName =
   // currentTool === TOOLS.ERASER ? 'eraser-working' : currentTool;
