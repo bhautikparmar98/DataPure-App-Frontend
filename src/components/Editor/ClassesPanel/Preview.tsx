@@ -1,8 +1,9 @@
 import { Grid } from '@mui/material';
-import { useAppSelector } from 'src/redux/store';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store';
 
 const Preview = () => {
-  const src: string = useAppSelector(({ classes }) => classes.src);
+  const src = useSelector((state: RootState) => state.classes.src);
   return src?.length > 0 ? (
     <Grid
       sx={{
@@ -11,13 +12,8 @@ const Preview = () => {
         height: 150,
       }}
       alignItems="center"
-      container
-    >
-      <img
-        src={src}
-        alt="workspace preview"
-        style={{ margin: 'auto', width: 'auto', maxHeight: 140 }}
-      />
+      container>
+      <img src={src} alt="workspace preview" style={{ margin: 'auto', width: 'auto', maxHeight: 140 }} />
     </Grid>
   ) : null;
 };

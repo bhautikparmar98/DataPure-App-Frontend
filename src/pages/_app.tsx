@@ -34,13 +34,13 @@ import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 //
-import { Provider as ReduxProvider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // @mui
 // redux
-import { persistor, store } from 'src/redux/store';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from 'src/redux/store';
+
 // utils
 import { SettingsValueProps } from 'src/components/Shared/settings/type';
 import { getSettings } from 'src/utils/settings';
@@ -57,7 +57,6 @@ import ProgressBar from 'src/components/Shared/ProgressBar';
 import RtlLayout from 'src/components/Shared/RtlLayout';
 import Settings from 'src/components/Shared/settings';
 import ThemeColorPresets from 'src/components/Shared/ThemeColorPresets';
-import ThemeLocalization from 'src/components/Shared/ThemeLocalization';
 
 import App, { AppContext, AppProps } from 'next/app';
 import { AuthProvider } from 'src/contexts/JWTContext';
@@ -92,32 +91,26 @@ export default function MyApp(props: MyAppProps) {
       <AuthProvider>
         <AxiosInterceptor>
           <ReduxProvider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <CollapseDrawerProvider>
-                <SettingsProvider defaultSettings={settings}>
-                  <ThemeProvider>
-                    <NotistackProvider>
-                      <MotionLazyContainer>
-                        <ThemeColorPresets>
-                          <ThemeLocalization>
-                            <RtlLayout>
-                              <LocalizationProvider
-                                dateAdapter={AdapterDateFns}
-                              >
-                                <ChartStyle />
-                                <Settings />
-                                <ProgressBar />
-                                {getLayout(<Component {...pageProps} />)}
-                              </LocalizationProvider>
-                            </RtlLayout>
-                          </ThemeLocalization>
-                        </ThemeColorPresets>
-                      </MotionLazyContainer>
-                    </NotistackProvider>
-                  </ThemeProvider>
-                </SettingsProvider>
-              </CollapseDrawerProvider>
-            </PersistGate>
+            <CollapseDrawerProvider>
+              <SettingsProvider defaultSettings={settings}>
+                <ThemeProvider>
+                  <NotistackProvider>
+                    <MotionLazyContainer>
+                      <ThemeColorPresets>
+                        <RtlLayout>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <ChartStyle />
+                            <Settings />
+                            <ProgressBar />
+                            {getLayout(<Component {...pageProps} />)}
+                          </LocalizationProvider>
+                        </RtlLayout>
+                      </ThemeColorPresets>
+                    </MotionLazyContainer>
+                  </NotistackProvider>
+                </ThemeProvider>
+              </SettingsProvider>
+            </CollapseDrawerProvider>
           </ReduxProvider>
         </AxiosInterceptor>
       </AuthProvider>

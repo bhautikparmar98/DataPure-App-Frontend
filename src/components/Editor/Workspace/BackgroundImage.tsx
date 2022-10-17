@@ -1,5 +1,5 @@
+import { useEffect, useRef, memo } from 'react';
 import { Image } from 'react-konva';
-
 type Props = {
   width: number;
   height: number;
@@ -9,8 +9,13 @@ type Props = {
 };
 
 const BackgroundImage = ({ width, height, x, y, background }: Props) => {
+  const bgRef = useRef<any>(null);
+  useEffect(() => {
+    if (width > 0) bgRef?.current?.cache();
+  }, [width]);
   return (
     <Image
+      ref={bgRef}
       x={x}
       y={y}
       width={width}
@@ -21,4 +26,4 @@ const BackgroundImage = ({ width, height, x, y, background }: Props) => {
     />
   );
 };
-export default BackgroundImage;
+export default memo(BackgroundImage);

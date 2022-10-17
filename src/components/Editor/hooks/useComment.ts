@@ -1,9 +1,10 @@
 import Konva from 'konva';
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-import { setComments as setCommentsAction } from 'src/redux/slices/classes/classes.actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { setComments as setCommentsAction } from 'src/redux/slices/classes/classes.slice';
 import { ROLES, Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
+import { RootState } from 'src/redux/store';
 interface Comment {
   text: string;
   x: number;
@@ -17,13 +18,11 @@ const useComment = (
   onAddComment: (text: string, x: number, y: number) => void,
   onDeleteComment: (commentId: string) => void
 ) => {
-  const storedComments = useAppSelector(({ classes }) => classes.comments);
+  const storedComments = useSelector((state: RootState) => state.classes.comments);
   const { role } = useAuth();
-  const [comments, setComments] = useState<Comment[]>(
-    storedComments?.length > 0 ? storedComments : []
-  );
+  const [comments, setComments] = useState<Comment[]>(storedComments?.length > 0 ? storedComments : []);
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     return () => document.querySelector('.editor-comment-popup')?.remove();
@@ -71,11 +70,7 @@ const useComment = (
     return false;
   };
 
-  const handleCommentClick = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    text: string,
-    commendIndex: number
-  ) => {
+  const handleCommentClick = (e: Konva.KonvaEventObject<MouseEvent>, text: string, commendIndex: number) => {
     e.cancelBubble = true;
     const { x = 0, y = 0 } = e.target.getStage()!.getRelativePointerPosition()!;
 
@@ -89,7 +84,7 @@ const useComment = (
           return comment;
         });
 
-        dispatch(setCommentsAction(newComments));
+        dispatch(setCommentsAction({ newComments }));
 
         document.body!.removeChild(textarea);
       } else if (
@@ -122,7 +117,7 @@ const useComment = (
             const newComments = [...comments, { text: textarea.value, x, y }];
 
             onAddComment(textarea.value, x, y);
-            dispatch(setCommentsAction(newComments));
+            dispatch(setCommentsAction({ newComments }));
 
             document.body!.removeChild(textarea);
           } else if (

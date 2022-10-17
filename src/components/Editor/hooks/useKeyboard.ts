@@ -1,8 +1,11 @@
 import Konva from 'konva';
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { TOOLS } from 'src/constants';
-import { deleteAnnotation } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { deleteAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { startDragging } from 'src/redux/slices/editor/editor.slice';
+import { RootState } from 'src/redux/store';
 import useCursor from './useCursor';
 
 const useKeyboard = (
@@ -10,10 +13,9 @@ const useKeyboard = (
   stageRef: React.RefObject<Konva.Stage>,
   selectedId: string
 ) => {
-  const [stageDragging, setStageDragging] = useState(false);
   const { setCursorStyle } = useCursor(workspaceRef);
-
-  const dispatch = useAppDispatch();
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
+  const dispatch = useDispatch();
 
   const stage = stageRef.current;
 
@@ -32,29 +34,29 @@ const useKeyboard = (
     }
   };
 
-  const handlePanTool = () => {
+  const handlePanTool = useCallback(() => {
     setCursorStyle(`url("/tools/${TOOLS.PAN}.svg"),auto`);
-    setStageDragging(true);
-  };
+    dispatch(startDragging({ stageDragging: true }));
+  }, [stage]);
 
-  const handleShapeDeletion = () => {
+  const handleShapeDeletion = useCallback(() => {
     if (!stage) return;
     const { classId, annotationId } =
       stage.find('#' + selectedId)[0]?.parent?.attrs || {};
     if (classId >= 0 && annotationId?.length > 0) {
-      dispatch(deleteAnnotation(classId, annotationId));
+      dispatch(deleteAnnotation({ classId, annotationId }));
     }
-  };
+  }, [selectedId]);
 
-  const handleKeyUp = () => {
-    setStageDragging(false);
+  const handleKeyUp = useCallback(() => {
+    dispatch(startDragging({ stageDragging: false }));
+
     setCursorStyle();
-  };
+  }, [stage, currentTool]);
 
   return {
     handleKeyDown,
     handleKeyUp,
-    stageDragging,
   };
 };
 export default useKeyboard;

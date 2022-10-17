@@ -13,8 +13,10 @@ const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
     {rects.length > 0 && (
       <Rect
         {...rects[0]}
+        listening={false}
         key={'temp-rect'}
-        fill={classColor.replace(')', ', 0.6)').replace('rgb', 'rgba')}
+        strokeWidth={1}
+        fill={classColor.replace(')', ', 0.35)').replace('rgb', 'rgba')}
       />
     )}
     {lines.map((options, l) => (
@@ -24,7 +26,7 @@ const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
         draggable={false}
         {...options}
         opacity={0.7}
-        strokeWidth={10}
+        strokeWidth={3}
         tension={0.5}
         lineCap="round"
       />
@@ -34,9 +36,6 @@ const TempShapes = ({ lines, rects = [], classColor }: Shapes) => (
 
 function propsChanged(_prevProps: any, nextProps: Shapes) {
   const { lines, rects = [] } = nextProps;
-  if (lines.length > 1 || rects.length > 1) {
-    return true;
-  }
-  return false;
+  return lines.length > 1 || rects.length > 1;
 }
 export default memo(TempShapes, propsChanged);

@@ -8,17 +8,14 @@ import Avatar, { Props as AvatarProps } from './Avatar';
 // ----------------------------------------------------------------------
 
 export default function MyAvatar({ ...other }: AvatarProps) {
-  const { user } = useAuth();
+  const { user } = useAuth() as any;
 
   return (
     <Avatar
       src={user?.photoURL}
       alt={user?.fullName}
-      color={
-        user?.photoURL ? 'default' : createAvatar(user?.fullName || '').color
-      }
-      {...other}
-    >
+      color={user?.photoURL ? 'default' : createAvatar(user?.fullName || '').color}
+      {...other}>
       {createAvatar(user?.fullName || '').name}
     </Avatar>
   );

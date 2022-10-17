@@ -1,10 +1,11 @@
-import Konva from 'konva';
+import { KonvaEventObject } from 'konva/lib/Node';
+import { Stage } from 'konva/lib/Stage';
 import _ from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // import { setPreview } from 'src/redux/slices/editor/editor.actions';
-// import { useAppDispatch } from 'src/redux/store';
+// import { useDispatch } from 'react-redux';
 
-const SCALE_BY = 1.4;
+const SCALE_BY = 1.8;
 const MIN_SCALE = 0.005;
 // const MAX_SCALE = 20;
 // const PREVIEW_SCALE = 1 / 4;
@@ -18,27 +19,26 @@ const useZoom = () => {
 
   const [zooming, setZooming] = useState(false);
 
-  const stageRef = useRef<Konva.Stage | null>(null);
+  const stageRef = useRef<Stage | null>(null);
 
-  const updateZoom = useCallback(() => {
-    if (zooming) {
+  const updateZoom = useCallback(
+    _.debounce(() => {
       setZooming(false);
-    }
-  }, [zooming]);
-
-  const debounced = _.debounce(updateZoom, 1200);
+    }, 400),
+    [zooming]
+  );
 
   useEffect(() => {
-    debounced();
+    updateZoom();
   }, [stageScale]);
 
   // We may need to debounce this method for big number of shapes drawn
-  const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+  const handleWheel = useCallback((e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
     setZooming(true);
-    const stage = e.target.getStage();
+    const stage = e.target.getStage()!;
 
-    if (!stage) return;
+    // if (!stage) return;
 
     stageRef.current = stage;
 
@@ -47,7 +47,7 @@ const useZoom = () => {
     const newScale =
       e.evt.deltaY < 0 ? oldScale * SCALE_BY : oldScale / SCALE_BY;
 
-    if (newScale < MIN_SCALE) return;
+    // if (newScale < MIN_SCALE) return;
 
     const pointerPosition = stage.getPointerPosition() as {
       x: number;
@@ -63,7 +63,7 @@ const useZoom = () => {
       stageX: -(mousePointTo.x - pointerPosition.x / newScale) * newScale,
       stageY: -(mousePointTo.y - pointerPosition.y / newScale) * newScale,
     });
-  };
+  }, []);
 
   return { stageScale, handleWheel, zooming };
 };

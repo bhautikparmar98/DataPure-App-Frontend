@@ -1,20 +1,21 @@
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import { useSelector } from 'react-redux';
 import { Annotation } from 'src/constants';
-import { useAppSelector } from 'src/redux/store';
 import axios from 'src/utils/axios';
-
+import { RootState } from 'src/redux/store';
 const useQaSubmit = () => {
-  const { classes, imageId } = useAppSelector(({ classes }) => classes);
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleQaSubmit = async (done = false) => {
     try {
-      const annotations: Annotation[] = [];
+      const annotations: Partial<Annotation>[] = [];
 
       classes.forEach((cls) => {
-        cls.annotations.forEach((anno) => {
+        cls.annotations.forEach((anno: Partial<Annotation>) => {
           delete anno.id;
           annotations.push(anno);
         });

@@ -1,25 +1,25 @@
-import { selectClass } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { SelectChangeEvent } from '@mui/material/Select';
 
+import { selectClass } from 'src/redux/slices/classes/classes.slice';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 const useFilters = () => {
-  const { classes, selectedClassIndex } = useAppSelector(
-    ({ classes }) => classes
-  );
-  const dispatch = useAppDispatch();
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
+  const dispatch = useDispatch();
 
   const classesFilters = classes.map((classItem, i) => ({
     label: classItem.name,
     classId: i,
   }));
 
-  const handleClassSelect = (
-    _: any,
-    classItem: { label: string; classId: number } | null
-  ) => {
-    if (classItem) {
-      classItem.classId >= 0 ? dispatch(selectClass(classItem.classId)) : null;
-    }
-  };
+  const handleClassSelect = useCallback(
+    (classIndex: number) => {
+      dispatch(selectClass({ classIndex }));
+    },
+    [selectedClassIndex]
+  );
 
   return {
     classes,

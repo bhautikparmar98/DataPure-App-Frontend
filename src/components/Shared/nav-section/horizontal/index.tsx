@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { memo } from 'react';
 // @mui
 import { Stack } from '@mui/material';
@@ -31,11 +33,7 @@ function NavSectionHorizontal({ navConfig }: NavSectionProps) {
   });
 
   return (
-    <Stack
-      direction="row"
-      justifyContent="center"
-      sx={{ bgcolor: 'background.neutral', borderRadius: 1, px: 0.5 }}
-    >
+    <Stack direction="row" justifyContent="center" sx={{ bgcolor: 'background.neutral', borderRadius: 1, px: 0.5 }}>
       <Stack direction="row" sx={{ ...hideScrollbar, py: 1 }}>
         {navAccessible.map((group) => (
           <Stack key={group.subheader} direction="row" flexShrink={0}>

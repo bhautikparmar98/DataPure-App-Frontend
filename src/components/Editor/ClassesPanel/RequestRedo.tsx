@@ -8,19 +8,19 @@ import { clientRequestRedo } from 'src/components/Editor/utils/clientRequests';
 import { qaRequestRedo } from 'src/components/Editor/utils/qaRequests';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { resetState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-
+import { resetState } from 'src/redux/slices/classes/classes.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 interface RequestRedoProps {
   onRequestRedoFinish: (imgId: string) => void;
 }
 
 const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  const { imageId } = useAppSelector(({ classes }) => classes);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
   const { role } = useAuth();
 
   const requestRedo = async () => {
@@ -48,16 +48,13 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
         throw new Error('Request has not been successful');
       }
     } catch (err) {
-      enqueueSnackbar(
-        `We couldn't process your request now. Please try again later`,
-        {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'left',
-          },
-        }
-      );
+      enqueueSnackbar(`We couldn't process your request now. Please try again later`, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'left',
+        },
+      });
     }
   };
 
@@ -67,19 +64,9 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
   };
 
   return (
-    <Grid
-      justifyContent="space-between"
-      alignItems="center"
-      mt={3.5}
-      mb={5}
-      sx={{ display: 'flex' }}
-    >
+    <Grid justifyContent="space-between" alignItems="center" mt={3.5} mb={5} sx={{ display: 'flex' }}>
       {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => requestRedoHandler(imageId)}
-        >
+        <Button variant="contained" color="error" onClick={() => requestRedoHandler(imageId)}>
           Request Redo
         </Button>
       )}
@@ -92,8 +79,7 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             textDecoration: 'none !important',
-          }}
-        >
+          }}>
           <Iconify icon="ic:baseline-logout" />
           <span style={{ paddingLeft: 5 }}>Exit Canvas</span>
         </Link>

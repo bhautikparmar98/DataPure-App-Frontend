@@ -1,5 +1,5 @@
 // form
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller, FieldValues, Control } from 'react-hook-form';
 // @mui
 import { TextField, TextFieldProps, Typography } from '@mui/material';
 
@@ -13,14 +13,7 @@ interface IProps {
   control?: Control<FieldValues, object>;
 }
 
-export default function RHFSelect({
-  name,
-  children,
-  upperLabel,
-  native,
-  control,
-  ...other
-}: IProps & TextFieldProps) {
+export default function RHFSelect({ name, children, upperLabel, native, control, ...other }: IProps & TextFieldProps) {
   const context = useFormContext();
 
   const fieldControl = control || context?.control;
@@ -44,8 +37,7 @@ export default function RHFSelect({
             SelectProps={{ native: native }}
             error={!!error}
             helperText={error?.message}
-            {...other}
-          >
+            {...other}>
             {children}
           </TextField>
         )}

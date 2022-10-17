@@ -1,8 +1,8 @@
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useState } from 'react';
-import { TOOLS, Line } from 'src/constants';
-import { addAnnotation } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { Line, TOOLS } from 'src/constants';
+import { addAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 import uniqid from 'uniqid';
 
 interface LineWithStroke extends Line {
@@ -14,7 +14,7 @@ const useLine = (
   classId: string,
   selectedClassColor: string
 ) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const [lines, setLines] = useState<LineWithStroke[]>([]);
 
@@ -48,8 +48,8 @@ const useLine = (
 
     const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
 
-    const bg = event.target.getStage()?.find('#canvasBackground');
-    if (!bg || bg.length === 0) return;
+    const bg = event.target.getStage()?.find('#canvasBackground')!;
+    // if (!bg || bg.length === 0) return;
     let { width: bgWidth, height: bgHeight } = bg[0].attrs;
 
     // mouse position relative to background origin(x,y)
@@ -76,10 +76,14 @@ const useLine = (
       const linesWithoutStoke = lines.map(({ stroke, ...rest }) => rest);
 
       dispatch(
-        addAnnotation(selectedClassIndex, classId, {
-          visible: true,
-          id: uniqid(),
-          shapes: [{ ...linesWithoutStoke[linesWithoutStoke.length - 1] }],
+        addAnnotation({
+          classIndex: selectedClassIndex,
+          classId,
+          annotation: {
+            visible: true,
+            id: uniqid(),
+            shapes: [{ ...linesWithoutStoke[linesWithoutStoke.length - 1] }],
+          },
         })
       );
     }

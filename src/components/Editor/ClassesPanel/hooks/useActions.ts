@@ -2,9 +2,9 @@ import { useState } from 'react';
 import {
   changeAnnotationsClass,
   deleteAnnotations,
-  toggleAnnotationsVisibility,
-} from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+  toggleAnnotationVisibility,
+} from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 
 interface Checks {
   [instanceId: string]: boolean;
@@ -21,7 +21,7 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
 
   const [newClassIndex, setNewClassIndex] = useState<number>();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const getCheckedIds = () => {
     const ids: string[] = [];
@@ -36,12 +36,22 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
   const toggleInstancesVisibility = (visible = false) => {
     const checkedIds = getCheckedIds();
     dispatch(
-      toggleAnnotationsVisibility(selectedClassIndex, checkedIds, visible)
+      toggleAnnotationVisibility({
+        classId: selectedClassIndex,
+        annotationIds: checkedIds,
+        visible,
+      })
     );
   };
   const deleteInstances = () => {
     const checkedIds = getCheckedIds();
-    dispatch(deleteAnnotations(selectedClassIndex, checkedIds));
+    dispatch(
+      deleteAnnotations({
+        classId: selectedClassIndex,
+        annotationIds: checkedIds,
+      })
+    );
+
     setDeleteModelVisible(false);
   };
 
@@ -49,8 +59,13 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
     if (typeof newClassIndex === 'number' && newClassIndex >= 0) {
       const checkedIds = getCheckedIds();
       dispatch(
-        changeAnnotationsClass(selectedClassIndex, newClassIndex, checkedIds)
+        changeAnnotationsClass({
+          oldClassIndex: selectedClassIndex,
+          newClassIndex,
+          annotationIds: checkedIds,
+        })
       );
+
       handleChangeClassModalVisibility();
     }
   };

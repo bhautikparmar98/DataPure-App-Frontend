@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Class } from 'src/constants';
 
 interface Checks {
@@ -14,24 +14,32 @@ enum AllChecked {
 type Props = {
   selectedClassIndex: number;
   classes: Class[];
-  checks: Checks;
-  handleChecks: (checks: Checks) => void;
-  handleAllChecks: (allChecked: AllChecked) => void;
+  updateFiltersChecks: (checks: Checks) => void;
 };
 
 const useChecks = ({
   classes,
   selectedClassIndex,
-  checks,
-  handleChecks,
-  handleAllChecks,
+  updateFiltersChecks,
 }: Props) => {
-  const toggleOne = (e: ChangeEvent<HTMLInputElement>, id: string) => {
-    const newChecks = { ...checks };
-    const checked = e.target.checked;
-    newChecks[id] = checked;
-    handleChecks(newChecks);
-  };
+  const [checks, setChecks] = useState<Checks>({});
+  const [allChecked, setAllChecked] = useState<AllChecked>(
+    AllChecked['allUnchecked']
+  );
+
+  useEffect(() => {
+    updateFiltersChecks(checks);
+  }, [checks]);
+
+  const toggleOne = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, id: string) => {
+      const newChecks = { ...checks };
+      const checked = e.target.checked;
+      newChecks[id] = checked;
+      setChecks(newChecks);
+    },
+    [checks]
+  );
 
   //toggle all checkboxes to be all checked or unchecked
   const toggleAll = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,19 +50,18 @@ const useChecks = ({
     const checksStatus = e.target.checked;
 
     if (checksStatus === true) {
-      handleAllChecks(AllChecked['allChecked']);
+      setAllChecked(AllChecked['allChecked']);
       const newChecks: Checks = {};
       instancesIds.forEach((id: string) => {
         newChecks[id] = true;
       });
-
-      handleChecks(newChecks);
+      setChecks(newChecks);
 
       return;
     }
 
-    handleAllChecks(AllChecked['allUnchecked']);
-    handleChecks({});
+    setAllChecked(AllChecked['allUnchecked']);
+    setChecks({});
   };
 
   // test new `checks` state and make changes accordingly
@@ -65,21 +72,21 @@ const useChecks = ({
     if (!annosCount || annosCount === 0) return;
 
     if (checkedIds.length === 0) {
-      handleAllChecks(AllChecked['allUnchecked']);
+      setAllChecked(AllChecked['allUnchecked']);
       return;
     }
 
     if (checkedIds.length === annosCount) {
-      handleAllChecks(AllChecked['allChecked']);
+      setAllChecked(AllChecked['allChecked']);
       return;
     }
 
-    handleAllChecks(AllChecked['someChecked']);
+    setAllChecked(AllChecked['someChecked']);
   };
 
   const resetChecks = () => {
-    handleChecks({});
-    handleAllChecks(AllChecked['allUnchecked']);
+    setChecks({});
+    setAllChecked(AllChecked['allUnchecked']);
   };
 
   useEffect(() => {
@@ -94,6 +101,8 @@ const useChecks = ({
   return {
     toggleOne,
     toggleAll,
+    checks,
+    allChecked,
   };
 };
 

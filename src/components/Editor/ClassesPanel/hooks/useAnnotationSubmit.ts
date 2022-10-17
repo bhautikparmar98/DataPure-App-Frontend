@@ -1,23 +1,24 @@
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Annotation, ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { useAppSelector } from 'src/redux/store';
 import { annotatorSubmitAnnotations } from '../../utils/annotatorRequests';
 import { clientApproveAnnotations } from '../../utils/clientRequests';
 import { qaApproveImage, qaSubmitAnnotations } from '../../utils/qaRequests';
-
-import { resetState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch } from 'src/redux/store';
+import { RootState } from 'src/redux/store';
+import { resetState } from 'src/redux/slices/classes/classes.slice';
+import { useDispatch } from 'react-redux';
 
 const useAnnotationSubmit = () => {
-  const { classes, imageId } = useAppSelector(({ classes }) => classes);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
+  const classes = useSelector((state: RootState) => state.classes.classes);
   const router = useRouter();
   const { role } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     if (ROLES.CLIENT.value !== role) {
       const interval = setInterval(() => {
@@ -52,18 +53,10 @@ const useAnnotationSubmit = () => {
           response = await qaSubmitAnnotations(purifiedAnnotations, imageId);
           break;
         case ROLES.ANNOTATOR.value:
-          response = await annotatorSubmitAnnotations(
-            purifiedAnnotations,
-            imageId,
-            done
-          );
+          response = await annotatorSubmitAnnotations(purifiedAnnotations, imageId, done);
           break;
         case ROLES.CLIENT.value:
-          response = await clientApproveAnnotations(
-            purifiedAnnotations,
-            imageId,
-            done
-          );
+          response = await clientApproveAnnotations(purifiedAnnotations, imageId, done);
           break;
         default:
           throw new Error('Undefined user role');
@@ -78,9 +71,7 @@ const useAnnotationSubmit = () => {
           }, 3000);
         }
       } else if (done) {
-        throw new Error(
-          'User clicked submit and the request was not successful'
-        );
+        throw new Error('User clicked submit and the request was not successful');
       }
     } catch (error) {
       console.error(error);
@@ -103,12 +94,9 @@ const useAnnotationSubmit = () => {
         router.reload();
       }, 3000);
     } else {
-      enqueueSnackbar(
-        `We couldn't process your approval request now. Please try again later`,
-        {
-          variant: 'error',
-        }
-      );
+      enqueueSnackbar(`We couldn't process your approval request now. Please try again later`, {
+        variant: 'error',
+      });
     }
   };
 

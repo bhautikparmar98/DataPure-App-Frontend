@@ -1,16 +1,17 @@
 import Konva from 'konva';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
+import { useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
-import { TOOLS, Class } from 'src/constants';
-import { updateShape } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { Class, TOOLS } from 'src/constants';
+import { RootState } from 'src/redux/store';
 import useImage from 'use-image';
 import useBackground from '../hooks/useBackground';
 import useCursor from '../hooks/useCursor';
 import useDraw from '../hooks/useDraw';
 import useKeyboard from '../hooks/useKeyboard';
 import useSelectShape from '../hooks/useSelectShape';
+import useShapesCache from '../hooks/useShapesCache';
 import useTooltip from '../hooks/useTooltip';
 import BackgroundImage from './BackgroundImage';
 import Shapes from './Shapes';
@@ -39,34 +40,21 @@ const Workspace: any = ({
   onAddComment,
   onDeleteComment,
 }: IProps) => {
-  const dispatch = useAppDispatch();
-
-  const [currentTool] = useAppSelector(({ editor }) => [editor.tool]);
-
-  const {
-    classes = [],
-    selectedClassIndex = 0,
-    src,
-  } = useAppSelector(({ classes }) => classes);
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const src = useSelector((state: RootState) => state.classes.src);
+  const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
 
   const classId: string = classes[selectedClassIndex]?._id;
 
   const workspaceRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const shapesRef = useRef<Konva.Group>(null);
+  const shapesLayerRef = useRef<Konva.Layer>(null);
   const bgLayerRef = useRef<Konva.Layer>(null);
 
-  const {
-    background,
-    backgroundStatus,
-    width,
-    height,
-    widthRatio,
-    heightRatio,
-    bgX,
-    bgY,
-    bgScale,
-  } = useBackground({
+  const { background, backgroundStatus, width, height, bgX, bgY, bgWidthScale, bgHeightScale } = useBackground({
     url: src,
     stageWidth: WIDTH,
     stageHeight: HEIGHT,
@@ -74,11 +62,7 @@ const Workspace: any = ({
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
 
-  const { handleKeyDown, handleKeyUp, stageDragging } = useKeyboard(
-    workspaceRef,
-    stageRef,
-    selectedId
-  );
+  const { handleKeyDown, handleKeyUp } = useKeyboard(workspaceRef, stageRef, selectedId);
 
   const {
     handleMouseDown,
@@ -86,10 +70,15 @@ const Workspace: any = ({
     handleMouseMove,
     rects,
     lines,
-    hideShapeTemporarily,
     handleShapeMove,
     comments,
     handleCommentClick,
+    rectHandleMouseDown,
+    rectHandleMouseUp,
+    rectHandleMouseMove,
+    lineHandleMouseDown,
+    lineHandleMouseUp,
+    lineHandleMouseMove,
   } = useDraw(
     selectedClassIndex,
     classId,
@@ -97,9 +86,9 @@ const Workspace: any = ({
     stageRef,
     bgLayerRef,
     currentTool,
-    stageDragging,
     width,
-    bgScale,
+    bgWidthScale,
+    bgHeightScale,
     onAddComment,
     onDeleteComment
   );
@@ -109,26 +98,12 @@ const Workspace: any = ({
 
   const { stageScale, handleWheel, zooming } = useZoom();
 
+  const { cachedVisible } = useShapesCache({
+    stageRef,
+    zooming,
+  });
+
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
-
-  // For Rectangle transformation (size & rotation)
-  const handleRectChange = (newAttrs: Konva.ShapeConfig) => {
-    if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape(selectedClassIndex, newAttrs));
-    }
-  };
-
-  const handleShapesCaching = (shouldCache = true, e?: any) => {
-    shouldCache ? shapesRef.current?.cache() : shapesRef.current?.clearCache();
-  };
-
-  useEffect(() => {
-    if (shapesRef.current) {
-      stageDragging || zooming
-        ? handleShapesCaching(true)
-        : handleShapesCaching(false);
-    }
-  }, [stageDragging, zooming]);
 
   return (
     <div
@@ -139,8 +114,7 @@ const Workspace: any = ({
         handleKeyDown(e);
       }}
       tabIndex={0}
-      onKeyUp={handleKeyUp}
-    >
+      onKeyUp={handleKeyUp}>
       {backgroundStatus === 'loaded' && classes.length > 0 ? (
         <Stage
           width={WIDTH}
@@ -151,72 +125,69 @@ const Workspace: any = ({
           scaleY={stageScale.stageScale}
           x={stageScale.stageX}
           y={stageScale.stageY}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseDown={(e: any) => {
-            checkDeselect(e);
-            if (stageDragging) return;
-            handleMouseDown(e);
-          }}
+          onMouseMove={
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseMove
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseMove
+              : () => {}
+          }
+          onMouseUp={currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
+          onMouseDown={
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseDown
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseDown
+              : () => {}
+          }
+          // onMouseUp={handleMouseUp}
+          // onMouseDown={(e: any) => {
+          //   checkDeselect(e);
+          //   if (stageDragging) return;
+          //   handleMouseDown(e);
+          // }}
           onClick={(e) => {
             checkDeselect(e);
             hideTooltip();
             // e.cancelBubble = true;
           }}
           draggable={stageDragging}
-          onDragEnd={() => {}}
-        >
+          onDragEnd={() => {}}>
           <Layer ref={bgLayerRef} id="background_layer" listening={false}>
-            <BackgroundImage
-              width={width}
-              height={height}
-              background={background}
-              x={bgX}
-              y={bgY}
-            />
+            <BackgroundImage width={width} height={height} background={background} x={bgX} y={bgY} />
           </Layer>
-
-          <Layer>
-            <Group
-              ref={shapesRef}
-              onClick={(e) => handleShapesCaching(false, e)}
-            >
+          <Layer id="shapes_layer" ref={shapesLayerRef} listening={!cachedVisible}>
+            <Group ref={shapesRef} id="shapes_group">
               <Shapes
                 classes={classes}
-                handleRectChange={handleRectChange}
                 showTooltip={showTooltip}
                 selectShape={selectShape}
-                hideShapeTemporarily={hideShapeTemporarily}
                 handleShapeMove={handleShapeMove}
                 currentTool={currentTool}
                 selectedId={selectedId}
-                stageDragging={stageDragging}
                 hideTooltip={hideTooltip}
-                zooming={zooming}
+                zooming={false}
                 bgX={bgX}
                 bgY={bgY}
-                bgScale={bgScale}
+                bgWidthScale={bgWidthScale}
+                bgHeightScale={bgHeightScale}
               />
             </Group>
           </Layer>
 
           <Layer>
-            <TempShapes
-              lines={lines}
-              rects={rects}
-              classColor={classes[selectedClassIndex]?.color}
-            />
+            <TempShapes lines={lines} rects={rects} classColor={classes[selectedClassIndex]?.color} />
             {tooltip.text.length > 0 && (
-              <Group y={-20}>
+              <Group>
                 <Rect
-                  x={tooltip.x - 8}
-                  y={tooltip.y + 20}
-                  scaleX={2}
-                  scaleY={2}
-                  offsetY={15}
-                  offsetX={2}
+                  listening={false}
+                  x={tooltip.x}
+                  y={tooltip.y}
+                  offsetX={5}
+                  scaleX={1 / stageScale.stageScale}
+                  scaleY={1 / stageScale.stageScale}
                   width={tooltip.rectWidth}
-                  height={24}
+                  height={18}
                   stroke={'rgba(0,0,0,0.4)'}
                   strokeWidth={2}
                   fill={'rgba(103,58,183, 0.8)'}
@@ -227,14 +198,14 @@ const Workspace: any = ({
                   shadowOpacity={0.2}
                   cornerRadius={5}
                 />
-                <Text {...tooltip} scaleX={2} scaleY={2} />
+                <Text {...tooltip} scaleX={2 / stageScale.stageScale} scaleY={2 / stageScale.stageScale} />
               </Group>
             )}
 
             {currentTool === TOOLS.COMMENT &&
               comments.map((comment, commendIndex) => (
                 <Image
-                  key={`comment-${commendIndex}`}
+                  key={commendIndex}
                   width={60 / stageScale.stageScale}
                   height={60 / stageScale.stageScale}
                   image={image}
@@ -243,9 +214,7 @@ const Workspace: any = ({
                   alt="Comment"
                   type="Comment"
                   draggable
-                  onClick={(e) =>
-                    handleCommentClick(e, comment.text, commendIndex)
-                  }
+                  onClick={(e) => handleCommentClick(e, comment.text, commendIndex)}
                   onMouseEnter={(_) => setCursorStyle('pointer')}
                   onMouseLeave={(_) => setCursorStyle()}
                 />
@@ -259,14 +228,12 @@ const Workspace: any = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-          }}
-        >
+          }}>
           <p
             style={{
               marginLeft: -(TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH) / 2,
               fontSize: '1.3rem',
-            }}
-          >
+            }}>
             Annotations are loading...
           </p>
         </div>

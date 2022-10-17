@@ -19,6 +19,7 @@ import {
   MenuItem,
   Stack,
   Typography,
+  Modal,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -76,13 +77,17 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     useState(false);
   const [jsonData, setJsonData] = useState([]);
 
+  const [tokenModalOpen, setTokenModalOpen] = useState(false);
+  //sdk token for human in the loop project
+  const [sdkToken, setSdkToken] = useState('');
+
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProjectSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     dueAt: Yup.date().required('Due Date is required'),
     type: Yup.string().required('Type is required'),
-    images: Yup.array().min(1, 'Images is required'),
+    // images: Yup.array().min(1, 'Images is required'),
     // statusType: Yup.string().optional(),
     // dataType: Yup.string().optional(),
     // annotationFile: Yup.array().optional(),
@@ -247,6 +252,44 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     setLoading(false);
   };
 
+  // human in loop type has no images and will redirect client to page for getting their token
+  const onSubmitHumanInLoop = async (data: FormValuesProps) => {
+    setLoading(true);
+
+    try {
+      //IDs are added for predefined-annotations only
+      const classesWithIds = classes.map((c: any) => {
+        delete c.id;
+        return c;
+      });
+
+      const response = await axiosInstance.post('/project/humanInLoop', {
+        name: data.name,
+        dueAt: data.dueAt,
+        type: data.type,
+        dataType: data.dataType,
+        classes: classesWithIds,
+      });
+      let token: string = response.data?.project?.sdkToken || '';
+      if (token.length > 0) {
+        setSdkToken(token);
+        setTokenModalOpen(true);
+      }
+
+      reset();
+      setClasses([]);
+      enqueueSnackbar(
+        `Human in The Loop Project has been created successfully.`
+      );
+      // push(PATH_DASHBOARD.project.list);
+    } catch (error) {
+      if (sdkToken !== '') setSdkToken('');
+      console.error(error);
+      enqueueSnackbar('Something went wrong.', { variant: 'error' });
+    }
+    setLoading(false);
+  };
+
   const handleDrop = useCallback(
     (acceptedFiles: any[]) => {
       setValue(
@@ -340,20 +383,25 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       loading ||
       values.name === '' ||
       values.type === '' ||
-      values.dueAt === null ||
-      values.images.length === 0
+      values.dueAt === null
     )
       return true;
 
     // selected image annotation and data type not selected should return true;
     if (isImageAnnotationSelected && values.dataType === '') return true;
 
+    // selected image annotation for non `human in the loop` and no images added
+    if (
+      values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value &&
+      values.images.length === 0
+    )
+      return true;
+
     // if data type is pre-annotated and there is no review status should return true;
     if (isReviewStatusShown && !values.reviewStatus) return true;
 
     // if data type is pre-annotated and there is no json file uploaded return true;
     if (isReviewStatusShown && !values.annotationFile) return true;
-
     return false;
   };
 
@@ -362,7 +410,9 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       <FormProvider
         methods={methods}
         onSubmit={
-          isReviewStatusShown
+          values.dataType === IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value
+            ? handleSubmit(onSubmitHumanInLoop)
+            : isReviewStatusShown
             ? handleSubmit(onSubmitPreAnnotated)
             : handleSubmit(onSubmit)
         }
@@ -439,24 +489,29 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                   <Grid container spacing={2}>
                     <Grid item md={8} xs={12}>
                       <Grid container spacing={2}>
-                        <Grid item xs={gridXsValueForUploader}>
-                          <div>
-                            <RHFUploadMultiFile
-                              name="images"
-                              showPreview={false}
-                              accept="image/*"
-                              minHeight={400}
-                              maxSize={31045728555}
-                              onDrop={handleDrop}
-                              onRemove={handleRemove}
-                              onRemoveAll={handleRemoveAll}
-                              uploading={uploading}
-                              label="Drop or Select Images file"
-                              progress={progress}
-                              buffer={progress + 5}
-                            />
-                          </div>
-                        </Grid>
+                        {isImageAnnotationSelected &&
+                          values.dataType !==
+                            IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && (
+                            <Grid item xs={gridXsValueForUploader}>
+                              <div>
+                                <RHFUploadMultiFile
+                                  name="images"
+                                  showPreview={false}
+                                  accept="image/*"
+                                  minHeight={400}
+                                  maxSize={31045728555}
+                                  onDrop={handleDrop}
+                                  onRemove={handleRemove}
+                                  onRemoveAll={handleRemoveAll}
+                                  uploading={uploading}
+                                  label="Drop or Select Images file"
+                                  progress={progress}
+                                  buffer={progress + 5}
+                                />
+                              </div>
+                            </Grid>
+                          )}
+
                         {isReviewStatusShown && (
                           <Grid item xs={gridXsValueForUploader}>
                             <div>
@@ -503,6 +558,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                             </RHFSelect>
                           </Box>
                         )}
+
                         <Box mb={2}>
                           <Grid container>
                             <Grid item md={6} xs={12}>
@@ -534,17 +590,20 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                           justifyContent="space-between"
                           flex={1}
                           position="relative"
-                          style={{ overflowY: 'auto', overflowX: 'hidden' }}
+                          style={{
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                          }}
                         >
                           <Box
                             minHeight="min-content"
                             display="flex"
                             flexDirection="column"
-                            position="absolute"
-                            top={0}
-                            left={0}
-                            right={0}
-                            bottom={0}
+                            // position="absolute"
+                            // top={0}
+                            // left={0}
+                            // right={0}
+                            // bottom={0}
                           >
                             {classes.map((c, index) => (
                               <Box
@@ -580,6 +639,40 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
           </Grid>
         </Grid>
       </FormProvider>
+      <Modal
+        open={tokenModalOpen}
+        onClose={() => setTokenModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Your SDK Token
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Use this token with our SDK to upload images to this project.
+            <br />
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ wordBreak: 'break-all', fontSize: 10 }}
+          >
+            {sdkToken}
+          </Typography>
+        </Box>
+      </Modal>
     </Container>
   );
 };

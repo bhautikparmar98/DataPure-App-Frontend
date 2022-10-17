@@ -1,22 +1,25 @@
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { initializeState } from 'src/redux/slices/classes/classes.actions';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
+import { initState } from 'src/redux/slices/classes/classes.slice';
 import ClassesPanel from './ClassesPanel';
 import useFetchImage from './hooks/useFetchImage';
 import useImageComments from './hooks/useImageComments';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
+import { RootState } from 'src/redux/store';
 
 const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
-  const imageId = useAppSelector((state) => state.classes.imageId);
+  const imageId: string = useSelector(
+    (state: RootState) => state.classes.imageId
+  );
 
   const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
 
@@ -25,7 +28,7 @@ const Editor = () => {
     imageId,
   });
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -44,8 +47,10 @@ const Editor = () => {
 
           // initialize state with requested image
           dispatch(
-            initializeState({
-              images: [images[foundIndex]],
+            initState({
+              state: {
+                images: [images[foundIndex]],
+              },
             })
           );
         }
@@ -61,8 +66,10 @@ const Editor = () => {
       setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
-        initializeState({
-          images: [images[newIndex]],
+        initState({
+          state: {
+            images: [images[newIndex]],
+          },
         })
       );
     }
@@ -74,14 +81,16 @@ const Editor = () => {
       setImgIndex(newIndex);
       // dispatch(resetState());
       dispatch(
-        initializeState({
-          images: [images[newIndex]],
+        initState({
+          state: {
+            images: [images[newIndex]],
+          },
         })
       );
     }
   };
 
-  const requestRedoHandler = (imgId: string) => {
+  const requestRedoHandler = useCallback((imgId: string) => {
     if (images.length === 1) return router.push(`/project/${id}/review`);
 
     let ind = imgIndex;
@@ -93,14 +102,16 @@ const Editor = () => {
     const newImages = removeImage(imgId);
 
     dispatch(
-      initializeState({
-        images: [newImages[ind]],
+      initState({
+        state: {
+          images: [newImages[ind]],
+        },
       })
     );
-  };
+  }, []);
 
   const TOOLBAR_WIDTH = 70;
-  const LAYERS_PANEL_WIDTH = 300;
+  const LAYERS_PANEL_WIDTH = 330;
   const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
   const HEIGHT = window.innerHeight - indicatorsHeight;
   return (
@@ -123,8 +134,7 @@ const Editor = () => {
           justifyContent="center"
           alignItems="center"
           sx={{ fontSize: '1.2rem' }}
-          pr={28.5}
-        >
+          pr={28.5}>
           <Iconify
             icon={'bi:arrow-left-circle'}
             sx={{
@@ -135,7 +145,7 @@ const Editor = () => {
             onClick={(e) => getPrevImg()}
           />
           <span style={{ padding: '10px 15px' }}>
-            {imgIndex + 1} of {images.length}
+            {imgIndex + 1} of {images.length || 1}
           </span>
           <Iconify
             icon={'bi:arrow-right-circle'}

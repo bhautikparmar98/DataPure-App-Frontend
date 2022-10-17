@@ -1,29 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import { rootPersistConfig, rootReducer } from './rootReducer';
-
+import classesReducer from './slices/classes/classes.slice';
+import editorReducer from './slices/editor/editor.slice';
 // ----------------------------------------------------------------------
 
 const store = configureStore({
-  reducer: persistReducer(rootPersistConfig, rootReducer),
-  middleware: (getDefaultMiddleware: any) =>
+  reducer: {
+    classes: classesReducer,
+    editor: editorReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false,
       immutableCheck: false,
+      serializableCheck: false,
     }),
 });
 
-const persistor = persistStore(store);
-
-export type RootState = ReturnType<typeof rootReducer>;
-
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
-const { dispatch } = store;
-
-const useAppDispatch = () => useDispatch<AppDispatch>();
-
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
-export { store, persistor, dispatch, useAppSelector, useAppDispatch };
+export { store };

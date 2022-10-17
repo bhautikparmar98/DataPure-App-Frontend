@@ -1,4 +1,4 @@
-// MUI
+import { useCallback } from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -7,15 +7,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { styled } from '@mui/material/styles';
-// Icons
 import { Icon } from '@iconify/react';
-// Constants
+import { memo } from 'react';
 import Image from 'src/components/Shared/Image';
 import { ROLES, TOOLS, type Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { setTool } from 'src/redux/slices/editor';
-import { useAppDispatch, useAppSelector } from 'src/redux/store';
-
+import { setTool } from 'src/redux/slices/editor/editor.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
 const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -54,13 +53,16 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   const open = false;
-  const currentTool = useAppSelector<Tool>((state) => state.editor.tool);
+  const currentTool = useSelector((state: RootState) => state.editor.tool);
   const { role } = useAuth();
 
-  const dispatch = useAppDispatch();
-  const handleToolClick = (newTool: Tool) => {
-    dispatch(setTool(newTool));
-  };
+  const dispatch = useDispatch();
+  const handleToolClick = useCallback(
+    (newTool: Tool) => {
+      dispatch(setTool({ tool: newTool }));
+    },
+    [currentTool]
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -77,8 +79,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
             margin: 'auto',
             position: 'relative',
             top: -88,
-          }}
-        >
+          }}>
           {Object.values(TOOLS)
             .slice(0, 4)
             .filter((key) => {
@@ -91,23 +92,21 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               return true;
             })
             .map((text, index) => (
-              <ListItem key={`${text}-${index}`} disablePadding>
+              <ListItem key={index} disablePadding>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
-                  onClick={(e) => handleToolClick(text)}
-                >
+                  onClick={(e) => handleToolClick(text)}>
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: open ? 3 : 'auto',
                       justifyContent: 'center',
                       color: text === currentTool ? 'royalblue' : 'inherit',
-                    }}
-                  >
+                    }}>
                     <Icon
                       icon={ICONS[text]}
                       width="30"
@@ -128,4 +127,4 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   );
 };
 
-export default Toolbar;
+export default memo(Toolbar);

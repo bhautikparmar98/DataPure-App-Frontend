@@ -1,0 +1,22 @@
+/* .form {
+} */
+
+.form li {
+  font-size: 0.8rem;
+}
+
+.form .MuiAutocomplete-popper {
+  margin-top: 20px !important;
+}
+
+.label {
+  font-family: 'Proxima Nova';
+  font-size: 16px;
+  color: #000 !important;
+  line-height: 2.3;
+  display: block;
+}
+.input {
+  margin-top: 0 !important;
+  /* width: 90%; */
+}

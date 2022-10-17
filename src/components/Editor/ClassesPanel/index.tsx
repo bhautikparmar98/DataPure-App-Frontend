@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, memo, useState } from 'react';
 // MUI
 import { Container } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
@@ -10,31 +10,22 @@ import SubmitAnnotations from './SubmitAnnotations';
 
 import useSortedClasses from './hooks/useSortedClasses';
 
-interface ClassPanelProps {
-  onRequestRedoFinish: (imgId: string) => void;
-}
-
 interface Checks {
   [instanceId: string]: boolean;
 }
-
-enum AllChecked {
-  'allUnchecked',
-  'someChecked',
-  'allChecked',
+interface ClassPanelProps {
+  onRequestRedoFinish: (imgId: string) => void;
 }
 
 const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
 
-  // checks management
   const [checks, setChecks] = useState<Checks>({});
-  const [allChecked, setAllChecked] = useState<AllChecked>(
-    AllChecked['allUnchecked']
+
+  const updateFiltersChecks = useCallback(
+    (newChecks: Checks) => setChecks(newChecks),
+    [checks]
   );
-  const handleChecks = (newChecks: Checks) => setChecks(newChecks);
-  const handleAllChecks = (newAllChecked: AllChecked) =>
-    setAllChecked(newAllChecked);
 
   return (
     <div style={{ cursor: 'default' }}>
@@ -46,29 +37,25 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
           sx: {
             backgroundColor: '#F6F6F6',
           },
-        }}
-      >
+        }}>
         <Container
           sx={{
-            width: 300,
+            width: 330,
             paddingTop: 2,
-            paddingBottom: 8,
+            paddingBottom: 4,
             minHeight: '100vh',
             display: 'flex',
             flexDirection: 'column',
-          }}
-        >
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          }}>
           <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
 
           <Preview />
           <Filters checks={checks} sortBy={sortBy} />
           <Annotations
             classes={sortedClasses}
-            allChecked={allChecked}
-            checks={checks}
-            handleChecks={handleChecks}
-            handleAllChecks={handleAllChecks}
-            lastSortType={lastSortType}
+            updateFiltersChecks={updateFiltersChecks}
           />
           <SubmitAnnotations />
         </Container>
@@ -76,4 +63,4 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish }) => {
     </div>
   );
 };
-export default ClassPanel;
+export default memo(ClassPanel, () => true);

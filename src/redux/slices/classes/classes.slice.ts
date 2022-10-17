@@ -1,8 +1,9 @@
-import Konva from 'konva';
-import _ from 'lodash';
+import { createSlice } from '@reduxjs/toolkit';
+import { ShapeConfig } from 'konva/lib/Shape';
+
+// import _ from 'lodash';
 import { Annotation, Class, TOOLS } from 'src/constants';
 import uniqid from 'uniqid';
-import { EditorActionTypes } from './classes.types';
 
 type State = {
   classes: Class[];
@@ -11,20 +12,24 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
+  lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
 };
 
-const initialState: State = {
+const initialState = {
   classes: [],
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],
   src: '',
   imageId: '',
-};
+  lastTimeUpdated: 0,
+} as State;
 
-export const classesReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case EditorActionTypes.INITIALIZE_STATE:
+const classesSlice = createSlice({
+  name: 'classes',
+  initialState,
+  reducers: {
+    initState: (state, action) => {
       if (
         !action.payload.state?.images ||
         action.payload.state?.images.length === 0 ||
@@ -59,30 +64,26 @@ export const classesReducer = (state = initialState, action: any) => {
           (anno: Annotation) => anno.classId === classItem._id
         ),
       }));
-
-      state = {
+      return {
         ...state,
         classes,
         comments: [],
         src,
         imageId: _id,
-      };
-
-      return {
-        ...state,
         selectedClassIndex: 0,
+        lastTimeUpdated: new Date().getTime(),
       };
+    },
 
-    case EditorActionTypes.RESET_STATE:
-      return initialState;
+    resetState: (state) => {
+      state = initialState;
+    },
 
-    case EditorActionTypes.SELECT_CLASS:
-      return {
-        ...state,
-        selectedClassIndex: action.payload.classId,
-      };
+    selectClass: (state, action) => {
+      state.selectedClassIndex = action.payload.classIndex;
+    },
 
-    case EditorActionTypes.DELETE_ANNOTATION: {
+    deleteAnnotation: (state, action) => {
       const { classId, annotationId } = action.payload;
       const { classes } = state;
       let annotations = classes[classId]?.annotations;
@@ -95,18 +96,14 @@ export const classesReducer = (state = initialState, action: any) => {
         if (i === classId) item.annotations = annotations;
         newClasses.push(item);
       });
-      return {
-        ...state,
-        classes: newClasses,
-      };
-    }
+      state.classes = newClasses;
+      state.lastTimeUpdated = new Date().getTime();
+    },
 
-    case EditorActionTypes.ADD_ANNOTATION: {
-      const { classes } = state;
+    addAnnotation: (state, action) => {
       const { classIndex, classId, annotation } = action.payload;
 
       annotation.classId = classId;
-
       const newShapes = annotation.shapes?.map((s: any) => {
         if (s.type !== TOOLS.RECTANGLE) return s;
 
@@ -132,44 +129,35 @@ export const classesReducer = (state = initialState, action: any) => {
 
       annotation.shapes = newShapes;
 
-      classes[classIndex].annotations.push(annotation);
-      return {
-        ...state,
-        classes,
-      };
-    }
+      state.classes[classIndex].annotations.push(annotation);
+      state.lastTimeUpdated = new Date().getTime();
+    },
 
-    case EditorActionTypes.UPDATE_ANNOTATION: {
+    updateAnnotation: (state, action) => {
       const { classes } = state;
       const { classId, annotationId, update } = action.payload;
       const annotations = classes[classId]?.annotations || [];
 
-      for (let i = 0; i < annotations.length; i++) {
-        if (annotations[i].id === annotationId) {
-          if (
-            update?.shapes &&
-            (update?.shapes[0]?.type === TOOLS.RECTANGLE ||
-              update?.shapes[0]?.type === TOOLS.LINE)
-          ) {
-            //id is important to change here as it's the key for the anno to be updated
-            update.shapes[0].id = uniqid();
-            classes[classId].annotations[i].shapes[0] = update.shapes[0];
-          } else {
-            classes[classId].annotations[i] = {
-              ...annotations[i],
-              ...update,
-            };
-          }
-        }
+      const index = state.classes[classId]?.annotations.findIndex(
+        (anno) => anno.id === annotationId
+      );
+      if (index === -1) return state;
+      if (update?.shapes && update.shapes[0].type) {
+        //id is important to change here as it's the key for the anno to be updated
+        update.shapes[0].id = uniqid();
+        classes[classId].annotations[index].shapes = update.shapes;
+      } else {
+        classes[classId].annotations[index] = {
+          ...annotations[index],
+          ...update,
+        };
       }
-      return {
-        ...state,
-        classes,
-      };
-    }
+      state.classes = classes;
+      state.lastTimeUpdated = new Date().getTime();
+    },
 
     //used for class panel bulk action
-    case EditorActionTypes.TOGGLE_ANNOTATION_VISIBILITY: {
+    toggleAnnotationVisibility: (state, action) => {
       const { classes } = state;
       const { classId, annotationIds, visible } = action.payload;
       const annotations = classes[classId]?.annotations || [];
@@ -180,15 +168,12 @@ export const classesReducer = (state = initialState, action: any) => {
         return anno;
       });
       classes[classId].annotations = newAnnotations;
-
-      return {
-        ...state,
-        classes,
-      };
-    }
+      state.classes = classes;
+      state.lastTimeUpdated = new Date().getTime();
+    },
 
     //used for class panel bulk action
-    case EditorActionTypes.DELETE_ANNOTATIONS: {
+    deleteAnnotations: (state, action) => {
       const { classes } = state;
       const { classId, annotationIds } = action.payload;
       const annotations = classes[classId]?.annotations || [];
@@ -196,15 +181,12 @@ export const classesReducer = (state = initialState, action: any) => {
         (anno) => !annotationIds.includes(anno.id)
       );
       classes[classId].annotations = newAnnotations;
-
-      return {
-        ...state,
-        classes,
-      };
-    }
+      state.classes = classes;
+      state.lastTimeUpdated = new Date().getTime();
+    },
 
     //used for class panel bulk action
-    case EditorActionTypes.CHANGE_ANNOTATIONS_CLASS: {
+    changeAnnotationsClass: (state, action) => {
       const { classes } = state;
       const { oldClassIndex, newClassIndex, annotationIds } = action.payload;
 
@@ -227,47 +209,62 @@ export const classesReducer = (state = initialState, action: any) => {
 
       newClassAnnotations = [...newClassAnnotations, ...newAnnos];
       classes[newClassIndex].annotations = [...newClassAnnotations];
-
-      return {
-        ...state,
-        classes,
-      };
-    }
-
-    case EditorActionTypes.UPDATE_SHAPE: {
+      state.classes = classes;
+      state.lastTimeUpdated = new Date().getTime();
+    },
+    updateShape: (state, action) => {
       const { classes } = state;
       const {
         newAttrs,
-        selectedClassIndex,
-      }: { newAttrs: Konva.ShapeConfig; selectedClassIndex: number } =
-        action.payload;
+        classItemName,
+      }: { newAttrs: ShapeConfig; classItemName: string } = action.payload;
       const shapeId = newAttrs?.id;
+
+      const selectedClassIndex = classes.findIndex(
+        (classItem) => classItem.name === classItemName
+      );
+      if (selectedClassIndex === -1) return state;
       const annotations: Annotation[] =
         classes[selectedClassIndex]?.annotations;
       if (annotations && typeof shapeId === 'string') {
-        annotations.forEach((annotation: Annotation, i) => {
-          annotation.shapes.forEach((shape, g) => {
-            if (shape.id === shapeId) {
-              classes[selectedClassIndex].annotations[i].shapes[g] = {
-                ...shape,
-                ...newAttrs,
-              };
-            }
-          });
-        });
+        let index = -1;
+        for (let i = 0; i < annotations.length; i++) {
+          index = annotations[i].shapes.findIndex(
+            (shape) => shape.id === shapeId
+          );
+          if (index !== -1) {
+            classes[selectedClassIndex].annotations[i].shapes[index] = {
+              ...annotations[i].shapes,
+              ...newAttrs,
+              id: uniqid(),
+            } as any;
+            break;
+          }
+        }
+
+        state.classes = classes;
+        state.lastTimeUpdated = new Date().getTime();
       }
-      return {
-        ...state,
-        classes,
-      };
-    }
+    },
 
-    case EditorActionTypes.SET_COMMENTS:
+    setComments: (state, action) => {
       const { comments } = action.payload;
-      if (comments?.length >= 0) state = { ...state, comments };
-      return state;
+      if (comments?.length >= 0) state.comments = comments;
+    },
+  },
+});
 
-    default:
-      return state;
-  }
-};
+export const {
+  initState,
+  resetState,
+  selectClass,
+  deleteAnnotation,
+  addAnnotation,
+  updateAnnotation,
+  toggleAnnotationVisibility,
+  deleteAnnotations,
+  changeAnnotationsClass,
+  updateShape,
+  setComments,
+} = classesSlice.actions;
+export default classesSlice.reducer;
