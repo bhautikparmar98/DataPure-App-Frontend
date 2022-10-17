@@ -62,7 +62,8 @@ const useDraw = (
   bgWidthScale: number,
   bgHeightScale: number,
   onAddComment: (text: string, x: number, y: number) => void,
-  onDeleteComment: (commentId: string) => void
+  onDeleteComment: (commentId: string) => void,
+  preAnnotation: any
 ) => {
   const dispatch = useDispatch();
   const stageDragging = useSelector(
@@ -73,15 +74,16 @@ const useDraw = (
   const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
     useRect(
       selectedClassIndex,
-      classId,
-      selectedClassColor,
+      classId,  
+      selectedClassColor, 
       bgWidthScale,
-      bgHeightScale
+      bgHeightScale,
+      preAnnotation
     );
 
   // Line
   const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
-    useLine(selectedClassIndex, classId, selectedClassColor);
+    useLine(selectedClassIndex, classId, selectedClassColor, preAnnotation);
 
   const { handleComment, handleCommentClick, comments } = useComment(
     bgLayerRef,

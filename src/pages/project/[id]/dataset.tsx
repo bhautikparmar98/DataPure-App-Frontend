@@ -30,9 +30,8 @@ export default function ProjectDataSet() {
       notFound: true,
     };
   }
-
   return (
-    <Page title="DataSet">
+    <Page title='DataSet'>
       <AuthGuard>
         <ProjectDataSetComponent projectId={id} />
       </AuthGuard>

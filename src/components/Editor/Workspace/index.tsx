@@ -1,8 +1,9 @@
 import Konva from 'konva';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useDispatch, useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
+import { IProject } from 'src/components/Project/List/types/project';
 import { Class, TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
 import useImage from 'use-image';
@@ -30,6 +31,8 @@ interface IProps {
   HEIGHT: number;
   onAddComment: (text: string, x: number, y: number) => void;
   onDeleteComment: (commentId: string) => void;
+  setAnnotationId: (a: string) => void;
+  project: IProject;
 }
 
 const Workspace: any = ({
@@ -39,19 +42,20 @@ const Workspace: any = ({
   HEIGHT,
   onAddComment,
   onDeleteComment,
+  setAnnotationId,
+  project,
 }: IProps) => {
   const dispatch = useDispatch();
-
   const currentTool = useSelector((state: RootState) => state.editor.tool);
   const stageDragging = useSelector(
     (state: RootState) => state.editor.stageDragging
   );
-
   const {
     classes = [],
     selectedClassIndex = 0,
     src,
   } = useSelector(({ classes }: RootState) => classes);
+  const [preAnnotation, setPreAnnotation] = useState<any>();
 
   const classId: string = classes[selectedClassIndex]?._id;
 
@@ -77,7 +81,6 @@ const Workspace: any = ({
   });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
-
   const { handleKeyDown, handleKeyUp } = useKeyboard(
     workspaceRef,
     stageRef,
@@ -110,7 +113,8 @@ const Workspace: any = ({
     bgWidthScale,
     bgHeightScale,
     onAddComment,
-    onDeleteComment
+    onDeleteComment,
+    preAnnotation
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -124,6 +128,18 @@ const Workspace: any = ({
   });
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
+  useEffect(() => {
+    let annotation = {};
+    if (project?.attributes) {
+      project.attributes.map((attribute: any) => {
+        annotation = {
+          ...annotation,
+          [attribute.metaname]: attribute.defaultValue,
+        };
+      });
+    }
+    setPreAnnotation(annotation);
+  }, [project]);
 
   return (
     <div
@@ -157,13 +173,14 @@ const Workspace: any = ({
               ? rectHandleMouseUp
               : lineHandleMouseUp
           }
-          onMouseDown={
+          onMouseDown={(e: any) => {
+            setAnnotationId(e.target?.attrs ? e.target.attrs.id : '');
             currentTool === TOOLS.RECTANGLE
-              ? rectHandleMouseDown
+              ? rectHandleMouseDown(e)
               : currentTool === TOOLS.LINE
-              ? lineHandleMouseDown
-              : () => {}
-          }
+              ? lineHandleMouseDown(e)
+              : () => {};
+          }}
           // onMouseUp={handleMouseUp}
           // onMouseDown={(e: any) => {
           //   checkDeselect(e);

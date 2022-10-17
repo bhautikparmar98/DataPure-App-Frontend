@@ -18,6 +18,8 @@ export interface IProject {
   // admins
   adminId: number;
 
+  attributes: IProjectMeataData[];
+
   assignedAnnotators: number[];
   assignedQAs: number[];
 }
@@ -26,4 +28,15 @@ export interface IProjectClass {
   _id?: string;
   name: string;
   color: string;
+}
+
+export interface IProjectMeataData {
+  metaname: string;
+  metatype: string;
+  displayName: string;
+  classes: string;
+  maxCharacters: number;
+  defaultValue: string;
+  descriptions: string;
+  required: boolean;
 }

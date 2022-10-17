@@ -12,7 +12,8 @@ interface LineWithStroke extends Line {
 const useLine = (
   selectedClassIndex: number,
   classId: string,
-  selectedClassColor: string
+  selectedClassColor: string,
+  preAnnotation: any
 ) => {
   const dispatch = useDispatch();
 
@@ -83,6 +84,7 @@ const useLine = (
             visible: true,
             id: uniqid(),
             shapes: [{ ...linesWithoutStoke[linesWithoutStoke.length - 1] }],
+            attributes: preAnnotation,
           },
         })
       );

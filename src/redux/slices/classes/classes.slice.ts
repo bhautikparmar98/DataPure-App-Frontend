@@ -12,6 +12,7 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
+  attributes: any;
   lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
 };
 
@@ -22,6 +23,7 @@ const initialState = {
   comments: [],
   src: '',
   imageId: '',
+  attributes: {},
   lastTimeUpdated: 0,
 } as State;
 
@@ -41,7 +43,7 @@ const classesSlice = createSlice({
         action.payload.state?.images[0];
 
       const purifiedAnnos = annotations?.map((anno: any) => {
-        const { id, classId, shapes, visible } = anno;
+        const { id, classId, shapes, visible, attributes } = anno;
         const purifiedShapes = shapes.map((shape: any) => {
           delete shape._id;
           delete shape.fill;
@@ -52,6 +54,7 @@ const classesSlice = createSlice({
           classId,
           shapes: purifiedShapes,
           visible,
+          attributes,
         };
 
         return anno;

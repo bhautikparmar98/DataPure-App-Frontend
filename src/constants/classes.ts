@@ -28,6 +28,7 @@ export interface Annotation {
   fill?: string;
   classId?: string;
   shapes: (Rectangle | Line)[];
+  attributes?: any;
 }
 
 export interface Class {
