@@ -137,6 +137,7 @@ const classesSlice = createSlice({
     },
 
     updateAnnotation: (state, action) => {
+      // !Todo: refactor this
       const { classes } = state;
       const { classId, annotationId, update } = action.payload;
       const annotations = classes[classId]?.annotations || [];
@@ -149,6 +150,18 @@ const classesSlice = createSlice({
         //id is important to change here as it's the key for the anno to be updated
         update.shapes[0].id = uniqid();
         classes[classId].annotations[index].shapes = update.shapes;
+      } else if (update?.attributes) {
+        const classIndex = classes.findIndex(
+          (classItem) => classItem._id === classId
+        );
+        const index = state.classes[classIndex]?.annotations.findIndex(
+          (anno) => anno.id === annotationId
+        );
+        if (classIndex === -1) return state;
+        classes[classIndex].annotations[index].attributes = {
+          ...classes[classIndex].annotations[index].attributes,
+          ...update.attributes,
+        };
       } else {
         classes[classId].annotations[index] = {
           ...annotations[index],

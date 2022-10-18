@@ -12,9 +12,7 @@ import { resetState } from 'src/redux/slices/classes/classes.slice';
 import { useDispatch } from 'react-redux';
 
 const useAnnotationSubmit = () => {
-  const { classes, imageId } = useSelector(
-    ({ classes }: RootState) => classes
-  );
+  const { classes, imageId } = useSelector(({ classes }: RootState) => classes);
   const router = useRouter();
   const { role } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -40,7 +38,7 @@ const useAnnotationSubmit = () => {
         const newAnnotations = [...cls.annotations];
         newAnnotations.forEach((anno) => {
           let newAnno = { ...anno };
-          if (newAnnotationData.shapes[0].id === newAnno.shapes[0].id) {
+          if (newAnnotationData?.shapes[0]?.id === newAnno.shapes[0].id) {
             newAnno = newAnnotationData;
           }
           delete newAnno.fill;

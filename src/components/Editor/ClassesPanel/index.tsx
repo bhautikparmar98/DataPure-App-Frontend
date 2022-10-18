@@ -1,21 +1,24 @@
-import { FC, useEffect, useCallback, memo, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 // MUI
-import { Container, Switch, TextField } from '@mui/material';
+import { Button, Container, TextField } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
+import Iconify from 'src/components/Shared/Iconify';
+import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
 import Filters from './Filters';
 import Preview from './Preview';
 import RequestRedo from './RequestRedo';
 import SubmitAnnotations from './SubmitAnnotations';
 
+import { useDispatch } from 'react-redux';
+import Annotations from './Annotations';
+import useAnnotationSubmit from './hooks/useAnnotationSubmit';
+import useAttributes from './hooks/useAttributes';
 import useSortedClasses from './hooks/useSortedClasses';
 import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
-import Annotations from './Annotations';
-import { IProject } from 'src/components/Project/List/types/project';
 
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
   annotationId: String | undefined;
-  project: IProject | null;
 }
 
 interface Checks {
@@ -25,10 +28,13 @@ interface Checks {
 const ClassPanel: FC<ClassPanelProps> = ({
   onRequestRedoFinish,
   annotationId,
-  project,
 }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
   const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>();
+  const dispatch = useDispatch();
+
+  const { handleSubmit, handleReset, handleApproveImage } =
+    useAnnotationSubmit();
 
   const [checks, setChecks] = useState<Checks>({});
 
@@ -37,6 +43,8 @@ const ClassPanel: FC<ClassPanelProps> = ({
     [checks]
   );
 
+  const { project } = useAttributes();
+
   // switch management
   const [Switchs, setSwitch] = useState<string>('Annotation');
 
@@ -44,8 +52,8 @@ const ClassPanel: FC<ClassPanelProps> = ({
     annotationId && setSwitch(e);
   };
 
+  //
   const getAnnotationMetaData = (id: String) => {
-    debugger;
     const getClass_HasAnnotation = sortedClasses.filter(
       (data) => data.annotations.length && data
     );
@@ -53,14 +61,14 @@ const ClassPanel: FC<ClassPanelProps> = ({
     const getAnnotationDataOfId = getClass_HasAnnotation.filter(
       (checkAnnotationData) =>
         checkAnnotationData.annotations.filter((data, index) => {
-          if (data.shapes[0].id === id) {
+          if (data?.shapes[0]?.id === id) {
             selectedAnnotationIndex = index;
             return true;
           }
         })?.length && checkAnnotationData
     );
     let annotation =
-      getAnnotationDataOfId[0].annotations[selectedAnnotationIndex];
+      getAnnotationDataOfId[0]?.annotations[selectedAnnotationIndex];
 
     if (!annotation?.attributes) {
       let preAnnotation = {};
@@ -78,6 +86,23 @@ const ClassPanel: FC<ClassPanelProps> = ({
       };
     }
     setSelectedAnnotationData(annotation);
+  };
+
+  const handleAttributesSubmit = (metadata: string) => {
+    if (metadata) {
+      dispatch(
+        updateAnnotation({
+          classId: selectedAnnotationData.classId,
+          annotationId: selectedAnnotationData.id,
+          update: {
+            attributes: {
+              [metadata]: selectedAnnotationData?.attributes[metadata],
+            },
+          },
+        })
+      );
+    }
+    handleSubmit(false, selectedAnnotationData);
   };
 
   useEffect(() => {
@@ -122,40 +147,54 @@ const ClassPanel: FC<ClassPanelProps> = ({
           ) : Object.keys(selectedAnnotationData.attributes).length ? (
             Object.keys(selectedAnnotationData.attributes).map((metadata) => {
               return (
-                <TextField
-                  label={metadata}
-                  name={metadata}
-                  fullWidth
-                  sx={{
-                    marginRight: '10px',
-                    marginTop: '30px',
-                    '.MuiFormHelperText-root': {
-                      color: '#FF4842',
-                      ml: '2px',
-                      mt: '30px',
-                    },
-                  }}
-                  onChange={(e: any) => {
-                    let _tempSelectedAnnotationData: JSON = {
-                      ...selectedAnnotationData.attributes,
-                    };
-                    _tempSelectedAnnotationData = {
-                      ..._tempSelectedAnnotationData,
-                      [e.target.name]: e.target.value,
-                    };
-                    let _tempAnnotationData = { ...selectedAnnotationData };
-                    _tempAnnotationData.attributes =
-                      _tempSelectedAnnotationData;
-                    setSelectedAnnotationData(_tempAnnotationData);
-                  }}
-                  value={selectedAnnotationData.attributes[metadata]}
-                />
+                <>
+                  <TextField
+                    label={metadata}
+                    name={metadata}
+                    fullWidth
+                    sx={{
+                      marginRight: '10px',
+                      marginTop: '30px',
+                      '.MuiFormHelperText-root': {
+                        color: '#FF4842',
+                        ml: '2px',
+                        mt: '30px',
+                      },
+                    }}
+                    onChange={(e: any) => {
+                      let _tempSelectedAnnotationData: JSON = {
+                        ...selectedAnnotationData.attributes,
+                      };
+                      _tempSelectedAnnotationData = {
+                        ..._tempSelectedAnnotationData,
+                        [e.target.name]: e.target.value,
+                      };
+                      let _tempAnnotationData = { ...selectedAnnotationData };
+                      _tempAnnotationData.attributes =
+                        _tempSelectedAnnotationData;
+                      setSelectedAnnotationData(_tempAnnotationData);
+                    }}
+                    value={selectedAnnotationData.attributes[metadata]}
+                  />
+                  <Button
+                    sx={{ mt: 4 }}
+                    variant="contained"
+                    onClick={(e) => handleAttributesSubmit(metadata)}
+                    startIcon={<Iconify icon={'ic:outline-done'} />}>
+                    Save
+                  </Button>
+                </>
               );
             })
           ) : (
             <></>
           )}
-          <SubmitAnnotations newAnnotationData={selectedAnnotationData} />
+          <SubmitAnnotations
+            handleSubmit={handleSubmit}
+            handleReset={handleReset}
+            handleApproveImage={handleApproveImage}
+            newAnnotationData={selectedAnnotationData}
+          />
         </Container>
       </Drawer>
     </div>

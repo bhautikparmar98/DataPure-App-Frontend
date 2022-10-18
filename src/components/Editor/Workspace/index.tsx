@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useDispatch, useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
-import { IProject } from 'src/components/Project/List/types/project';
 import { Class, TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
 import useImage from 'use-image';
@@ -32,7 +31,6 @@ interface IProps {
   onAddComment: (text: string, x: number, y: number) => void;
   onDeleteComment: (commentId: string) => void;
   setAnnotationId: (a: string) => void;
-  project: IProject;
 }
 
 const Workspace: any = ({
@@ -43,7 +41,6 @@ const Workspace: any = ({
   onAddComment,
   onDeleteComment,
   setAnnotationId,
-  project,
 }: IProps) => {
   const dispatch = useDispatch();
   const currentTool = useSelector((state: RootState) => state.editor.tool);
@@ -113,8 +110,7 @@ const Workspace: any = ({
     bgWidthScale,
     bgHeightScale,
     onAddComment,
-    onDeleteComment,
-    preAnnotation
+    onDeleteComment
   );
   const { setCursorStyle } = useCursor(workspaceRef);
 
@@ -128,18 +124,6 @@ const Workspace: any = ({
   });
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
-  useEffect(() => {
-    let annotation = {};
-    if (project?.attributes) {
-      project.attributes.map((attribute: any) => {
-        annotation = {
-          ...annotation,
-          [attribute.metaname]: attribute.defaultValue,
-        };
-      });
-    }
-    setPreAnnotation(annotation);
-  }, [project]);
 
   return (
     <div

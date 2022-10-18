@@ -11,14 +11,9 @@ import useFetchImage from './hooks/useFetchImage';
 import useImageComments from './hooks/useImageComments';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
-import { IProject } from '../Project/List/types/project';
 import { RootState } from 'src/redux/store';
 
-interface PropEditor {
-  project: IProject | null;
-}
-
-const Editor = ({ project }: PropEditor) => {
+const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
@@ -136,13 +131,11 @@ const Editor = ({ project }: PropEditor) => {
           setAnnotationId={(a: string) => {
             setAnnotationId(a);
           }}
-          project={project}
         />
       </div>
       <ClassesPanel
         onRequestRedoFinish={requestRedoHandler}
         annotationId={annotationId}
-        project={project}
       />
       {ROLES.CLIENT.value === role && (
         <Grid
