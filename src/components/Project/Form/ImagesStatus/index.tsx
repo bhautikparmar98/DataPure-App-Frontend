@@ -70,6 +70,7 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
               height: anno.bbox[3],
               id: anno.id,
               type: TOOLS.RECTANGLE,
+              attributes: anno.attributes,
               classId: anno.category_id,
             }));
 
@@ -79,8 +80,6 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
             annotations: imgAnnotations,
             count: 0,
           };
-
-          // debugger;
         } else imagesWithNoData.push(img);
       });
 
@@ -88,7 +87,6 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
         name: i.uploadedImage.name,
         image: i.uploadedImage,
         annotations: i.annotations,
-
         exist: true,
       }));
 
@@ -174,8 +172,7 @@ const ImagesStatus: React.FC<ImagesStatusProps> = ({
           <Button
             onClick={() => onApprove(rows)}
             variant="contained"
-            disabled={loading}
-          >
+            disabled={loading}>
             Confirm
           </Button>
         </Box>

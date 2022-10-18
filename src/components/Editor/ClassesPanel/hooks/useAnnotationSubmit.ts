@@ -31,18 +31,19 @@ const useAnnotationSubmit = () => {
     }
   }, [classes]);
 
-  const handleSubmit = async (done = false) => {
+  const handleSubmit = async (done = false, newAnnotationData?: any) => {
     try {
       const updatedClasses = [...classes];
-
       const purifiedAnnotations: Annotation[] = [];
       updatedClasses.forEach((cls) => {
         const newAnnotations = [...cls.annotations];
         newAnnotations.forEach((anno) => {
-          const newAnno = { ...anno };
+          let newAnno = { ...anno };
+          if (newAnnotationData?.shapes[0]?.id === newAnno.shapes[0].id) {
+            newAnno = newAnnotationData;
+          }
           delete newAnno.fill;
           delete (newAnno as any).id;
-
           purifiedAnnotations.push(newAnno);
         });
       });

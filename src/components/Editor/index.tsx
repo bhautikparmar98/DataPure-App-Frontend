@@ -20,6 +20,7 @@ const Editor = () => {
   const imageId: string = useSelector(
     (state: RootState) => state.classes.imageId
   );
+  const [annotationId, setAnnotationId] = useState('');
 
   const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
 
@@ -114,6 +115,8 @@ const Editor = () => {
   const LAYERS_PANEL_WIDTH = 330;
   const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
   const HEIGHT = window.innerHeight - indicatorsHeight;
+
+  useEffect(() => {}, [annotationId]);
   return (
     <div id="editor">
       <Toolbar isAnnotatorRedo={isAnnotatorRedo} />
@@ -125,9 +128,15 @@ const Editor = () => {
           HEIGHT={HEIGHT}
           onAddComment={addComment}
           onDeleteComment={deleteComment}
+          setAnnotationId={(a: string) => {
+            setAnnotationId(a);
+          }}
         />
       </div>
-      <ClassesPanel onRequestRedoFinish={requestRedoHandler} />
+      <ClassesPanel
+        onRequestRedoFinish={requestRedoHandler}
+        annotationId={annotationId}
+      />
       {ROLES.CLIENT.value === role && (
         <Grid
           container

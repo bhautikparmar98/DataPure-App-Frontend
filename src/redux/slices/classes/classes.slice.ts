@@ -12,6 +12,7 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
+  attributes: any;
   lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
 };
 
@@ -22,6 +23,7 @@ const initialState = {
   comments: [],
   src: '',
   imageId: '',
+  attributes: {},
   lastTimeUpdated: 0,
 } as State;
 
@@ -41,7 +43,7 @@ const classesSlice = createSlice({
         action.payload.state?.images[0];
 
       const purifiedAnnos = annotations?.map((anno: any) => {
-        const { id, classId, shapes, visible } = anno;
+        const { id, classId, shapes, visible, attributes } = anno;
         const purifiedShapes = shapes.map((shape: any) => {
           delete shape._id;
           delete shape.fill;
@@ -52,6 +54,7 @@ const classesSlice = createSlice({
           classId,
           shapes: purifiedShapes,
           visible,
+          attributes,
         };
 
         return anno;
@@ -134,6 +137,7 @@ const classesSlice = createSlice({
     },
 
     updateAnnotation: (state, action) => {
+      // !Todo: refactor this
       const { classes } = state;
       const { classId, annotationId, update } = action.payload;
       const annotations = classes[classId]?.annotations || [];
@@ -146,6 +150,18 @@ const classesSlice = createSlice({
         //id is important to change here as it's the key for the anno to be updated
         update.shapes[0].id = uniqid();
         classes[classId].annotations[index].shapes = update.shapes;
+      } else if (update?.attributes) {
+        const classIndex = classes.findIndex(
+          (classItem) => classItem._id === classId
+        );
+        const index = state.classes[classIndex]?.annotations.findIndex(
+          (anno) => anno.id === annotationId
+        );
+        if (classIndex === -1) return state;
+        classes[classIndex].annotations[index].attributes = {
+          ...classes[classIndex].annotations[index].attributes,
+          ...update.attributes,
+        };
       } else {
         classes[classId].annotations[index] = {
           ...annotations[index],

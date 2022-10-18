@@ -13,10 +13,11 @@ import { IProject } from '../../types/project';
 import { fDate } from 'src/utils/formatTime';
 import { ANNOTATION_TYPES } from 'src/constants';
 import Iconify from 'src/components/Shared/Iconify';
+import MetaDataCreationModel from '../MetaDataCreationModel';
 
 interface MinimizedProjectCardProps {
   project: IProject;
-
+  syncProjectData?: any;
   renderStatistics?: (project: IProject) => React.ReactNode;
   actions: {
     label: string;
@@ -28,15 +29,18 @@ interface MinimizedProjectCardProps {
   removeProgress?: boolean;
   calcProgress?: (p: IProject) => number;
   getProgressLabel?: (p: IProject) => string;
+  metaButton?: boolean;
 }
 
 const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   project,
+  syncProjectData,
   renderStatistics,
   actions,
   removeProgress,
   calcProgress,
   getProgressLabel,
+  metaButton,
 }) => {
   const theme = useTheme();
 
@@ -50,9 +54,17 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
   return (
     <Card>
       <CardContent>
-        <Typography variant="h6" color={theme.palette.primary.main}>
-          {project.name}
-        </Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" color={theme.palette.primary.main}>
+            {project.name}
+          </Typography>
+          {metaButton && (
+            <MetaDataCreationModel
+              project={project}
+              syncProjectData={syncProjectData}
+            />
+          )}
+        </Box>
         <Box my={1}>
           <Typography variant="body2">
             <strong>Due By: </strong>
@@ -74,14 +86,12 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
             <Box
               display="flex"
               justifyContent="space-between"
-              alignItems="center"
-            >
+              alignItems="center">
               <Box>
                 <Typography
                   variant="body2"
                   fontSize={12}
-                  color={theme.palette.secondary.main}
-                >
+                  color={theme.palette.secondary.main}>
                   <strong>
                     {getProgressLabel ? getProgressLabel(project) : 'Progress'}
                   </strong>
@@ -90,8 +100,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
               <Box>
                 <Typography
                   variant="body2"
-                  color={theme.palette.secondary.main}
-                >
+                  color={theme.palette.secondary.main}>
                   <strong>{progress}%</strong>
                 </Typography>
               </Box>
@@ -109,8 +118,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          mt={2}
-        >
+          mt={2}>
           {actions.map((a, index) => {
             if (a.variant === 'icon') {
               return (
@@ -118,9 +126,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                   color="primary"
                   edge="end"
                   key={index}
-                  onClick={() => a.action(project)}
-                  disabled={true}
-                >
+                  onClick={() => a.action(project)}>
                   <Iconify icon={a.icon as any} />
                 </IconButton>
               );
@@ -131,8 +137,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                 key={index}
                 variant={a.variant as any}
                 color="primary"
-                onClick={() => a.action(project)}
-              >
+                onClick={() => a.action(project)}>
                 {a.label}
               </Button>
             );

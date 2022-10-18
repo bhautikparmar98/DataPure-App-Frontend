@@ -107,13 +107,13 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
     return (
       <Box
         flex={1}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
+        display='flex'
+        flexDirection='column'
+        justifyContent='center'
+        alignItems='center'
       >
-        <Iconify icon="clarity:home-solid" width={100} height={100} />
-        <Typography variant="subtitle2">
+        <Iconify icon='clarity:home-solid' width={100} height={100} />
+        <Typography variant='subtitle2'>
           Please select client to get his projects
         </Typography>
       </Box>
@@ -124,13 +124,13 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
     return (
       <Box
         flex={1}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
+        display='flex'
+        flexDirection='column'
+        justifyContent='center'
+        alignItems='center'
       >
-        <Iconify icon="cil:grid-slash" width={100} height={100} />
-        <Typography variant="subtitle2">Oops, It's Empty</Typography>
+        <Iconify icon='cil:grid-slash' width={100} height={100} />
+        <Typography variant='subtitle2'>Oops, It's Empty</Typography>
       </Box>
     );
   }
@@ -173,4 +173,4 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
   );
 };
 
-export default SuperAdminClientProjects;
+export default SuperAdminClientProjects; 

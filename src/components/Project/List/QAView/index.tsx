@@ -16,7 +16,7 @@ const QAProjectsComponents = () => {
 
       <Box sx={{ mt: 4 }}>
         {!loading && projects.length === 0 && (
-          <Alert severity="info">
+          <Alert severity='info'>
             <AlertTitle>No Projects</AlertTitle>
             You don't have any projects yet, please ask for one.
           </Alert>

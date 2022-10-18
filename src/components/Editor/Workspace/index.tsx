@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -30,6 +30,7 @@ interface IProps {
   HEIGHT: number;
   onAddComment: (text: string, x: number, y: number) => void;
   onDeleteComment: (commentId: string) => void;
+  setAnnotationId: (a: string) => void;
 }
 
 const Workspace: any = ({
@@ -39,12 +40,14 @@ const Workspace: any = ({
   HEIGHT,
   onAddComment,
   onDeleteComment,
+  setAnnotationId,
 }: IProps) => {
   const currentTool = useSelector((state: RootState) => state.editor.tool);
   const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
   const classes = useSelector((state: RootState) => state.classes.classes);
   const src = useSelector((state: RootState) => state.classes.src);
   const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
+  const [preAnnotation, setPreAnnotation] = useState<any>();
 
   const classId: string = classes[selectedClassIndex]?._id;
 
@@ -61,7 +64,6 @@ const Workspace: any = ({
   });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
-
   const { handleKeyDown, handleKeyUp } = useKeyboard(workspaceRef, stageRef, selectedId);
 
   const {
@@ -133,24 +135,18 @@ const Workspace: any = ({
               : () => {}
           }
           onMouseUp={currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
-          onMouseDown={
-            currentTool === TOOLS.RECTANGLE
-              ? rectHandleMouseDown
-              : currentTool === TOOLS.LINE
-              ? lineHandleMouseDown
-              : () => {}
-          }
-          // onMouseUp={handleMouseUp}
-          // onMouseDown={(e: any) => {
-          //   checkDeselect(e);
-          //   if (stageDragging) return;
-          //   handleMouseDown(e);
-          // }}
           onClick={(e) => {
             checkDeselect(e);
             hideTooltip();
             // e.cancelBubble = true;
           }}
+          onMouseDown={(e: any) =>
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseDown(e)
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseDown(e)
+              : () => {}
+          }
           draggable={stageDragging}
           onDragEnd={() => {}}>
           <Layer ref={bgLayerRef} id="background_layer" listening={false}>

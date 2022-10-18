@@ -39,24 +39,23 @@ const ClientProjectsComponent = () => {
     router.push(`/project/${id}/review`);
   };
 
+  const getProjects = async () => {
+    setLoading(true);
+
+    if (user === null) throw new Error('Client can not be null');
+
+    try {
+      const response = await axiosInstance.get(`/user/${user.id}/project`);
+      const { projects } = response.data;
+      setProjects(projects);
+    } catch (error) {
+      console.log('error', error);
+      enqueueSnackbar('Something went wrong.', { variant: 'error' });
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const getProjects = async () => {
-      setLoading(true);
-
-      if (user === null) throw new Error('Client can not be null');
-
-      try {
-        const response = await axiosInstance.get(`/user/${user.id}/project`);
-        const { projects } = response.data;
-
-        setProjects(projects);
-      } catch (error) {
-        console.log('error', error);
-        enqueueSnackbar('Something went wrong.', { variant: 'error' });
-      }
-      setLoading(false);
-    };
-
     getProjects();
   }, []);
 
@@ -66,7 +65,7 @@ const ClientProjectsComponent = () => {
 
       <Box sx={{ mt: 4 }}>
         {!loading && projects.length === 0 && (
-          <Alert severity="info">
+          <Alert severity='info'>
             <AlertTitle>No Projects</AlertTitle>
             You don't have any projects yet, please create one.
           </Alert>
@@ -74,6 +73,7 @@ const ClientProjectsComponent = () => {
 
         <ProjectGrid
           projects={projects}
+          syncProjectData={() => getProjects()}
           actions={[
             {
               label: '',
@@ -93,6 +93,7 @@ const ClientProjectsComponent = () => {
               variant: 'contained',
             },
           ]}
+          metaButton={true}
         />
       </Box>
     </Container>

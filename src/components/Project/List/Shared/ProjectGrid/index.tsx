@@ -8,6 +8,7 @@ import { IProject } from '../../types/project';
 
 interface ProjectBodyListProps {
   projects: IProject[];
+  syncProjectData?: () => {};
 
   renderStatistics?: (project: IProject) => React.ReactNode;
   actions: {
@@ -20,14 +21,17 @@ interface ProjectBodyListProps {
   removeProgress?: boolean;
   calcProgress?: (p: IProject) => number;
   getProgressLabel?: (p: IProject) => string;
+  metaButton?: boolean;
 }
 const ProjectGrid: React.FC<ProjectBodyListProps> = ({
   projects,
+  syncProjectData,
   renderStatistics,
   removeProgress,
   actions,
   calcProgress,
   getProgressLabel,
+  metaButton,
 }) => {
   const { themeStretch } = useSettings();
 
@@ -45,11 +49,13 @@ const ProjectGrid: React.FC<ProjectBodyListProps> = ({
         >
           <MinimizedProjectCard
             project={p}
+            syncProjectData={syncProjectData}
             removeProgress={removeProgress}
             calcProgress={calcProgress}
             renderStatistics={renderStatistics}
             actions={actions}
             getProgressLabel={getProgressLabel}
+            metaButton={metaButton}
           />
         </Grid>
       ))}

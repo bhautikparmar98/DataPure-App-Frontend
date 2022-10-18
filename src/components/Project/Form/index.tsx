@@ -182,7 +182,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       const { files } = response.data;
 
       await uploadHandler(files, values.images);
-
+      console.log(rows)
       const imgAnnoMap: any = {};
       rows.forEach((element) => {
         imgAnnoMap[element.name] = element.annotations;
@@ -309,7 +309,6 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       const file = acceptedFiles[0];
 
       const data = await parseJsonFile(file);
-
       if (!data.categories) {
         return enqueueSnackbar('Invalid file structure', { variant: 'error' });
       }
