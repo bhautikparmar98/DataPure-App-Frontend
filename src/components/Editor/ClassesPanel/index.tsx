@@ -25,23 +25,16 @@ interface Checks {
   [instanceId: string]: boolean;
 }
 
-const ClassPanel: FC<ClassPanelProps> = ({
-  onRequestRedoFinish,
-  annotationId,
-}) => {
+const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
   const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>();
   const dispatch = useDispatch();
 
-  const { handleSubmit, handleReset, handleApproveImage } =
-    useAnnotationSubmit();
+  const { handleSubmit, handleReset, handleApproveImage } = useAnnotationSubmit();
 
   const [checks, setChecks] = useState<Checks>({});
 
-  const updateFiltersChecks = useCallback(
-    (newChecks: Checks) => setChecks(newChecks),
-    [checks]
-  );
+  const updateFiltersChecks = useCallback((newChecks: Checks) => setChecks(newChecks), [checks]);
 
   const { project } = useAttributes();
 
@@ -54,9 +47,7 @@ const ClassPanel: FC<ClassPanelProps> = ({
 
   //
   const getAnnotationMetaData = (id: String) => {
-    const getClass_HasAnnotation = sortedClasses.filter(
-      (data) => data.annotations.length && data
-    );
+    const getClass_HasAnnotation = sortedClasses.filter((data) => data.annotations.length && data);
     let selectedAnnotationIndex = 0;
     const getAnnotationDataOfId = getClass_HasAnnotation.filter(
       (checkAnnotationData) =>
@@ -67,8 +58,7 @@ const ClassPanel: FC<ClassPanelProps> = ({
           }
         })?.length && checkAnnotationData
     );
-    let annotation =
-      getAnnotationDataOfId[0]?.annotations[selectedAnnotationIndex];
+    let annotation = getAnnotationDataOfId[0]?.annotations[selectedAnnotationIndex];
 
     if (!annotation?.attributes) {
       let preAnnotation = {};
@@ -88,20 +78,23 @@ const ClassPanel: FC<ClassPanelProps> = ({
     setSelectedAnnotationData(annotation);
   };
 
-  const handleAttributesSubmit = (metadata: string) => {
-    if (metadata) {
-      dispatch(
-        updateAnnotation({
-          classId: selectedAnnotationData.classId,
-          annotationId: selectedAnnotationData.id,
-          update: {
-            attributes: {
-              [metadata]: selectedAnnotationData?.attributes[metadata],
-            },
-          },
-        })
-      );
-    }
+  const handleAttributesSubmit = () => {
+    selectedAnnotationData?.attributes &&
+      Object.keys(selectedAnnotationData.attributes).map((metadata) => {
+        if (metadata) {
+          dispatch(
+            updateAnnotation({
+              classId: selectedAnnotationData.classId,
+              annotationId: selectedAnnotationData.id,
+              update: {
+                attributes: {
+                  [metadata]: selectedAnnotationData?.attributes[metadata],
+                },
+              },
+            })
+          );
+        }
+      });
     handleSubmit(false, selectedAnnotationData);
   };
 
@@ -139,15 +132,12 @@ const ClassPanel: FC<ClassPanelProps> = ({
             <>
               <Preview />
               <Filters checks={checks} sortBy={sortBy} />
-              <Annotations
-                classes={sortedClasses}
-                updateFiltersChecks={updateFiltersChecks}
-              />
+              <Annotations classes={sortedClasses} updateFiltersChecks={updateFiltersChecks} />
             </>
           ) : Object.keys(selectedAnnotationData.attributes).length ? (
-            Object.keys(selectedAnnotationData.attributes).map((metadata) => {
-              return (
-                <>
+            <>
+              {Object.keys(selectedAnnotationData.attributes).map((metadata) => {
+                return (
                   <TextField
                     label={metadata}
                     name={metadata}
@@ -170,25 +160,25 @@ const ClassPanel: FC<ClassPanelProps> = ({
                         [e.target.name]: e.target.value,
                       };
                       let _tempAnnotationData = { ...selectedAnnotationData };
-                      _tempAnnotationData.attributes =
-                        _tempSelectedAnnotationData;
+                      _tempAnnotationData.attributes = _tempSelectedAnnotationData;
                       setSelectedAnnotationData(_tempAnnotationData);
                     }}
                     value={selectedAnnotationData.attributes[metadata]}
                   />
-                  <Button
-                    sx={{ mt: 4 }}
-                    variant="contained"
-                    onClick={(e) => handleAttributesSubmit(metadata)}
-                    startIcon={<Iconify icon={'ic:outline-done'} />}>
-                    Save
-                  </Button>
-                </>
-              );
-            })
+                );
+              })}
+              <Button
+                sx={{ mt: 4 }}
+                variant="contained"
+                onClick={(e) => handleAttributesSubmit()}
+                startIcon={<Iconify icon={'ic:outline-done'} />}>
+                Save
+              </Button>
+            </>
           ) : (
             <></>
           )}
+
           <SubmitAnnotations
             handleSubmit={handleSubmit}
             handleReset={handleReset}

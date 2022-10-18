@@ -135,18 +135,25 @@ const Workspace: any = ({
               : () => {}
           }
           onMouseUp={currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
+          onMouseDown={(e: any) => {
+            setAnnotationId(e.target?.attrs ? e.target.attrs.id : '');
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseDown(e)
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseDown(e)
+              : () => {};
+          }}
+          // onMouseUp={handleMouseUp}
+          // onMouseDown={(e: any) => {
+          //   checkDeselect(e);
+          //   if (stageDragging) return;
+          //   handleMouseDown(e);
+          // }}
           onClick={(e) => {
             checkDeselect(e);
             hideTooltip();
             // e.cancelBubble = true;
           }}
-          onMouseDown={(e: any) =>
-            currentTool === TOOLS.RECTANGLE
-              ? rectHandleMouseDown(e)
-              : currentTool === TOOLS.LINE
-              ? lineHandleMouseDown(e)
-              : () => {}
-          }
           draggable={stageDragging}
           onDragEnd={() => {}}>
           <Layer ref={bgLayerRef} id="background_layer" listening={false}>
