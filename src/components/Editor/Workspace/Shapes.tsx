@@ -1,13 +1,21 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import _ from 'lodash';
-import next from 'next';
-import { memo, useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Group, Line } from 'react-konva';
 import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
 import Rectangle from './Rectangle';
+
+const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
+  if (e?.target?.attrs?.fill) {
+    let originalFill = e.target.attrs.originalFill || e.target.attrs.fill;
+
+    e.target.attrs.fill = e.target.attrs.fill === 'rgba(0,0,0,0)' ? originalFill : 'rgba(0,0,0,0)';
+
+    e.target.attrs.originalFill = originalFill;
+  }
+};
 
 interface IShapes {
   classes: Class[];
@@ -19,12 +27,7 @@ interface IShapes {
   bgY: number;
   bgWidthScale: number;
   bgHeightScale: number;
-  handleShapeMove: (
-    e: any,
-    classId: number,
-    group: any,
-    annotationId: string
-  ) => void;
+  handleShapeMove: (e: any, classId: number, group: any, annotationId: string) => void;
   showTooltip: (e: Konva.KonvaEventObject<DragEvent>) => void;
   hideTooltip: () => void;
 }
@@ -49,9 +52,7 @@ const Shapes = ({
     e.cancelBubble = true; // to not trigger parents click
   }, []);
 
-  const stageDragging = useSelector(
-    (state: RootState) => state.editor.stageDragging
-  );
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
 
   return (
     <>
@@ -70,9 +71,7 @@ const Shapes = ({
                   tabIndex={1}
                   classId={i}
                   annotationId={annotation.id}
-                  onDragEnd={(e) =>
-                    handleShapeMove(e, i, shape, annotation.id!)
-                  }>
+                  onDragEnd={(e) => handleShapeMove(e, i, shape, annotation.id!)}>
                   {shape.type === TOOLS.LINE ? (
                     <Line
                       {...shape}
@@ -92,9 +91,7 @@ const Shapes = ({
                       key={shape.id + '-rect'}
                       shapeProps={{
                         ...shape,
-                        fill: classItem.color
-                          .replace(')', ', 0.35)')
-                          .replace('rgb', 'rgba'),
+                        fill: classItem.color.replace(')', ', 0.35)').replace('rgb', 'rgba'),
                         stroke: classItem.color,
                         width: shape.width * bgWidthScale,
                         height: shape.height * bgHeightScale,
@@ -103,6 +100,7 @@ const Shapes = ({
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}
                       onClick={(e) => handleShapeClick(e, shape.id)}
+                      onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
                       bgX={bgX}
                       bgY={bgY}

@@ -1,5 +1,5 @@
 // _mock_
-import { _megaMenuProducts } from 'src/_mock';
+// import { _megaMenuProducts } from 'src/_mock';
 // @types
 import { MegaMenuItemProps } from './type';
 // components
@@ -11,6 +11,8 @@ const ICON_SIZE = {
   width: '100%',
   height: '100%',
 };
+
+const _megaMenuProducts: never[] = [];
 
 const TAGS = [
   { name: 'Paper Cup', path: '#' },

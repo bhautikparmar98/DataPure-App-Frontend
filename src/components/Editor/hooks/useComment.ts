@@ -18,13 +18,9 @@ const useComment = (
   onAddComment: (text: string, x: number, y: number) => void,
   onDeleteComment: (commentId: string) => void
 ) => {
-  const storedComments = useSelector<RootState>(
-    ({ classes }) => classes.comments
-  );
+  const storedComments = useSelector((state: RootState) => state.classes.comments);
   const { role } = useAuth();
-  const [comments, setComments] = useState<Comment[]>(
-    storedComments?.length > 0 ? storedComments : []
-  );
+  const [comments, setComments] = useState<Comment[]>(storedComments?.length > 0 ? storedComments : []);
 
   const dispatch = useDispatch();
 
@@ -74,11 +70,7 @@ const useComment = (
     return false;
   };
 
-  const handleCommentClick = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    text: string,
-    commendIndex: number
-  ) => {
+  const handleCommentClick = (e: Konva.KonvaEventObject<MouseEvent>, text: string, commendIndex: number) => {
     e.cancelBubble = true;
     const { x = 0, y = 0 } = e.target.getStage()!.getRelativePointerPosition()!;
 

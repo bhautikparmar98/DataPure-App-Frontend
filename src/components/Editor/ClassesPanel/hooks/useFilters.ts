@@ -5,9 +5,8 @@ import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/redux/store';
 const useFilters = () => {
-  const { classes, selectedClassIndex } = useSelector(
-    (state: RootState) => state.classes
-  );
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
   const dispatch = useDispatch();
 
   const classesFilters = classes.map((classItem, i) => ({

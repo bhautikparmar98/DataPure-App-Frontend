@@ -1,11 +1,12 @@
+// @ts-nocheck
+
 // form
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller, FieldValues, Control } from 'react-hook-form';
 // @mui
 import { TextField, TextFieldProps, Typography } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 // ----------------------------------------------------------------------
-
 interface IProps {
   name: string;
 

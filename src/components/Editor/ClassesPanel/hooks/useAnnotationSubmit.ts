@@ -12,7 +12,8 @@ import { resetState } from 'src/redux/slices/classes/classes.slice';
 import { useDispatch } from 'react-redux';
 
 const useAnnotationSubmit = () => {
-  const { classes, imageId } = useSelector(({ classes }: RootState) => classes);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
+  const classes = useSelector((state: RootState) => state.classes.classes);
   const router = useRouter();
   const { role } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -53,18 +54,10 @@ const useAnnotationSubmit = () => {
           response = await qaSubmitAnnotations(purifiedAnnotations, imageId);
           break;
         case ROLES.ANNOTATOR.value:
-          response = await annotatorSubmitAnnotations(
-            purifiedAnnotations,
-            imageId,
-            done
-          );
+          response = await annotatorSubmitAnnotations(purifiedAnnotations, imageId, done);
           break;
         case ROLES.CLIENT.value:
-          response = await clientApproveAnnotations(
-            purifiedAnnotations,
-            imageId,
-            done
-          );
+          response = await clientApproveAnnotations(purifiedAnnotations, imageId, done);
           break;
         default:
           throw new Error('Undefined user role');
@@ -79,9 +72,7 @@ const useAnnotationSubmit = () => {
           }, 3000);
         }
       } else if (done) {
-        throw new Error(
-          'User clicked submit and the request was not successful'
-        );
+        throw new Error('User clicked submit and the request was not successful');
       }
     } catch (error) {
       console.error(error);
@@ -104,12 +95,9 @@ const useAnnotationSubmit = () => {
         router.reload();
       }, 3000);
     } else {
-      enqueueSnackbar(
-        `We couldn't process your approval request now. Please try again later`,
-        {
-          variant: 'error',
-        }
-      );
+      enqueueSnackbar(`We couldn't process your approval request now. Please try again later`, {
+        variant: 'error',
+      });
     }
   };
 

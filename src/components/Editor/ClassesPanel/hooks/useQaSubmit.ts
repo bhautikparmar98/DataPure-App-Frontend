@@ -5,16 +5,17 @@ import { Annotation } from 'src/constants';
 import axios from 'src/utils/axios';
 import { RootState } from 'src/redux/store';
 const useQaSubmit = () => {
-  const { classes, imageId } = useSelector<RootState>(({ classes }) => classes);
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const imageId = useSelector((state: RootState) => state.classes.imageId);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleQaSubmit = async (done = false) => {
     try {
-      const annotations: Annotation[] = [];
+      const annotations: Partial<Annotation>[] = [];
 
       classes.forEach((cls) => {
-        cls.annotations.forEach((anno) => {
+        cls.annotations.forEach((anno: Partial<Annotation>) => {
           delete anno.id;
           annotations.push(anno);
         });

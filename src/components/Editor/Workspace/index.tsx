@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { Class, TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
@@ -42,16 +42,11 @@ const Workspace: any = ({
   onDeleteComment,
   setAnnotationId,
 }: IProps) => {
-  const dispatch = useDispatch();
   const currentTool = useSelector((state: RootState) => state.editor.tool);
-  const stageDragging = useSelector(
-    (state: RootState) => state.editor.stageDragging
-  );
-  const {
-    classes = [],
-    selectedClassIndex = 0,
-    src,
-  } = useSelector(({ classes }: RootState) => classes);
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
+  const classes = useSelector((state: RootState) => state.classes.classes);
+  const src = useSelector((state: RootState) => state.classes.src);
+  const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
   const [preAnnotation, setPreAnnotation] = useState<any>();
 
   const classId: string = classes[selectedClassIndex]?._id;
@@ -62,27 +57,14 @@ const Workspace: any = ({
   const shapesLayerRef = useRef<Konva.Layer>(null);
   const bgLayerRef = useRef<Konva.Layer>(null);
 
-  const {
-    background,
-    backgroundStatus,
-    width,
-    height,
-    bgX,
-    bgY,
-    bgWidthScale,
-    bgHeightScale,
-  } = useBackground({
+  const { background, backgroundStatus, width, height, bgX, bgY, bgWidthScale, bgHeightScale } = useBackground({
     url: src,
     stageWidth: WIDTH,
     stageHeight: HEIGHT,
   });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
-  const { handleKeyDown, handleKeyUp } = useKeyboard(
-    workspaceRef,
-    stageRef,
-    selectedId
-  );
+  const { handleKeyDown, handleKeyUp } = useKeyboard(workspaceRef, stageRef, selectedId);
 
   const {
     handleMouseDown,
@@ -152,45 +134,25 @@ const Workspace: any = ({
               ? lineHandleMouseMove
               : () => {}
           }
-          onMouseUp={
-            currentTool === TOOLS.RECTANGLE
-              ? rectHandleMouseUp
-              : lineHandleMouseUp
-          }
-          onMouseDown={(e: any) => {
-            setAnnotationId(e.target?.attrs ? e.target.attrs.id : '');
-            currentTool === TOOLS.RECTANGLE
-              ? rectHandleMouseDown(e)
-              : currentTool === TOOLS.LINE
-              ? lineHandleMouseDown(e)
-              : () => {};
-          }}
-          // onMouseUp={handleMouseUp}
-          // onMouseDown={(e: any) => {
-          //   checkDeselect(e);
-          //   if (stageDragging) return;
-          //   handleMouseDown(e);
-          // }}
+          onMouseUp={currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
           onClick={(e) => {
             checkDeselect(e);
             hideTooltip();
             // e.cancelBubble = true;
           }}
+          onMouseDown={(e: any) =>
+            currentTool === TOOLS.RECTANGLE
+              ? rectHandleMouseDown(e)
+              : currentTool === TOOLS.LINE
+              ? lineHandleMouseDown(e)
+              : () => {}
+          }
           draggable={stageDragging}
           onDragEnd={() => {}}>
           <Layer ref={bgLayerRef} id="background_layer" listening={false}>
-            <BackgroundImage
-              width={width}
-              height={height}
-              background={background}
-              x={bgX}
-              y={bgY}
-            />
+            <BackgroundImage width={width} height={height} background={background} x={bgX} y={bgY} />
           </Layer>
-          <Layer
-            id="shapes_layer"
-            ref={shapesLayerRef}
-            listening={!cachedVisible}>
+          <Layer id="shapes_layer" ref={shapesLayerRef} listening={!cachedVisible}>
             <Group ref={shapesRef} id="shapes_group">
               <Shapes
                 classes={classes}
@@ -210,11 +172,7 @@ const Workspace: any = ({
           </Layer>
 
           <Layer>
-            <TempShapes
-              lines={lines}
-              rects={rects}
-              classColor={classes[selectedClassIndex]?.color}
-            />
+            <TempShapes lines={lines} rects={rects} classColor={classes[selectedClassIndex]?.color} />
             {tooltip.text.length > 0 && (
               <Group>
                 <Rect
@@ -236,11 +194,7 @@ const Workspace: any = ({
                   shadowOpacity={0.2}
                   cornerRadius={5}
                 />
-                <Text
-                  {...tooltip}
-                  scaleX={2 / stageScale.stageScale}
-                  scaleY={2 / stageScale.stageScale}
-                />
+                <Text {...tooltip} scaleX={2 / stageScale.stageScale} scaleY={2 / stageScale.stageScale} />
               </Group>
             )}
 
@@ -256,9 +210,7 @@ const Workspace: any = ({
                   alt="Comment"
                   type="Comment"
                   draggable
-                  onClick={(e) =>
-                    handleCommentClick(e, comment.text, commendIndex)
-                  }
+                  onClick={(e) => handleCommentClick(e, comment.text, commendIndex)}
                   onMouseEnter={(_) => setCursorStyle('pointer')}
                   onMouseLeave={(_) => setCursorStyle()}
                 />
