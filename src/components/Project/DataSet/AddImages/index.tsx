@@ -8,7 +8,7 @@ interface AddClassProps {
   open: boolean;
   onClose: () => void;
   onFinishAddingImages: (data: IImage[]) => void;
-  projectId: string;
+  projectId: string | string[];
 }
 
 const AddImagesDialog: React.FC<AddClassProps> = ({

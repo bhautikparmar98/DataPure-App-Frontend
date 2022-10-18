@@ -15,7 +15,7 @@ import { IProject } from '../Project/List/types/project';
 import { RootState } from 'src/redux/store';
 
 interface PropEditor {
-  project: IProject;
+  project: IProject | null;
 }
 
 const Editor = ({ project }: PropEditor) => {
@@ -142,6 +142,7 @@ const Editor = ({ project }: PropEditor) => {
       <ClassesPanel
         onRequestRedoFinish={requestRedoHandler}
         annotationId={annotationId}
+        project={project}
       />
       {ROLES.CLIENT.value === role && (
         <Grid

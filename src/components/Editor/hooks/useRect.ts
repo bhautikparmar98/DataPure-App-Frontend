@@ -15,13 +15,12 @@ const useRect = (
   classId: string,
   selectedClassColor: string,
   bgWidthScale: number,
-  bgHeightScale: number,
-  preAnnotation: any
+  bgHeightScale: number
 ) => {
   const dispatch = useDispatch();
   // const [annotations, setAnnotations] = useState<Konva.ShapeConfig[]>([]);
   const [newAnnotation, setNewAnnotation] = useState<Konva.ShapeConfig[]>([]);
-  
+
   const rectHandleMouseDown = useCallback(
     (event: KonvaEventObject<WheelEvent>) => {
       if (newAnnotation.length === 0) {
@@ -127,7 +126,6 @@ const useRect = (
 
           //min width & height
           if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
-            
             dispatch(
               addAnnotation({
                 classIndex: selectedClassIndex,
@@ -136,7 +134,6 @@ const useRect = (
                   visible: true,
                   id: uniqid(),
                   shapes: [{ ...annotationToAdd }],
-                  attributes: preAnnotation,
                 },
               })
             );

@@ -126,8 +126,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
                   color="primary"
                   edge="end"
                   key={index}
-                  onClick={() => a.action(project)}
-                  disabled={true}>
+                  onClick={() => a.action(project)}>
                   <Iconify icon={a.icon as any} />
                 </IconButton>
               );

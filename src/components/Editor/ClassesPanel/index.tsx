@@ -10,10 +10,12 @@ import SubmitAnnotations from './SubmitAnnotations';
 import useSortedClasses from './hooks/useSortedClasses';
 import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
 import Annotations from './Annotations';
+import { IProject } from 'src/components/Project/List/types/project';
 
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
   annotationId: String | undefined;
+  project: IProject | null;
 }
 
 interface Checks {
@@ -23,6 +25,7 @@ interface Checks {
 const ClassPanel: FC<ClassPanelProps> = ({
   onRequestRedoFinish,
   annotationId,
+  project,
 }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
   const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>();
@@ -42,20 +45,39 @@ const ClassPanel: FC<ClassPanelProps> = ({
   };
 
   const getAnnotationMetaData = (id: String) => {
+    debugger;
     const getClass_HasAnnotation = sortedClasses.filter(
       (data) => data.annotations.length && data
     );
-    let a = 0;
+    let selectedAnnotationIndex = 0;
     const getAnnotationDataOfId = getClass_HasAnnotation.filter(
       (checkAnnotationData) =>
         checkAnnotationData.annotations.filter((data, index) => {
           if (data.shapes[0].id === id) {
-            a = index;
+            selectedAnnotationIndex = index;
             return true;
           }
         })?.length && checkAnnotationData
     );
-    setSelectedAnnotationData(getAnnotationDataOfId[0].annotations[a]);
+    let annotation =
+      getAnnotationDataOfId[0].annotations[selectedAnnotationIndex];
+
+    if (!annotation?.attributes) {
+      let preAnnotation = {};
+      if (project?.attributes) {
+        project.attributes.map((attribute: any) => {
+          preAnnotation = {
+            ...preAnnotation,
+            [attribute.metaname]: attribute.defaultValue,
+          };
+        });
+      }
+      annotation = {
+        ...annotation,
+        attributes: preAnnotation,
+      };
+    }
+    setSelectedAnnotationData(annotation);
   };
 
   useEffect(() => {

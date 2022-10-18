@@ -29,7 +29,7 @@ import { IImage } from './types';
 // ----------------------------------------------------------------------
 
 interface ProjectDataSetComponentProps {
-  projectId: string;
+  projectId: string | string[];
 }
 
 //------------------------------------------------------------------------

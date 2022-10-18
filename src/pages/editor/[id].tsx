@@ -14,7 +14,7 @@ const EditorPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const query = router.query;
 
-  const projectId = query.id;
+  const projectId: string[] | string | undefined = query.id;
 
   if (!projectId) {
     return {
@@ -22,7 +22,7 @@ const EditorPage = () => {
     };
   }
 
-  const getProject = async (projectId: number | string) => {
+  const getProject = async (projectId: string[] | string | undefined) => {
     try {
       const response = await axiosInstance.get(`/project/${projectId}`);
       const { project } = response.data;
@@ -35,8 +35,13 @@ const EditorPage = () => {
   };
 
   useEffect(() => {
-    if (projectId) getProject(projectId);
-  }, [projectId]);
+    // const id = projectId ? projectId : localStorage.getItem('projectId');
+    if (typeof window !== undefined) {
+      setTimeout(() => {
+        getProject(projectId);
+      }, 0);
+    }
+  }, []);
   return (
     <Page title="Editor">
       <AuthGuard>

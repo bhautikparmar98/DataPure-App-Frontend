@@ -15,7 +15,7 @@ import { IImage } from '../types';
 
 interface ClassFormProps {
   onSubmit: (data: IImage[]) => void;
-  projectId: string;
+  projectId: string | string[];
 }
 
 const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId }) => {
@@ -142,8 +142,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId }) => {
           variant="contained"
           fullWidth
           disabled={images.length === 0 || loading}
-          onClick={submitHandler}
-        >
+          onClick={submitHandler}>
           Add
         </LoadingButton>
       </Stack>
