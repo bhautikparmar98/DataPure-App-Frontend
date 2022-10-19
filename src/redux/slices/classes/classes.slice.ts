@@ -39,8 +39,7 @@ const classesSlice = createSlice({
       )
         return state;
 
-      const { src, project, annotations, _id } =
-        action.payload.state?.images[0];
+      const { src, project, annotations, _id } = action.payload.state?.images[0];
 
       const purifiedAnnos = annotations?.map((anno: any) => {
         const { id, classId, shapes, visible, attributes } = anno;
@@ -63,9 +62,7 @@ const classesSlice = createSlice({
       let { classes } = project;
       classes = classes.map((classItem: Class) => ({
         ...classItem,
-        annotations: purifiedAnnos.filter(
-          (anno: Annotation) => anno.classId === classItem._id
-        ),
+        annotations: purifiedAnnos.filter((anno: Annotation) => anno.classId === classItem._id),
       }));
       return {
         ...state,
@@ -90,9 +87,7 @@ const classesSlice = createSlice({
       const { classId, annotationId } = action.payload;
       const { classes } = state;
       let annotations = classes[classId]?.annotations;
-      annotations = annotations.filter(
-        (annotation: Annotation) => annotation.id !== annotationId
-      );
+      annotations = annotations.filter((annotation: Annotation) => annotation.id !== annotationId);
       const newClasses = [] as Class[];
 
       classes.forEach((item, i) => {
@@ -142,26 +137,21 @@ const classesSlice = createSlice({
       const { classId, annotationId, update } = action.payload;
       const annotations = classes[classId]?.annotations || [];
 
-      const index = state.classes[classId]?.annotations.findIndex(
-        (anno) => anno.id === annotationId
-      );
+      const index = state.classes[classId]?.annotations.findIndex((anno) => anno.id === annotationId);
       if (index === -1) return state;
       if (update?.shapes && update.shapes[0].type) {
         //id is important to change here as it's the key for the anno to be updated
         update.shapes[0].id = uniqid();
         classes[classId].annotations[index].shapes = update.shapes;
       } else if (update?.attributes) {
-        const classIndex = classes.findIndex(
-          (classItem) => classItem._id === classId
-        );
-        const index = state.classes[classIndex]?.annotations.findIndex(
-          (anno) => anno.id === annotationId
-        );
+        const classIndex = classes.findIndex((classItem) => classItem._id === classId);
+        const index = state.classes[classIndex]?.annotations.findIndex((anno) => anno.id === annotationId);
         if (classIndex === -1) return state;
-        classes[classIndex].annotations[index].attributes = {
-          ...classes[classIndex].annotations[index].attributes,
-          ...update.attributes,
-        };
+        if (classes[classIndex]?.annotations[index]?.attributes)
+          classes[classIndex].annotations[index].attributes = {
+            ...classes[classIndex]?.annotations[index]?.attributes,
+            ...update.attributes,
+          };
       } else {
         classes[classId].annotations[index] = {
           ...annotations[index],
@@ -193,9 +183,7 @@ const classesSlice = createSlice({
       const { classes } = state;
       const { classId, annotationIds } = action.payload;
       const annotations = classes[classId]?.annotations || [];
-      const newAnnotations = annotations.filter(
-        (anno) => !annotationIds.includes(anno.id)
-      );
+      const newAnnotations = annotations.filter((anno) => !annotationIds.includes(anno.id));
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
       state.lastTimeUpdated = new Date().getTime();
@@ -230,24 +218,16 @@ const classesSlice = createSlice({
     },
     updateShape: (state, action) => {
       const { classes } = state;
-      const {
-        newAttrs,
-        classItemName,
-      }: { newAttrs: ShapeConfig; classItemName: string } = action.payload;
+      const { newAttrs, classItemName }: { newAttrs: ShapeConfig; classItemName: string } = action.payload;
       const shapeId = newAttrs?.id;
 
-      const selectedClassIndex = classes.findIndex(
-        (classItem) => classItem.name === classItemName
-      );
+      const selectedClassIndex = classes.findIndex((classItem) => classItem.name === classItemName);
       if (selectedClassIndex === -1) return state;
-      const annotations: Annotation[] =
-        classes[selectedClassIndex]?.annotations;
+      const annotations: Annotation[] = classes[selectedClassIndex]?.annotations;
       if (annotations && typeof shapeId === 'string') {
         let index = -1;
         for (let i = 0; i < annotations.length; i++) {
-          index = annotations[i].shapes.findIndex(
-            (shape) => shape.id === shapeId
-          );
+          index = annotations[i].shapes.findIndex((shape) => shape.id === shapeId);
           if (index !== -1) {
             classes[selectedClassIndex].annotations[i].shapes[index] = {
               ...annotations[i].shapes,
