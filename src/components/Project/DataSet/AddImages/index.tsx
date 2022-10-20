@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Box } from '@mui/system';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import { IImage } from '../types';
@@ -9,14 +10,10 @@ interface AddClassProps {
   onClose: () => void;
   onFinishAddingImages: (data: IImage[]) => void;
   projectId: string | string[];
+  projectType: string | undefined;
 }
 
-const AddImagesDialog: React.FC<AddClassProps> = ({
-  open,
-  onClose,
-  onFinishAddingImages,
-  projectId,
-}) => {
+const AddImagesDialog: React.FC<AddClassProps> = ({ open, onClose, onFinishAddingImages, projectId, projectType }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const submitHandler = (images: IImage[]) => {
@@ -30,11 +27,22 @@ const AddImagesDialog: React.FC<AddClassProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add Class</DialogTitle>
-      <DialogContent>
-        <AddImageForm onSubmit={submitHandler} projectId={projectId} />
-      </DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        width: '100%',
+        '.MuiPaper-root': {
+          width: 'auto',
+          maxWidth: 'none',
+        },
+      }}>
+      <Box width="100%">
+        <DialogTitle>Add Class</DialogTitle>
+        <DialogContent>
+          <AddImageForm onSubmit={submitHandler} projectId={projectId} projectType={projectType} />
+        </DialogContent>
+      </Box>
     </Dialog>
   );
 };

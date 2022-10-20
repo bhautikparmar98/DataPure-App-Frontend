@@ -269,6 +269,7 @@ export const ProjectDataSetComponent: React.FC<
         onClose={() => setAddImagesModalOpened(false)}
         onFinishAddingImages={addingImagesHandler}
         projectId={projectId}
+        projectType={project?.type}
       />
 
       <ClassesAccordion project={project} loading={getProjectLoading} />
