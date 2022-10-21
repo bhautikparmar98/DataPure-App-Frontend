@@ -40,7 +40,7 @@ const AddImagesDialog: React.FC<AddClassProps> = ({ open, onClose, onFinishAddin
       <Box width="100%">
         <DialogTitle>Add Class</DialogTitle>
         <DialogContent>
-          <AddImageForm onSubmit={submitHandler} projectId={projectId} projectType={projectType} />
+          <AddImageForm onSubmit={submitHandler} projectId={projectId} projectType={projectType} onClose={onClose} />
         </DialogContent>
       </Box>
     </Dialog>

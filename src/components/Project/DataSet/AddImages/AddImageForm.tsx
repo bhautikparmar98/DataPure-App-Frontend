@@ -26,6 +26,7 @@ import { Box } from '@mui/system';
 
 interface ClassFormProps {
   onSubmit: (data: IImage[]) => void;
+  onClose: () => void;
   projectId: string | string[];
   projectType: string | undefined;
 }
@@ -36,7 +37,7 @@ interface FormValuesProps extends Partial<IProject> {
   annotationFile?: string;
 }
 
-const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType }) => {
+const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType, onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [images, setImages] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -134,6 +135,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType 
         const imagesWithNoData: any[] = [];
         let annotationsWithNoImages = 0;
 
+        let imagesHaveAnnotations = false;
         images.forEach((img) => {
           const jsonImg = jsonData.images.filter((i: { file_name: string }) => i.file_name === img.name);
 
@@ -152,6 +154,8 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType 
                 classId: anno.category_id,
               }));
 
+            imagesHaveAnnotations = imgAnnotations.length > 0;
+
             imgIdMap[jsonImg[0].id] = {
               uploadedImage: img,
               jsonImg: jsonImg[0],
@@ -160,6 +164,16 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType 
             };
           } else imagesWithNoData.push(img);
         });
+
+        if (!imagesHaveAnnotations) {
+          onClose();
+          enqueueSnackbar(
+            'The JSON file have no annotations for these images. Please, make sure to add a valid JSON file.',
+            { variant: 'warning' }
+          );
+
+          return;
+        }
 
         const newRows = Object.values(imgIdMap).map((i: any) => ({
           name: i.uploadedImage.name,
@@ -188,7 +202,12 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType 
       }
 
       const response = await axiosInstance.post(`/project/${projectId}/images`, {
-        images: files.map((f: any) => ({ url: f.url, fileName: f.fileName, annotations: imgAnnoMap[f.fileName] })),
+        images: files.map((f: any) => ({
+          url: f.url,
+          fileName: f.fileName,
+          annotations: imgAnnoMap[f.fileName],
+        })),
+        imgsStatus: IMAGE_STATUS.PENDING_CLIENT_REVIEW.value,
       });
 
       const { imagesIds } = response.data;
@@ -198,7 +217,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType 
         src: files[index].url,
         fileName: files[index].fileName,
         createdAt: new Date(),
-        status: IMAGE_STATUS.PENDING_ANNOTATION.value,
+        status: IMAGE_STATUS.PENDING_CLIENT_REVIEW.value,
       }));
 
       await onSubmit(results);
