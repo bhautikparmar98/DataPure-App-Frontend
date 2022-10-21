@@ -10,9 +10,10 @@ type Props = {
 
 const BackgroundImage = ({ width, height, x, y, background }: Props) => {
   const bgRef = useRef<any>(null);
-  useEffect(() => {
-    if (width > 0) bgRef?.current?.cache();
-  }, [width]);
+  // * caching the background will make it pixelated as you will cache a small version of the background
+  // useEffect(() => {
+  // if (width > 0) bgRef?.current?.cache({ pixelRatio: 2 });
+  // }, [width]);
   return (
     <Image
       ref={bgRef}
