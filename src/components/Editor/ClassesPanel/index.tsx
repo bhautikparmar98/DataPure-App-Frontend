@@ -27,7 +27,7 @@ interface Checks {
 
 const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
-  const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>();
+  const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>({});
   const dispatch = useDispatch();
 
   const { handleSubmit, handleReset, handleApproveImage } = useAnnotationSubmit();
@@ -39,31 +39,31 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
   const { project } = useAttributes();
 
   // switch management
-  const [Switchs, setSwitch] = useState<string>('Annotation');
+  const [Switchs, setSwitch] = useState('Annotation');
 
-  const handleChange = (e: any) => {
-    annotationId && setSwitch(e);
+  const handleChange = (chosenTab: string) => {
+    annotationId && setSwitch(chosenTab);
   };
 
   //
   const getAnnotationMetaData = (id: String) => {
-    const getClass_HasAnnotation = sortedClasses.filter((data) => data.annotations.length && data);
+    const classesWithAnnotations = sortedClasses.filter((data) => data.annotations.length);
     let selectedAnnotationIndex = 0;
-    const getAnnotationDataOfId = getClass_HasAnnotation.filter(
-      (checkAnnotationData) =>
-        checkAnnotationData.annotations.filter((data, index) => {
+    const selectedClass = classesWithAnnotations.filter(
+      (classItem) =>
+        classItem.annotations.filter((data, index) => {
           if (data?.shapes[0]?.id === id) {
             selectedAnnotationIndex = index;
             return true;
           }
-        })?.length && checkAnnotationData
+        })?.length
     );
-    let annotation = getAnnotationDataOfId[0]?.annotations[selectedAnnotationIndex];
+    let annotation = selectedClass[0]?.annotations[selectedAnnotationIndex];
 
     if (!annotation?.attributes) {
       let preAnnotation = {};
       if (project?.attributes) {
-        project.attributes.map((attribute: any) => {
+        project.attributes.map((attribute) => {
           preAnnotation = {
             ...preAnnotation,
             [attribute.metaname]: attribute.defaultValue,
@@ -75,6 +75,21 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
         attributes: preAnnotation,
       };
     }
+
+    //if there are attributes limited for specific classes and the selected annotation's class is not included, we will omit it here
+    if (project?.attributes) {
+      let attributes = {};
+      project.attributes.forEach((attr) => {
+        //if this attr is limited to specific class
+        if (attr.classes?.length > 0 && selectedClass[0].name !== attr.classes) return;
+        attributes = {
+          ...attributes,
+          [attr.metaname]: annotation.attributes ? annotation?.attributes[attr.metaname] || '' : attr.defaultValue,
+        };
+      });
+      annotation = { ...annotation, attributes };
+    }
+
     setSelectedAnnotationData(annotation);
   };
 
@@ -88,7 +103,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
               annotationId: selectedAnnotationData.id,
               update: {
                 attributes: {
-                  [metadata]: selectedAnnotationData?.attributes[metadata],
+                  [metadata]: (selectedAnnotationData && (selectedAnnotationData as any)?.attributes[metadata]) || '',
                 },
               },
             })
@@ -134,7 +149,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
               <Filters checks={checks} sortBy={sortBy} />
               <Annotations classes={sortedClasses} updateFiltersChecks={updateFiltersChecks} />
             </>
-          ) : Object.keys(selectedAnnotationData.attributes).length ? (
+          ) : selectedAnnotationData?.attributes && Object.keys(selectedAnnotationData.attributes).length ? (
             <>
               {Object.keys(selectedAnnotationData.attributes).map((metadata) => {
                 return (
@@ -152,7 +167,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
                       },
                     }}
                     onChange={(e: any) => {
-                      let _tempSelectedAnnotationData: JSON = {
+                      let _tempSelectedAnnotationData = {
                         ...selectedAnnotationData.attributes,
                       };
                       _tempSelectedAnnotationData = {
@@ -163,7 +178,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
                       _tempAnnotationData.attributes = _tempSelectedAnnotationData;
                       setSelectedAnnotationData(_tempAnnotationData);
                     }}
-                    value={selectedAnnotationData.attributes[metadata]}
+                    value={selectedAnnotationData ? (selectedAnnotationData as any)!.attributes[metadata]! || '' : ''}
                   />
                 );
               })}

@@ -1,5 +1,4 @@
-import { proertiesProps } from '../MetaPropertyTypeView/MetaCreatePropertyView';
-import { IProjectMeataData } from '../../types/project';
+import { IProject, IProjectMeataData } from '../../types/project';
 
 export interface metricTypes {
   editable: boolean;
@@ -30,6 +29,7 @@ export interface MetaPropertiesViewProps {
 export interface MetaPropertiesCreateViewProps {
   open: boolean;
   error: boolean;
+  project: IProject;
   setError: (e: any) => void;
   setOpen: (e: any) => void;
   saveProperty: (e: any, projectId: string) => void;

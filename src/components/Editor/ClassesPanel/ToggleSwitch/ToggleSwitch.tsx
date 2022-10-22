@@ -1,8 +1,8 @@
-import React from 'react';
+import { ChangeEvent } from 'react';
 import styles from './toggleswitch.module.css';
 
 interface SwitchProps {
-  onChangeHandler: (value: String) => void;
+  onChangeHandler: (value: string) => void;
   value: String;
 }
 
@@ -16,9 +16,7 @@ const ToggleSwitch = ({ onChangeHandler, value }: SwitchProps) => {
           name="switchPlan"
           value="Annotation"
           checked={value === 'Annotation' ? true : false}
-          onClick={(e: { target: { value: any } }) =>
-            onChangeHandler(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeHandler(e.target.value)}
         />
         <input
           type="radio"
@@ -26,9 +24,7 @@ const ToggleSwitch = ({ onChangeHandler, value }: SwitchProps) => {
           value="Metadata"
           name="switchPlan"
           checked={value === 'Metadata' ? true : false}
-          onClick={(e: { target: { value: any } }) =>
-            onChangeHandler(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onChangeHandler(e.target.value)}
         />
         <label htmlFor="switchAnnotation">Annotation</label>
         <label htmlFor="switchMetadata">Metadata</label>

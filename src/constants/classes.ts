@@ -28,7 +28,7 @@ export interface Annotation {
   fill?: string;
   classId?: string;
   shapes: (Rectangle | Line)[];
-  attributes?: any;
+  attributes?: { [attr: string]: string };
 }
 
 export interface Class {
