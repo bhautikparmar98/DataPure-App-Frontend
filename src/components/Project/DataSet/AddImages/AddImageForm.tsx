@@ -201,13 +201,17 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
         });
       }
 
+      // TODO: imgStatus should be driven by an input
       const response = await axiosInstance.post(`/project/${projectId}/images`, {
         images: files.map((f: any) => ({
           url: f.url,
           fileName: f.fileName,
-          annotations: imgAnnoMap[f.fileName],
+          annotations: imgAnnoMap[f.fileName] || [],
         })),
-        imgsStatus: IMAGE_STATUS.PENDING_CLIENT_REVIEW.value,
+        imgsStatus:
+          jsonData && jsonData.annotations
+            ? IMAGE_STATUS.PENDING_CLIENT_REVIEW.value
+            : IMAGE_STATUS.PENDING_ANNOTATION.value,
       });
 
       const { imagesIds } = response.data;
@@ -217,7 +221,10 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
         src: files[index].url,
         fileName: files[index].fileName,
         createdAt: new Date(),
-        status: IMAGE_STATUS.PENDING_CLIENT_REVIEW.value,
+        status:
+          jsonData && jsonData.annotations
+            ? IMAGE_STATUS.PENDING_CLIENT_REVIEW.value
+            : IMAGE_STATUS.PENDING_ANNOTATION.value,
       }));
 
       await onSubmit(results);
@@ -323,7 +330,11 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
           type="submit"
           variant="contained"
           fullWidth
-          disabled={images.length === 0 || loading}
+          disabled={
+            images.length === 0 ||
+            loading ||
+            (projectType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value && jsonData.length === 0)
+          }
           onClick={submitHandler}>
           Add
         </LoadingButton>

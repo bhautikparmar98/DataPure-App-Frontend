@@ -17,9 +17,7 @@ const Editor = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const { role } = useAuth();
-  const imageId: string = useSelector(
-    (state: RootState) => state.classes.imageId
-  );
+  const imageId: string = useSelector((state: RootState) => state.classes.imageId);
   const [annotationId, setAnnotationId] = useState('');
 
   const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
@@ -114,7 +112,7 @@ const Editor = () => {
   const TOOLBAR_WIDTH = 70;
   const LAYERS_PANEL_WIDTH = 330;
   const WIDTH = window.innerWidth - (TOOLBAR_WIDTH + LAYERS_PANEL_WIDTH);
-  const HEIGHT = window.innerHeight - indicatorsHeight;
+  const HEIGHT = window.innerHeight - indicatorsHeight - 1;
 
   useEffect(() => {}, [annotationId]);
   return (
@@ -133,17 +131,9 @@ const Editor = () => {
           }}
         />
       </div>
-      <ClassesPanel
-        onRequestRedoFinish={requestRedoHandler}
-        annotationId={annotationId}
-      />
+      <ClassesPanel onRequestRedoFinish={requestRedoHandler} annotationId={annotationId} />
       {ROLES.CLIENT.value === role && (
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          sx={{ fontSize: '1.2rem' }}
-          pr={28.5}>
+        <Grid container justifyContent="center" alignItems="center" sx={{ fontSize: '1.2rem' }} pr={28.5}>
           <Iconify
             icon={'bi:arrow-left-circle'}
             sx={{
