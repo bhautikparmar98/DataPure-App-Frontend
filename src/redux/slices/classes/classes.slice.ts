@@ -244,8 +244,8 @@ const classesSlice = createSlice({
     },
 
     setComments: (state, action) => {
-      const { comments } = action.payload;
-      if (comments?.length >= 0) state.comments = comments;
+      const { newComments } = action.payload;
+      if (newComments?.length >= 0) state.comments = newComments;
     },
   },
 });

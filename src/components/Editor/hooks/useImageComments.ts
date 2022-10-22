@@ -5,22 +5,12 @@ import { setComments } from 'src/redux/slices/classes/classes.slice';
 import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 
-const useImageComments = ({
-  isAnnotatorRedo,
-  imageId,
-}: {
-  isAnnotatorRedo?: boolean;
-  imageId: string;
-}) => {
+const useImageComments = ({ isAnnotatorRedo, imageId }: { isAnnotatorRedo?: boolean; imageId: string }) => {
   const { role } = useAuth();
   const dispatch = useDispatch();
 
   const canSeeComments = () => {
-    if (
-      (role === ROLES.ANNOTATOR.value && isAnnotatorRedo) ||
-      role === ROLES.QA.value
-    )
-      return true;
+    if ((role === ROLES.ANNOTATOR.value && isAnnotatorRedo) || role === ROLES.QA.value) return true;
     return false;
   };
 
@@ -39,7 +29,12 @@ const useImageComments = ({
       const response = await axiosInstance.get(`/image/${imageId}/comment`);
       const { comments } = response.data;
 
-      dispatch(setComments( {comments} ));
+      const newComments = comments?.map(({ x, y, text }: { x: string; y: string; text: string }) => ({
+        x,
+        y,
+        value: text,
+      }));
+      dispatch(setComments({ newComments }));
     };
 
     if (canSeeComments() && imageId?.length > 0) {
@@ -53,8 +48,7 @@ const useImageComments = ({
   };
 
   const deleteComment = async (commentId: string) => {
-    if (commentId?.length > 0 && canDeleteComment())
-      await axiosInstance.delete(`comment/${commentId}`);
+    if (commentId?.length > 0 && canDeleteComment()) await axiosInstance.delete(`comment/${commentId}`);
   };
 
   return { addComment, deleteComment };
