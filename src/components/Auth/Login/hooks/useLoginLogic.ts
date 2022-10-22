@@ -10,7 +10,7 @@ const useLoginLogic = () => {
 
   const submitHandler = async (data: FormValuesProps | any) => {
     try {
-      await login(data.email, data.password, data.remember);
+      await login(data.email?.trim(), data.password?.trim(), data.remember);
       // router.push('/');
     } catch (error) {
       console.log('error', error);

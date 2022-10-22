@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useSelector } from 'react-redux';
 import useZoom from 'src/components/Editor/hooks/useZoom';
@@ -20,7 +20,7 @@ import TempShapes from './TempShapes';
 interface Layer {
   classes: Class[];
   selectedClassIndex: number;
-  comments: { text: string; x: number; y: number }[];
+  comments: { value: string; x: number; y: number }[];
 }
 
 interface IProps {
@@ -70,6 +70,7 @@ const Workspace: any = ({
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
+    handleComment,
     rects,
     lines,
     handleShapeMove,
@@ -141,6 +142,8 @@ const Workspace: any = ({
               ? rectHandleMouseDown(e)
               : currentTool === TOOLS.LINE
               ? lineHandleMouseDown(e)
+              : currentTool === TOOLS.COMMENT
+              ? handleComment(e)
               : () => {};
           }}
           // onMouseUp={handleMouseUp}
@@ -209,15 +212,17 @@ const Workspace: any = ({
               comments.map((comment, commendIndex) => (
                 <Image
                   key={commendIndex}
-                  width={60 / stageScale.stageScale}
-                  height={60 / stageScale.stageScale}
+                  width={15 / stageScale.stageScale}
+                  height={15 / stageScale.stageScale}
                   image={image}
-                  x={comment.x}
-                  y={comment.y}
+                  scaleX={stageScale.stageScale * 5}
+                  scaleY={stageScale.stageScale * 5}
+                  x={comment.x * bgWidthScale + bgX}
+                  y={comment.y * bgHeightScale + bgY}
                   alt="Comment"
                   type="Comment"
                   draggable
-                  onClick={(e) => handleCommentClick(e, comment.text, commendIndex)}
+                  onClick={(e) => handleCommentClick(e, (comment as any).value, commendIndex)}
                   onMouseEnter={(_) => setCursorStyle('pointer')}
                   onMouseLeave={(_) => setCursorStyle()}
                 />

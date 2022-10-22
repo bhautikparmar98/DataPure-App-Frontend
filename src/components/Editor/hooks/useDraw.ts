@@ -10,12 +10,7 @@ import useLine from './useLine';
 import useRect from './useRect';
 import { RootState } from 'src/redux/store';
 
-const getNewShapeMove = (
-  e: any,
-  group: any,
-  bgWidthScale: number,
-  bgHeightScale: number
-) => {
+const getNewShapeMove = (e: any, group: any, bgWidthScale: number, bgHeightScale: number) => {
   const shape = _.cloneDeep(group);
   let shapes = [];
 
@@ -65,28 +60,29 @@ const useDraw = (
   onDeleteComment: (commentId: string) => void
 ) => {
   const dispatch = useDispatch();
-  const stageDragging = useSelector(
-    (state: RootState) => state.editor.stageDragging
-  );
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
 
   // Rectangle
-  const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } =
-    useRect(
-      selectedClassIndex,
-      classId,
-      selectedClassColor,
-      bgWidthScale,
-      bgHeightScale
-    );
+  const { rectHandleMouseDown, rectHandleMouseUp, rectHandleMouseMove, rects } = useRect(
+    selectedClassIndex,
+    classId,
+    selectedClassColor,
+    bgWidthScale,
+    bgHeightScale
+  );
 
   // Line
-  const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } =
-    useLine(selectedClassIndex, classId, selectedClassColor);
+  const { lineHandleMouseDown, lineHandleMouseUp, lineHandleMouseMove, lines } = useLine(
+    selectedClassIndex,
+    classId,
+    selectedClassColor
+  );
 
   const { handleComment, handleCommentClick, comments } = useComment(
     bgLayerRef,
     currentTool,
-    backgroundWidth,
+    bgWidthScale,
+    bgHeightScale,
     onAddComment,
     onDeleteComment
   );
@@ -165,6 +161,7 @@ const useDraw = (
     handleMouseMove,
     comments,
     handleCommentClick,
+    handleComment,
     handleShapeMove,
     rectHandleMouseDown,
     rectHandleMouseUp,

@@ -1,5 +1,6 @@
 .list {
-  min-height: min(500px, 60vh) !important;
+  /* min-height: min(500px, 60vh) !important; */
+  height: clamp(20vh, 500px, 60vh);
   overflow-y: auto;
 }
 

@@ -187,7 +187,6 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       rows.forEach((element) => {
         imgAnnoMap[element.name] = element.annotations;
       });
-
       await axiosInstance.post('/project/preAnnotated', {
         name: values.name,
         dueAt: values.dueAt,
@@ -198,6 +197,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
           annotations: imgAnnoMap[f.fileName],
         })),
         annotationType: values.reviewStatus,
+        dataType: values.dataType,
         classes,
       });
 

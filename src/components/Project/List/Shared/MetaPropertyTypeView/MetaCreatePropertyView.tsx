@@ -36,19 +36,19 @@ const MetaAddNewPropertiesView: React.FC<MetaPropertiesCreateViewProps> = ({
   setError,
   setOpen,
   saveProperty,
+  project,
 }) => {
   const initialData = {
     metaname: '',
     metatype: 'text',
     displayName: '',
     classes: '',
-    maxCharacters: 0,
+    maxCharacters: 30,
     defaultValue: '',
     descriptions: '',
     required: false,
   };
-  const [propertiesData, setPropertiesData] =
-    useState<proertiesProps>(initialData);
+  const [propertiesData, setPropertiesData] = useState<proertiesProps>(initialData);
 
   const onChangeHandler = (field: string, value: string | number | boolean) => {
     let _tempPropertiesData = { ...propertiesData };
@@ -99,19 +99,13 @@ const MetaAddNewPropertiesView: React.FC<MetaPropertiesCreateViewProps> = ({
                 required
                 labelId="demo-simple-select-label"
                 value={propertiesData.metatype}
-                onChange={(e) =>
-                  onChangeHandler(e.target.name, e.target.value)
-                }>
+                onChange={(e) => onChangeHandler(e.target.name, e.target.value)}>
                 <MenuItem value="text">Text</MenuItem>
               </Select>
             </FormControl>
           </Box>
           <Divider />
-          <Typography
-            textTransform={'uppercase'}
-            fontSize={14}
-            fontWeight={600}
-            marginTop="15px">
+          <Typography textTransform={'uppercase'} fontSize={14} fontWeight={600} marginTop="15px">
             String Properties
           </Typography>
           <Box display={'flex'}>
@@ -127,9 +121,7 @@ const MetaAddNewPropertiesView: React.FC<MetaPropertiesCreateViewProps> = ({
               fullWidth
             />
             <FormControl fullWidth margin="normal">
-              <InputLabel id="demo-simple-select-label">
-                Limited to Class(es)
-              </InputLabel>
+              <InputLabel id="demo-simple-select-label">Limited to Class(es)</InputLabel>
               <Select
                 id="demo-simple-select-label"
                 label="Limited to Class(es)"
@@ -137,12 +129,12 @@ const MetaAddNewPropertiesView: React.FC<MetaPropertiesCreateViewProps> = ({
                 fullWidth
                 labelId="demo-simple-select-label"
                 value={propertiesData.classes}
-                onChange={(e) =>
-                  onChangeHandler(e.target.name, e.target.value)
-                }>
-                <MenuItem value="test">test</MenuItem>
-                <MenuItem value="test1">test1</MenuItem>
-                <MenuItem value="test2">test2</MenuItem>
+                onChange={(e) => onChangeHandler(e.target.name, e.target.value)}>
+                {project?.classes?.map((cls, i) => (
+                  <MenuItem value={cls.name} key={cls._id}>
+                    {cls.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Box>
@@ -208,8 +200,7 @@ const MetaAddNewPropertiesView: React.FC<MetaPropertiesCreateViewProps> = ({
               variant="outlined"
               sx={{ marginRight: '10px' }}
               onClick={() => {
-                if (!propertiesData.metaname)
-                  setError(!propertiesData.metaname ? true : false);
+                if (!propertiesData.metaname) setError(!propertiesData.metaname ? true : false);
                 else {
                   saveProperty(propertiesData, '');
                 }

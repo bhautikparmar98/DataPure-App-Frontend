@@ -11,10 +11,12 @@ interface Comment {
   y: number;
 }
 
+// !TODO: Handle comment movement in redux store
 const useComment = (
   bgLayerRef: React.RefObject<Konva.Layer>,
   currentTool: Tool,
-  backgroundWidth: number,
+  bgWidthScale: number,
+  bgHeightScale: number,
   onAddComment: (text: string, x: number, y: number) => void,
   onDeleteComment: (commentId: string) => void
 ) => {
@@ -46,10 +48,10 @@ const useComment = (
     const textarea = document.createElement('textarea');
     document.body!.appendChild(textarea);
     textarea.style.position = 'fixed';
-    textarea.style.top = `${y + 40}px`;
-    textarea.style.left = `${x + 50}px`;
+    textarea.style.top = `${y + 10}px`;
+    textarea.style.left = `${x}px`;
     textarea.style.width = '250px';
-    textarea.style.minHeight = '36px';
+    textarea.style.minHeight = '72px';
     textarea.style.resize = 'none';
     textarea.style.borderRadius = '8px';
     textarea.style.outline = 'none';
@@ -72,7 +74,7 @@ const useComment = (
 
   const handleCommentClick = (e: Konva.KonvaEventObject<MouseEvent>, text: string, commendIndex: number) => {
     e.cancelBubble = true;
-    const { x = 0, y = 0 } = e.target.getStage()!.getRelativePointerPosition()!;
+    const { x = 0, y = 0 } = e.target.getStage()!.getPointerPosition()!;
 
     const textarea = createStyledTextarea(x, y, text);
 
@@ -102,21 +104,25 @@ const useComment = (
     if (layer && layer?.children?.length !== 0) {
       const bg = (layer as any).children[0]!;
       //to avoid clicking on a previous comment
-      if (e.target.attrs?.type === 'Comment') return;
+      if (e.target?.attrs?.type === 'Comment') return;
 
       const { x = 0, y = 0 } = bg!.getStage()!.getRelativePointerPosition();
+      const { x: bgX = 0, y: bgY = 0 } = bg?.attrs;
+
+      const absoluteX = (x - 65 - bgX) / bgWidthScale;
+      const absoluteY = (y - 65 - bgY) / bgHeightScale;
+
+      const { x: stageX = 0, y: stageY = 0 } = e.target?.getStage()!.getPointerPosition()!;
 
       // create textarea and style it
       if (canAddComments()) {
-        const textarea = createStyledTextarea(x, y);
+        const textarea = createStyledTextarea(stageX, stageY);
 
         textarea.addEventListener('keydown', function (e) {
           if (e.code === 'Enter' && textarea.value.length > 0) {
-            try {
-            } catch (error) {}
-            const newComments = [...comments, { text: textarea.value, x, y }];
+            const newComments = [...comments, { text: textarea.value, x: absoluteX, y: absoluteY }];
 
-            onAddComment(textarea.value, x, y);
+            onAddComment(textarea.value, (x - bgX) / bgWidthScale - 65, (y - bgY) / bgHeightScale - 65);
             dispatch(setCommentsAction({ newComments }));
 
             document.body!.removeChild(textarea);

@@ -39,7 +39,7 @@ const useAnnotationSubmit = () => {
         const newAnnotations = [...cls.annotations];
         newAnnotations.forEach((anno) => {
           let newAnno = { ...anno };
-          if (newAnnotationData?.shapes[0]?.id === newAnno.shapes[0].id) {
+          if (newAnnotationData?.shapes && newAnnotationData?.shapes[0]?.id === newAnno.shapes[0].id) {
             newAnno = newAnnotationData;
           }
           delete newAnno.fill;

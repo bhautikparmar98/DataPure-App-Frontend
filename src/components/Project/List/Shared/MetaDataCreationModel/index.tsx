@@ -22,10 +22,7 @@ interface MetaDataCreationProps {
   syncProjectData: any;
 }
 
-const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({
-  project,
-  syncProjectData,
-}) => {
+const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({ project, syncProjectData }) => {
   const [openlistView, setOpenListView] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
@@ -33,15 +30,11 @@ const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({
 
   const savePropertiesHandler = async (data: proertiesProps) => {
     try {
-      const response = await axiosInstance.put(
-        `/project/${project._id}/metadata`,
-        data
-      );
+      const response = await axiosInstance.put(`/project/${project._id}/metadata`, data);
       syncProjectData();
       enqueueSnackbar('Property added successfully', { variant: 'success' });
       setOpen(false);
       setOpenListView(false);
-      console.log(response);
     } catch (error) {
       console.log('error', error);
       enqueueSnackbar('Something went wrong', { variant: 'error' });
@@ -50,11 +43,7 @@ const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({
 
   return (
     <Box>
-      <Button
-        variant={'contained'}
-        color={'primary'}
-        onClick={() => setOpenListView(!openlistView)}
-        size={'small'}>
+      <Button variant={'contained'} color={'primary'} onClick={() => setOpenListView(!openlistView)} size={'small'}>
         {'Meta data'}
       </Button>
       <MetaPropertiesList
@@ -71,6 +60,7 @@ const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({
           setOpen(false);
           setError(false);
         }}
+        project={project}
         saveProperty={savePropertiesHandler}
       />
     </Box>

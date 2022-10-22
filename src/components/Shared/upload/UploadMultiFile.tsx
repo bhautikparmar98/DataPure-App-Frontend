@@ -18,6 +18,7 @@ const DropZoneStyle = styled('div')(({ theme }) => ({
   border: `3px dashed #688BB1`,
   filter: `drop-shadow(0px 0px 33px rgba(0, 0, 0, 0.03)) drop-shadow(0px 0px 7.37098px rgba(0, 0, 0, 0.0178832)) drop-shadow(0px 0px 2.19453px rgba(0, 0, 0, 0.0121168));`,
   borderRadius: `10px`,
+  height: `100%`,
   '&:hover': { opacity: 0.72, cursor: 'pointer' },
 }));
 
@@ -39,18 +40,12 @@ export default function UploadMultiFile({
   buffer,
   ...other
 }: UploadMultiFileProps) {
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragReject,
-    fileRejections,
-  } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     ...other,
   });
 
   return (
-    <Box sx={{ width: '100%', ...sx }}>
+    <Box sx={{ width: '100%', height: '100%', ...sx }}>
       <DropZoneStyle
         {...getRootProps()}
         sx={{
@@ -60,8 +55,7 @@ export default function UploadMultiFile({
             borderColor: 'error.light',
             bgcolor: 'error.lighter',
           }),
-        }}
-      >
+        }}>
         <input {...getInputProps()} />
 
         <input {...getInputProps()} />
@@ -69,16 +63,9 @@ export default function UploadMultiFile({
         <BlockContent minHeight={minHeight} label={label} />
       </DropZoneStyle>
 
-      {uploading && (
-        <UploadingProgress
-          buffer={buffer ? buffer : progress! + 5}
-          progress={progress || 0}
-        />
-      )}
+      {uploading && <UploadingProgress buffer={buffer ? buffer : progress! + 5} progress={progress || 0} />}
 
-      {fileRejections.length > 0 && (
-        <RejectionFiles fileRejections={fileRejections} />
-      )}
+      {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
 
       {/* <MultiFilePreview
         files={files}
