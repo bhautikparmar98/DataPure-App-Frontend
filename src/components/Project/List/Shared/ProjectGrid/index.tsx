@@ -16,6 +16,7 @@ interface ProjectBodyListProps {
     action: (p: IProject) => void;
     variant: 'contained' | 'icon' | 'outlined';
     icon?: string;
+    color?: 'inherit' | 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
     disabled?: boolean;
   }[];
   removeProgress?: boolean;
@@ -38,15 +39,7 @@ const ProjectGrid: React.FC<ProjectBodyListProps> = ({
   return (
     <Grid container spacing={2}>
       {projects.map((p) => (
-        <Grid
-          item
-          xl={themeStretch ? 3 : 4}
-          lg={4}
-          md={4}
-          sm={6}
-          xs={12}
-          key={p._id}
-        >
+        <Grid item xl={themeStretch ? 3 : 4} lg={4} md={4} sm={6} xs={12} key={p._id}>
           <MinimizedProjectCard
             project={p}
             syncProjectData={syncProjectData}
