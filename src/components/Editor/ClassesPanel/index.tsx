@@ -134,7 +134,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
             width: 330,
             paddingTop: 2,
             paddingBottom: 4,
-            minHeight: '98vh',
+            minHeight: 'max(98vh, 800px)',
             display: 'flex',
             flexDirection: 'column',
             overflowY: 'auto',

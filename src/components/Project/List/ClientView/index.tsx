@@ -1,15 +1,18 @@
 import { Alert, AlertTitle, Box } from '@mui/material';
 import { Container } from '@mui/system';
 import { useSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import useAuth from 'src/hooks/useAuth';
 import useSettings from 'src/hooks/useSettings';
+
+import _ from 'lodash';
+import { useRouter } from 'next/router';
 import axiosInstance from 'src/utils/axios';
-import ProjectListHeader from './Header';
+import { downloadFile } from 'src/utils/downloadFile';
 import ProjectGrid from '../Shared/ProjectGrid';
 import { IProject } from '../types/project';
-import { useRouter } from 'next/router';
-import { downloadFile } from 'src/utils/downloadFile';
+import DeleteProjectModal from './DeleteProjectModal';
+import ProjectListHeader from './Header';
 
 const ClientProjectsComponent = () => {
   const { themeStretch } = useSettings();
@@ -20,6 +23,13 @@ const ClientProjectsComponent = () => {
   const [projects, setProjects] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [projectId, setProjectId] = useState('');
+
+  const onCloseDeleteModal = useCallback(() => {
+    setDeleteModalOpen(false);
+    setProjectId('');
+  }, []);
 
   const downloadOutputHandler = async (project: IProject) => {
     setDownloadLoading(true);
@@ -30,6 +40,26 @@ const ClientProjectsComponent = () => {
     }
     setDownloadLoading(false);
   };
+
+  const deleteProject = useCallback(
+    (project: IProject) => {
+      console.log(project);
+      if (project._id) {
+        setProjectId(project._id);
+        setDeleteModalOpen(true);
+      }
+    },
+    [projectId]
+  );
+
+  const onFinishDeleteProject = useCallback(
+    (id: string) => {
+      let newProjects = _.cloneDeep(projects);
+      newProjects = newProjects.filter((project) => project._id !== id);
+      setProjects(newProjects);
+    },
+    [projectId]
+  );
 
   const viewDataSetHandler = (id: string) => {
     router.push(`/project/${id}/dataset`);
@@ -65,7 +95,7 @@ const ClientProjectsComponent = () => {
 
       <Box sx={{ mt: 4 }}>
         {!loading && projects.length === 0 && (
-          <Alert severity='info'>
+          <Alert severity="info">
             <AlertTitle>No Projects</AlertTitle>
             You don't have any projects yet, please create one.
           </Alert>
@@ -83,6 +113,13 @@ const ClientProjectsComponent = () => {
               disabled: downloadLoading,
             },
             {
+              label: '',
+              action: (project: IProject) => deleteProject(project),
+              variant: 'icon',
+              icon: 'ant-design:delete-outlined',
+              color: 'error',
+            },
+            {
               label: 'View Dataset',
               action: (project: IProject) => viewDataSetHandler(project._id!),
               variant: 'outlined',
@@ -95,6 +132,13 @@ const ClientProjectsComponent = () => {
           ]}
           metaButton={true}
         />
+        {deleteModalOpen && (
+          <DeleteProjectModal
+            projectId={projectId}
+            onClose={onCloseDeleteModal}
+            onFinishDeleteProject={(id) => onFinishDeleteProject(id)}
+          />
+        )}
       </Box>
     </Container>
   );

@@ -100,12 +100,7 @@ const useRect = (
 
         const bg = event.target.getStage()?.find('#canvasBackground')!;
         // if (!bg || bg.length === 0) return;
-        const {
-          x: bgX,
-          y: bgY,
-          width: bgWidth,
-          height: bgHeight,
-        } = bg[0].attrs;
+        const { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
 
         // mouse position relative to background origin(x,y)
         const { x: mouseX, y: mouseY } = bg[0].getRelativePointerPosition();
@@ -125,7 +120,7 @@ const useRect = (
           };
 
           //min width & height
-          if (Math.abs(x - sx) > 2 && Math.abs(y - sy) > 2) {
+          if (Math.abs(x - sx) > 0 && Math.abs(y - sy) > 0) {
             dispatch(
               addAnnotation({
                 classIndex: selectedClassIndex,
