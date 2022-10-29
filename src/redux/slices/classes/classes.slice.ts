@@ -7,6 +7,8 @@ import uniqid from 'uniqid';
 
 type State = {
   classes: Class[];
+  history: [Class[]];
+  historyStep: number;
   selectedClassIndex: number;
   currentAnnotationId: number | null;
   comments: { text: string; x: number; y: number; _id?: string }[];
@@ -18,6 +20,8 @@ type State = {
 
 const initialState = {
   classes: [],
+  history: [] as unknown as [Class[]],
+  historyStep: 0,
   selectedClassIndex: 0,
   currentAnnotationId: 0,
   comments: [],
@@ -67,6 +71,8 @@ const classesSlice = createSlice({
       return {
         ...state,
         classes,
+        history: [classes],
+        historyStep: 0,
         comments: [],
         src,
         imageId: _id,
@@ -95,6 +101,8 @@ const classesSlice = createSlice({
         newClasses.push(item);
       });
       state.classes = newClasses;
+      state.history.push(newClasses);
+      state.historyStep++;
       state.lastTimeUpdated = new Date().getTime();
     },
 
@@ -128,6 +136,8 @@ const classesSlice = createSlice({
       annotation.shapes = newShapes;
 
       state.classes[classIndex].annotations.push(annotation);
+      state.history.push(state.classes);
+      state.historyStep++;
       state.lastTimeUpdated = new Date().getTime();
     },
 
@@ -159,6 +169,8 @@ const classesSlice = createSlice({
         };
       }
       state.classes = classes;
+      state.history.push(classes);
+      state.historyStep++;
       state.lastTimeUpdated = new Date().getTime();
     },
 
@@ -175,6 +187,8 @@ const classesSlice = createSlice({
       });
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
+      state.history.push(classes);
+      state.historyStep++;
       state.lastTimeUpdated = new Date().getTime();
     },
 
@@ -187,6 +201,8 @@ const classesSlice = createSlice({
       classes[classId].annotations = newAnnotations;
       state.classes = classes;
       state.lastTimeUpdated = new Date().getTime();
+      state.history.push(classes);
+      state.historyStep++;
     },
 
     //used for class panel bulk action
@@ -214,6 +230,8 @@ const classesSlice = createSlice({
       newClassAnnotations = [...newClassAnnotations, ...newAnnos];
       classes[newClassIndex].annotations = [...newClassAnnotations];
       state.classes = classes;
+      state.history.push(classes);
+      state.historyStep++;
       state.lastTimeUpdated = new Date().getTime();
     },
     updateShape: (state, action) => {
@@ -239,6 +257,8 @@ const classesSlice = createSlice({
         }
 
         state.classes = classes;
+        state.history.push(classes);
+        state.historyStep++;
         state.lastTimeUpdated = new Date().getTime();
       }
     },
@@ -246,6 +266,22 @@ const classesSlice = createSlice({
     setComments: (state, action) => {
       const { newComments } = action.payload;
       if (newComments?.length >= 0) state.comments = newComments;
+    },
+
+    //go backward in annotations history
+    undoHistory: (state) => {
+      if (state.historyStep === 0) return state;
+      state.historyStep--;
+      state.classes = state.history[state.historyStep];
+      state.lastTimeUpdated = new Date().getTime();
+    },
+
+    //go forward in annotations history
+    redoHistory: (state) => {
+      if (state.historyStep === state.history.length - 1) return state;
+      state.historyStep++;
+      state.classes = state.history[state.historyStep];
+      state.lastTimeUpdated = new Date().getTime();
     },
   },
 });
@@ -262,5 +298,7 @@ export const {
   changeAnnotationsClass,
   updateShape,
   setComments,
+  undoHistory,
+  redoHistory,
 } = classesSlice.actions;
 export default classesSlice.reducer;

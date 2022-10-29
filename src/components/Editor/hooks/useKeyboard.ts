@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { ROLES, TOOLS } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { deleteAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { deleteAnnotation, undoHistory, redoHistory } from 'src/redux/slices/classes/classes.slice';
 import { startDragging, setTool } from 'src/redux/slices/editor/editor.slice';
 import { RootState } from 'src/redux/store';
 import useCursor from './useCursor';
@@ -41,12 +41,12 @@ const useKeyboard = (
         break;
       case 'KeyZ':
         if (e.ctrlKey) {
-          console.log('handle history undo');
+          dispatch(undoHistory());
         }
         break;
       case 'KeyY':
         if (e.ctrlKey) {
-          console.log('handle history redo');
+          dispatch(redoHistory());
         }
         break;
 

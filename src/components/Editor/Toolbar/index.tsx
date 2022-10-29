@@ -13,6 +13,7 @@ import Image from 'src/components/Shared/Image';
 import { ROLES, TOOLS, type Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { setTool } from 'src/redux/slices/editor/editor.slice';
+import { undoHistory, redoHistory } from 'src/redux/slices/classes/classes.slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/redux/store';
 const drawerWidth = 240;
@@ -42,6 +43,7 @@ const ICONS = {
   [TOOLS.SELECT]: 'la:mouse-pointer',
   [TOOLS.COMMENT]: 'cil:comment-bubble',
   [TOOLS.PAN]: '',
+
   // [TOOLS.ERASER]: 'clarity:eraser-line',
   // [TOOLS.BRUSH]: 'bi:brush',
   // [TOOLS.PEN_TOOL]: 'bi:vector-pen',
@@ -54,6 +56,12 @@ interface ToolbarProps {
 const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
   const open = false;
   const currentTool = useSelector((state: RootState) => state.editor.tool);
+  const historyStep = useSelector((state: RootState) => state.classes.historyStep);
+  const history = useSelector((state: RootState) => state.classes.history);
+
+  const undoEnabled = historyStep > 0;
+  const redoEnabled = historyStep < history.length - 1;
+
   const { role } = useAuth();
 
   const dispatch = useDispatch();
@@ -83,12 +91,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
           {Object.values(TOOLS)
             .slice(0, 4)
             .filter((key) => {
-              if (
-                key === TOOLS.COMMENT &&
-                role === ROLES.ANNOTATOR.value &&
-                !isAnnotatorRedo
-              )
-                return false;
+              if (key === TOOLS.COMMENT && role === ROLES.ANNOTATOR.value && !isAnnotatorRedo) return false;
               return true;
             })
             .map((text, index) => (
@@ -111,16 +114,38 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                       icon={ICONS[text]}
                       width="30"
                       style={{
-                        transform:
-                          text === TOOLS.LINE
-                            ? 'rotate(45deg)'
-                            : 'rotate(0deg)',
+                        transform: text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)',
                       }}
                     />
                   </ListItemIcon>
                 </ListItemButton>
               </ListItem>
             ))}
+          {/* Undo & Redo icons */}
+          <ListItem disablePadding>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              disabled={!undoEnabled}
+              onClick={() => dispatch(undoHistory())}>
+              <Icon icon={'ant-design:undo-outlined'} width="30" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              disabled={!redoEnabled}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={() => dispatch(redoHistory())}>
+              <Icon icon={'ant-design:redo-outlined'} width="30" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
     </Box>
