@@ -35,10 +35,7 @@ const useKeyboard = (
       case 'KeyL':
         return dispatch(setTool({ tool: TOOLS.LINE }));
       case 'KeyC':
-        if (role === ROLES.CLIENT.value || role === ROLES.QA.value) {
-          dispatch(setTool({ tool: TOOLS.COMMENT }));
-        }
-        break;
+        return dispatch(setTool({ tool: TOOLS.COMMENT }));
       case 'KeyZ':
         if (e.ctrlKey) {
           dispatch(undoHistory());
@@ -50,7 +47,6 @@ const useKeyboard = (
         }
         break;
 
-      // Select rectangle
       default:
         break;
     }
