@@ -27,7 +27,6 @@ import {
   RHFSelect,
   RHFTextField,
   RHFUploadMultiFile,
-  RHFUploadSingleFile,
 } from 'src/components/Shared/hook-form';
 import RHFDatePicker from 'src/components/Shared/hook-form/RHFDatePicker';
 import Iconify from 'src/components/Shared/Iconify';
@@ -44,6 +43,7 @@ import { IMAGE_STATUS } from 'src/constants/ImageStatus';
 import { parseJsonFile } from 'src/utils/parseJsonFile';
 import { availableColors } from 'src/constants/availableColors';
 import ImagesStatus from './ImagesStatus';
+import mergeMultiAnnotations from 'src/utils/mergeMultipleAnnotations';
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -55,16 +55,14 @@ interface FormValuesProps extends Partial<IProject> {
   images: string[];
   dataType?: string;
   reviewStatus?: string;
-  annotationFile?: string;
+  annotationFile?: any[];
 }
 
 interface ProjectFormComponentProps {
   isEdit?: boolean;
 }
 
-const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
-  isEdit,
-}) => {
+const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) => {
   const { themeStretch } = useSettings();
   const { push } = useRouter();
   const [currentProject, setCurrentProject] = useState<IProject | null>(null);
@@ -73,8 +71,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [isImageStatusModalOpened, setIsImageStatusModalOpened] =
-    useState(false);
+  const [isImageStatusModalOpened, setIsImageStatusModalOpened] = useState(false);
   const [jsonData, setJsonData] = useState([]);
 
   const [tokenModalOpen, setTokenModalOpen] = useState(false);
@@ -139,10 +136,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentProject]);
 
-  const uploadHandler = async (
-    urls: { url: string; presignedURL: string }[],
-    files: any
-  ) => {
+  const uploadHandler = async (urls: { url: string; presignedURL: string }[], files: any) => {
     setUploading(true);
 
     // [[] , [] , []]
@@ -182,7 +176,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
       const { files } = response.data;
 
       await uploadHandler(files, values.images);
-      console.log(rows)
+      console.log(rows);
       const imgAnnoMap: any = {};
       rows.forEach((element) => {
         imgAnnoMap[element.name] = element.annotations;
@@ -278,9 +272,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
 
       reset();
       setClasses([]);
-      enqueueSnackbar(
-        `Human in The Loop Project has been created successfully.`
-      );
+      enqueueSnackbar(`Human in The Loop Project has been created successfully.`);
       // push(PATH_DASHBOARD.project.list);
     } catch (error) {
       if (sdkToken !== '') setSdkToken('');
@@ -304,17 +296,25 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     [setValue]
   );
 
-  const handleSingleDrop = useCallback(
+  const handleJSONDrop = useCallback(
     async (acceptedFiles: any) => {
-      const file = acceptedFiles[0];
+      let file = acceptedFiles[0];
+      let data;
+      if (acceptedFiles.length > 0) {
+        setLoading(true);
+        data = await mergeMultiAnnotations(acceptedFiles);
+        setLoading(false);
+      } else {
+        file = acceptedFiles[0];
+        data = await parseJsonFile(file);
+      }
 
-      const data = await parseJsonFile(file);
       if (!data.categories) {
-        return enqueueSnackbar('Invalid file structure', { variant: 'error' });
+        return enqueueSnackbar('Invalid JSON structure', { variant: 'error' });
       }
 
       if (!data.annotations)
-        return enqueueSnackbar('There is no annotations in this file', {
+        return enqueueSnackbar('There are no annotations in the JSON schema', {
           variant: 'error',
         });
 
@@ -339,6 +339,13 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
     [setValue]
   );
 
+  const handleRemoveAllJSON = () => {
+    setValue('annotationFile', []);
+  };
+  const handleRemoveJSON = (file: File | string) => {
+    setValue('annotationFile', []);
+  };
+
   const handleRemoveAll = () => {
     setValue('images', []);
   };
@@ -349,9 +356,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
   };
 
   const deleteImageHandler = (row: any) => {
-    const filteredItems = values.images?.filter(
-      (img: any) => img.name !== row.name
-    );
+    const filteredItems = values.images?.filter((img: any) => img.name !== row.name);
     setValue('images', filteredItems);
   };
 
@@ -368,33 +373,20 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
   };
 
   // on fly calc ---------------------------------------
-  const isImageAnnotationSelected =
-    values.type === ANNOTATION_TYPES.IMAGE_ANNOTATION.value;
+  const isImageAnnotationSelected = values.type === ANNOTATION_TYPES.IMAGE_ANNOTATION.value;
   const gridMDValueForAnnotationSelect = isImageAnnotationSelected ? 3 : 4;
-  const isReviewStatusShown =
-    values.dataType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value &&
-    isImageAnnotationSelected;
+  const isReviewStatusShown = values.dataType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value && isImageAnnotationSelected;
   const gridXsValueForUploader = isReviewStatusShown ? 6 : 12;
 
   const isFormInvalid = () => {
-    if (
-      classes.length === 0 ||
-      loading ||
-      values.name === '' ||
-      values.type === '' ||
-      values.dueAt === null
-    )
+    if (classes.length === 0 || loading || values.name === '' || values.type === '' || values.dueAt === null)
       return true;
 
     // selected image annotation and data type not selected should return true;
     if (isImageAnnotationSelected && values.dataType === '') return true;
 
     // selected image annotation for non `human in the loop` and no images added
-    if (
-      values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value &&
-      values.images.length === 0
-    )
-      return true;
+    if (values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && values.images.length === 0) return true;
 
     // if data type is pre-annotated and there is no review status should return true;
     if (isReviewStatusShown && !values.reviewStatus) return true;
@@ -414,8 +406,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
             : isReviewStatusShown
             ? handleSubmit(onSubmitPreAnnotated)
             : handleSubmit(onSubmit)
-        }
-      >
+        }>
         <ImagesStatus
           onDelete={deleteImageHandler}
           open={isImageStatusModalOpened}
@@ -445,12 +436,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                     <Grid item xs={12} md={gridMDValueForAnnotationSelect}>
                       <RHFSelect name="type" label="Project Type">
                         {Object.keys(ANNOTATION_TYPES).map((key) => (
-                          <MenuItem
-                            key={key}
-                            value={
-                              ANNOTATION_TYPES[key as AnnotationTypeKey]?.value
-                            }
-                          >
+                          <MenuItem key={key} value={ANNOTATION_TYPES[key as AnnotationTypeKey]?.value}>
                             {ANNOTATION_TYPES[key as AnnotationTypeKey]?.label}
                           </MenuItem>
                         ))}
@@ -460,19 +446,8 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                       <Grid item xs={12} md={gridMDValueForAnnotationSelect}>
                         <RHFSelect name="dataType" label="Data Type">
                           {Object.keys(IMAGE_DATA_TYPE).map((key) => (
-                            <MenuItem
-                              key={key}
-                              value={
-                                IMAGE_DATA_TYPE[
-                                  key as keyof typeof IMAGE_DATA_TYPE
-                                ]?.value
-                              }
-                            >
-                              {
-                                IMAGE_DATA_TYPE[
-                                  key as keyof typeof IMAGE_DATA_TYPE
-                                ]?.label
-                              }
+                            <MenuItem key={key} value={IMAGE_DATA_TYPE[key as keyof typeof IMAGE_DATA_TYPE]?.value}>
+                              {IMAGE_DATA_TYPE[key as keyof typeof IMAGE_DATA_TYPE]?.label}
                             </MenuItem>
                           ))}
                         </RHFSelect>
@@ -488,39 +463,40 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                   <Grid container spacing={2}>
                     <Grid item md={8} xs={12}>
                       <Grid container spacing={2}>
-                        {isImageAnnotationSelected &&
-                          values.dataType !==
-                            IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && (
-                            <Grid item xs={gridXsValueForUploader}>
-                              <div>
-                                <RHFUploadMultiFile
-                                  name="images"
-                                  showPreview={false}
-                                  accept="image/*"
-                                  minHeight={400}
-                                  maxSize={31045728555}
-                                  onDrop={handleDrop}
-                                  onRemove={handleRemove}
-                                  onRemoveAll={handleRemoveAll}
-                                  uploading={uploading}
-                                  label="Drop or Select Images file"
-                                  progress={progress}
-                                  buffer={progress + 5}
-                                />
-                              </div>
-                            </Grid>
-                          )}
+                        {isImageAnnotationSelected && values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && (
+                          <Grid item xs={gridXsValueForUploader}>
+                            <div>
+                              <RHFUploadMultiFile
+                                name="images"
+                                showPreview={false}
+                                accept="image/*"
+                                minHeight={400}
+                                maxSize={31045728555}
+                                onDrop={handleDrop}
+                                onRemove={handleRemove}
+                                onRemoveAll={handleRemoveAll}
+                                uploading={uploading}
+                                label="Drop or Select Images file"
+                                progress={progress}
+                                buffer={progress + 5}
+                              />
+                            </div>
+                          </Grid>
+                        )}
 
                         {isReviewStatusShown && (
                           <Grid item xs={gridXsValueForUploader}>
                             <div>
-                              <RHFUploadSingleFile
+                              <RHFUploadMultiFile
                                 name="annotationFile"
                                 accept="application/json"
                                 minHeight={400}
                                 maxSize={31045728555}
                                 label="Drop or Select JSON file"
-                                onDrop={handleSingleDrop}
+                                onDrop={handleJSONDrop}
+                                onRemove={handleRemoveJSON}
+                                onRemoveAll={handleRemoveAllJSON}
+                                showPreview={false}
                               />
                             </div>
                           </Grid>
@@ -531,29 +507,14 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                       <Box display="flex" flexDirection="column" flex={1}>
                         {isReviewStatusShown && (
                           <Box mb={3}>
-                            <RHFSelect
-                              name="reviewStatus"
-                              label="Review Status"
-                            >
-                              {[
-                                IMAGE_STATUS.PENDING_ANNOTATION.value,
-                                IMAGE_STATUS.PENDING_CLIENT_REVIEW.value,
-                              ].map((key) => (
-                                <MenuItem
-                                  key={key}
-                                  value={
-                                    IMAGE_STATUS[
-                                      key as keyof typeof IMAGE_STATUS
-                                    ]?.value
-                                  }
-                                >
-                                  {
-                                    IMAGE_STATUS[
-                                      key as keyof typeof IMAGE_STATUS
-                                    ]?.label
-                                  }
-                                </MenuItem>
-                              ))}
+                            <RHFSelect name="reviewStatus" label="Review Status">
+                              {[IMAGE_STATUS.PENDING_ANNOTATION.value, IMAGE_STATUS.PENDING_CLIENT_REVIEW.value].map(
+                                (key) => (
+                                  <MenuItem key={key} value={IMAGE_STATUS[key as keyof typeof IMAGE_STATUS]?.value}>
+                                    {IMAGE_STATUS[key as keyof typeof IMAGE_STATUS]?.label}
+                                  </MenuItem>
+                                )
+                              )}
                             </RHFSelect>
                           </Box>
                         )}
@@ -566,17 +527,12 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                               </Typography>
                             </Grid>
                             <Grid item md={6} xs={12}>
-                              <Box
-                                flex={1}
-                                display="flex"
-                                justifyContent="flex-end"
-                              >
+                              <Box flex={1} display="flex" justifyContent="flex-end">
                                 <Button
                                   variant="contained"
                                   startIcon={<Iconify icon={'eva:plus-fill'} />}
                                   onClick={addClassHandler}
-                                  fullWidth={false}
-                                >
+                                  fullWidth={false}>
                                   Add Class
                                 </Button>
                               </Box>
@@ -592,8 +548,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                           style={{
                             overflowY: 'auto',
                             overflowX: 'hidden',
-                          }}
-                        >
+                          }}>
                           <Box
                             minHeight="min-content"
                             display="flex"
@@ -605,14 +560,8 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                             // bottom={0}
                           >
                             {classes.map((c, index) => (
-                              <Box
-                                key={c.name + index}
-                                sx={{ marginBottom: 1 }}
-                              >
-                                <ClassItem
-                                  item={c}
-                                  onDelete={() => deleteClassHandler(index)}
-                                />
+                              <Box key={c.name + index} sx={{ marginBottom: 1 }}>
+                                <ClassItem item={c} onDelete={() => deleteClassHandler(index)} />
                               </Box>
                             ))}
                           </Box>
@@ -624,8 +573,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
                             variant="contained"
                             fullWidth
                             disabled={isFormInvalid()}
-                            loading={isSubmitting || loading}
-                          >
+                            loading={isSubmitting || loading}>
                             Save & Preview
                           </LoadingButton>
                         </Box>
@@ -642,8 +590,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
         open={tokenModalOpen}
         onClose={() => setTokenModalOpen(false)}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+        aria-describedby="modal-modal-description">
         <Box
           sx={{
             position: 'absolute' as 'absolute',
@@ -655,8 +602,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
             border: '2px solid #000',
             boxShadow: 24,
             p: 4,
-          }}
-        >
+          }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Your SDK Token
           </Typography>
@@ -664,10 +610,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({
             Use this token with our SDK to upload images to this project.
             <br />
           </Typography>
-          <Typography
-            variant="caption"
-            sx={{ wordBreak: 'break-all', fontSize: 10 }}
-          >
+          <Typography variant="caption" sx={{ wordBreak: 'break-all', fontSize: 10 }}>
             {sdkToken}
           </Typography>
         </Box>
