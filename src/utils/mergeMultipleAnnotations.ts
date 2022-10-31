@@ -60,8 +60,8 @@ const mergeMultiAnnotations = async (jsonFiles: Blob[]) => {
       anno.image_id = imgMap[anno.image_id];
       return anno;
     });
-    mergedSchema.images.push(...images);
-    mergedSchema.annotations.push(...annotations);
+    mergedSchema.images = [...mergedSchema.images, ...images]  
+    mergedSchema.annotations = [...mergedSchema.annotations, ...annotations]
   }
 
   return mergedSchema;

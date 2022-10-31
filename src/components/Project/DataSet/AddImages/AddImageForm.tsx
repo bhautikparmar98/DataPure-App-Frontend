@@ -3,24 +3,22 @@ import { useCallback, useMemo, useState } from 'react';
 // form
 
 // @mui
+import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Stack, Typography } from '@mui/material';
+import { Box } from '@mui/system';
 import { useSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { FormProvider, RHFUploadMultiFile } from 'src/components/Shared/hook-form';
 import { UploadMultiFile } from 'src/components/Shared/upload';
+import { TOOLS } from 'src/constants';
+import { IMAGE_DATA_TYPE } from 'src/constants/dataType';
 import { IMAGE_STATUS } from 'src/constants/ImageStatus';
 import axiosInstance from 'src/utils/axios';
-import { IImage } from '../types';
-import { IMAGE_DATA_TYPE } from 'src/constants/dataType';
-import { FormProvider, RHFUploadSingleFile } from 'src/components/Shared/hook-form';
-import { parseJsonFile } from 'src/utils/parseJsonFile';
-import { availableColors } from 'src/constants/availableColors';
-import { IProject, IProjectClass } from '../../List/types/project';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { useRouter } from 'next/router';
-import { TOOLS } from 'src/constants';
-import { Box } from '@mui/system';
+import { IProject } from '../../List/types/project';
+import { IImage } from '../types';
+import useJSONDrop from './useJSONDrop';
 
 // ----------------------------------------------------------------------
 
@@ -43,9 +41,19 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [jsonData, setJsonData] = useState<any>([]);
-  const [classes, setClasses] = useState<IProjectClass[]>([]);
   const [currentProject, setCurrentProject] = useState<IProject | null>(null);
+
+  const { jsonData, handleJSONDrop, handleRemoveAllJSON, handleRemoveJSON } = useJSONDrop({
+    onLoadingChange,
+    onAnnotationFileChange,
+  });
+
+  function onLoadingChange(isLoading: boolean) {
+    setLoading(isLoading);
+  }
+  function onAnnotationFileChange(newValue: any) {
+    setValue('annotationFile', newValue);
+  }
 
   const NewProjectSchema = Yup.object().shape({
     // name: Yup.string().required('Name is required'),
@@ -59,8 +67,6 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
 
   const defaultValues = useMemo(
     () => {
-      setClasses(currentProject?.classes || []);
-
       return {
         name: currentProject?.name || '',
         type: currentProject?.type || '',
@@ -131,7 +137,6 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
 
       if (jsonData && jsonData.annotations && images) {
         const imgIdMap: any = {};
-
         const imagesWithNoData: any[] = [];
         let annotationsWithNoImages = 0;
 
@@ -257,41 +262,6 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
     setImages(filteredItems);
   };
 
-  const handleSingleDrop = useCallback(
-    async (acceptedFiles: any) => {
-      const file = acceptedFiles[0];
-
-      const data = await parseJsonFile(file);
-      if (!data.categories) {
-        return enqueueSnackbar('Invalid file structure', { variant: 'error' });
-      }
-
-      if (!data.annotations)
-        return enqueueSnackbar('There is no annotations in this file', {
-          variant: 'error',
-        });
-
-      const newClasses = data.categories.map((cat: any, index: number) => ({
-        id: cat.id,
-        name: cat.name,
-        color: availableColors[index % availableColors.length],
-      }));
-
-      setClasses(newClasses);
-      setJsonData(data);
-
-      if (file) {
-        setValue(
-          'annotationFile',
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        );
-      }
-    },
-    [setValue]
-  );
-
   return (
     <FormProvider methods={methods}>
       <Stack color="text.secondary" sx={{ mt: 2, display: 'flex' }}>
@@ -310,17 +280,18 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
             buffer={progress + 5}
           />
           {projectType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value ? (
-            <RHFUploadSingleFile
+            <RHFUploadMultiFile
               name="annotationFile"
               accept="application/json"
               minHeight={400}
               maxSize={31045728555}
-              label="Drop or Select JSON file"
-              onDrop={handleSingleDrop}
+              label="Drop or Select JSON files"
+              onDrop={handleJSONDrop}
+              onRemove={handleRemoveJSON}
+              onRemoveAll={handleRemoveAllJSON}
+              showPreview={false}
             />
-          ) : (
-            <></>
-          )}
+          ) : null}
         </Box>
         {images.length !== 0 && <Typography variant="subtitle2">You have uploaded {images.length} images</Typography>}
       </Stack>
