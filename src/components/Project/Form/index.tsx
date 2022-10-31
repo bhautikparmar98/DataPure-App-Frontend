@@ -22,12 +22,7 @@ import {
   Modal,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {
-  FormProvider,
-  RHFSelect,
-  RHFTextField,
-  RHFUploadMultiFile,
-} from 'src/components/Shared/hook-form';
+import { FormProvider, RHFSelect, RHFTextField, RHFUploadMultiFile } from 'src/components/Shared/hook-form';
 import RHFDatePicker from 'src/components/Shared/hook-form/RHFDatePicker';
 import Iconify from 'src/components/Shared/Iconify';
 import { ANNOTATION_TYPES } from 'src/constants';
@@ -61,6 +56,8 @@ interface FormValuesProps extends Partial<IProject> {
 interface ProjectFormComponentProps {
   isEdit?: boolean;
 }
+
+const MAX_SIZE = 50_000_000; //50 MB
 
 const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) => {
   const { themeStretch } = useSettings();
@@ -471,7 +468,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
                                 showPreview={false}
                                 accept="image/*"
                                 minHeight={400}
-                                maxSize={31045728555}
+                                maxSize={MAX_SIZE}
                                 onDrop={handleDrop}
                                 onRemove={handleRemove}
                                 onRemoveAll={handleRemoveAll}

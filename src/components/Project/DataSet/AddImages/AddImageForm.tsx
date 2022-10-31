@@ -35,6 +35,8 @@ interface FormValuesProps extends Partial<IProject> {
   annotationFile?: string;
 }
 
+const MAX_SIZE = 50_000_000; //50 MB
+
 const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType, onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [images, setImages] = useState<any[]>([]);
@@ -271,7 +273,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
             files={images}
             minHeight={400}
             showPreview={false}
-            maxSize={31045728}
+            maxSize={MAX_SIZE}
             onDrop={handleDrop}
             onRemove={handleRemove}
             onRemoveAll={handleRemoveAll}
