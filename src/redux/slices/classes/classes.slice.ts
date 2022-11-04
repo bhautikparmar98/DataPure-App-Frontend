@@ -248,7 +248,7 @@ const classesSlice = createSlice({
           index = annotations[i].shapes.findIndex((shape) => shape.id === shapeId);
           if (index !== -1) {
             classes[selectedClassIndex].annotations[i].shapes[index] = {
-              ...annotations[i].shapes,
+              ...annotations[i].shapes[index],
               ...newAttrs,
               id: uniqid(),
             } as any;

@@ -41,7 +41,19 @@ const Rectangle = ({
   // For Rectangle transformation (size & rotation)
   const handleRectChange = useCallback((newAttrs: Konva.ShapeConfig) => {
     if (newAttrs?.id && newAttrs?.id?.length > 0) {
-      dispatch(updateShape({ classItemName, newAttrs }));
+      dispatch(
+        updateShape({
+          classItemName,
+          newAttrs: {
+            x: newAttrs?.x || 0,
+            y: newAttrs?.y || 0,
+            width: newAttrs?.width || 0,
+            height: newAttrs?.height || 0,
+            id: newAttrs?.id || '',
+            points: newAttrs?.points || [],
+          },
+        })
+      );
     }
   }, []);
 
