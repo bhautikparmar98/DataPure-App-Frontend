@@ -38,24 +38,15 @@ type Props = {
   onCloseSidebar: VoidFunction;
 };
 
-export default function NavbarVertical({
-  isOpenSidebar,
-  onCloseSidebar,
-}: Props) {
+export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
   const theme = useTheme();
 
   const { pathname } = useRouter();
 
   const isDesktop = useResponsive('up', 'lg');
 
-  const {
-    isCollapse,
-    collapseClick,
-    collapseHover,
-    onToggleCollapse,
-    onHoverEnter,
-    onHoverLeave,
-  } = useCollapseDrawer();
+  const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
+    useCollapseDrawer();
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -74,8 +65,7 @@ export default function NavbarVertical({
           flexDirection: 'column',
         },
         background: theme.palette.gradients.secondary,
-      }}
-    >
+      }}>
       <Stack
         spacing={3}
         sx={{
@@ -83,20 +73,12 @@ export default function NavbarVertical({
           px: 2.5,
           flexShrink: 0,
           ...(isCollapse && { alignItems: 'center' }),
-        }}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+        }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Logo />
 
           {isDesktop && !isCollapse && (
-            <CollapseButton
-              onToggleCollapse={onToggleCollapse}
-              collapseClick={collapseClick}
-            />
+            <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
           )}
         </Stack>
 
@@ -113,21 +95,14 @@ export default function NavbarVertical({
     <RootStyle
       sx={{
         width: {
-          lg: isCollapse
-            ? NAVBAR.DASHBOARD_COLLAPSE_WIDTH
-            : NAVBAR.DASHBOARD_WIDTH,
+          lg: isCollapse ? NAVBAR.DASHBOARD_COLLAPSE_WIDTH : NAVBAR.DASHBOARD_WIDTH,
         },
         ...(collapseClick && {
           position: 'absolute',
         }),
-      }}
-    >
+      }}>
       {!isDesktop && (
-        <Drawer
-          open={isOpenSidebar}
-          onClose={onCloseSidebar}
-          PaperProps={{ sx: { width: NAVBAR.DASHBOARD_WIDTH } }}
-        >
+        <Drawer open={isOpenSidebar} onClose={onCloseSidebar} PaperProps={{ sx: { width: NAVBAR.DASHBOARD_WIDTH } }}>
           {renderContent}
         </Drawer>
       )}
@@ -141,6 +116,7 @@ export default function NavbarVertical({
           PaperProps={{
             sx: {
               width: NAVBAR.DASHBOARD_WIDTH,
+              zIndex: 0,
               borderRightStyle: 'dashed',
               bgcolor: 'transparent',
               transition: (theme) =>
@@ -155,8 +131,7 @@ export default function NavbarVertical({
                 boxShadow: (theme) => theme.customShadows.z24,
               }),
             },
-          }}
-        >
+          }}>
           {renderContent}
         </Drawer>
       )}
