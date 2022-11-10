@@ -39,12 +39,19 @@ import { parseJsonFile } from 'src/utils/parseJsonFile';
 import { availableColors } from 'src/constants/availableColors';
 import ImagesStatus from './ImagesStatus';
 import mergeMultiAnnotations from 'src/utils/mergeMultipleAnnotations';
+import useDrivePicker from 'react-google-drive-picker';
+import DropboxChooser from 'react-dropbox-chooser';
 
-const LabelStyle = styled(Typography)(({ theme }) => ({
-  ...theme.typography.subtitle2,
-  color: theme.palette.text.secondary,
-  marginBottom: theme.spacing(1),
-}));
+const CloudGridStyle = styled(Grid)({
+  padding: '24px 8px',
+  backgroundColor: '#F4F6F8',
+  border: '3px dashed #688BB1',
+  filter:
+    'drop-shadow(0px 0px 33px rgba(0, 0, 0, 0.03)) drop-shadow(0px 0px 7.37098px rgba(0, 0, 0, 0.0178832)) drop-shadow(0px 0px 2.19453px rgba(0, 0, 0, 0.0121168))',
+  borderRadius: '10px',
+  height: '100%',
+  marginLeft: 0,
+});
 
 interface FormValuesProps extends Partial<IProject> {
   images: string[];
@@ -70,6 +77,36 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
   const [uploading, setUploading] = useState(false);
   const [isImageStatusModalOpened, setIsImageStatusModalOpened] = useState(false);
   const [jsonData, setJsonData] = useState([]);
+
+  // --- dropBox && drive -----------------
+  var cloudImageFiles: any = [];
+
+  // drive Handle
+  const scope = ['https://www.googleapis.com/auth/drive.file'];
+
+  const [openPicker, data] = useDrivePicker();
+
+  const handleOpenDrivePicker = () => {
+    openPicker({
+      clientId: process.env.NEXT_PUBLIC_DRIVE_TEST_CLIENTID ?? '',
+      developerKey: process.env.NEXT_PUBLIC_DRIVE_TEST_DEVELOPER_KEY ?? '',
+      viewId: 'DOCS_IMAGES',
+      showUploadView: true,
+      showUploadFolders: true,
+      supportDrives: true,
+      multiselect: true,
+      customScopes: scope,
+      callbackFunction: (data) => {
+        if (data.action === 'cancel') {
+          console.log('User clicked cancel/close button');
+        }
+        if (data.action === 'picked') {
+          const cloudDriveFiles = data.docs.filter((file) => file.name.includes('.jpg') || file.name.includes('.jpeg'));
+          handleDriveDrop(cloudDriveFiles);
+        }
+      },
+    });
+  };
 
   const [tokenModalOpen, setTokenModalOpen] = useState(false);
   //sdk token for human in the loop project
@@ -162,12 +199,16 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
   const onSubmitPreAnnotatedConfirmed = async (rows: any[]) => {
     setLoading(true);
     setIsImageStatusModalOpened(false);
-
     try {
       const imageList = values.images.map((i: any) => i.name);
 
+      const cloudImageList = values.images.map((i: any) =>
+        i?.link ? { name: i.name, link: i.link } : { name: i.name }
+      );
+
       const response = await axiosInstance.post('/image/sign', {
         files: imageList,
+        cloudFiles: cloudImageList,
       });
 
       const { files } = response.data;
@@ -211,10 +252,15 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
 
     try {
       const imageList = data.images.map((i: any) => i.name);
+      const cloudImageList = values.images.map((i: any) =>
+        i?.link ? { name: i.name, link: i.link } : { name: i.name }
+      );
 
       const response = await axiosInstance.post('/image/sign', {
         files: imageList,
+        cloudFiles: cloudImageList,
       });
+
       const { files } = response.data;
 
       await uploadHandler(files, data.images);
@@ -289,6 +335,38 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
           })
         )
       );
+    },
+    [setValue]
+  );
+
+  const handleDriveDrop = useCallback(
+    async (acceptedFiles: any[]) => {
+      acceptedFiles.map((file) => {
+        const link = file?.url?.replace('file/d/', 'uc?id=').replace('/view?usp=drive_web', '&export=download');
+        cloudImageFiles.push(
+          Object.assign(file, {
+            link: link,
+            type: 'image/jpeg',
+          })
+        );
+      });
+      cloudImageFiles?.length && setValue('images', cloudImageFiles);
+    },
+    [setValue]
+  );
+
+  const dropBoxImageHandler = useCallback(
+    async (acceptedFiles: any[]) => {
+      acceptedFiles.map((file) => {
+        const link = file?.link?.split('=')[0].concat('=1');
+        cloudImageFiles.push(
+          Object.assign(file, {
+            link: link,
+            type: 'image/jpeg',
+          })
+        );
+      });
+      cloudImageFiles?.length && setValue('images', cloudImageFiles);
     },
     [setValue]
   );
@@ -462,22 +540,62 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
                       <Grid container spacing={2}>
                         {isImageAnnotationSelected && values.dataType !== IMAGE_DATA_TYPE.HUMAN_IN_LOOP.value && (
                           <Grid item xs={gridXsValueForUploader}>
-                            <div>
-                              <RHFUploadMultiFile
-                                name="images"
-                                showPreview={false}
-                                accept="image/*"
-                                minHeight={400}
-                                maxSize={MAX_SIZE}
-                                onDrop={handleDrop}
-                                onRemove={handleRemove}
-                                onRemoveAll={handleRemoveAll}
-                                uploading={uploading}
-                                label="Drop or Select Images file"
-                                progress={progress}
-                                buffer={progress + 5}
-                              />
-                            </div>
+                            <Grid
+                              item
+                              xs={12}
+                              display="flex"
+                              flexDirection="column"
+                              width="100%"
+                              justifyContent="space-evenly">
+                              <Grid item xs={12}>
+                                <RHFUploadMultiFile
+                                  name="images"
+                                  showPreview={false}
+                                  accept="image/*"
+                                  minHeight={200}
+                                  maxSize={31045728555}
+                                  onDrop={handleDrop}
+                                  onRemove={handleRemove}
+                                  onRemoveAll={handleRemoveAll}
+                                  uploading={uploading}
+                                  label="Drop or Select Images file"
+                                  progress={progress}
+                                  buffer={progress + 5}
+                                />
+                              </Grid>
+                              <Grid item xs={12}>
+                                {isImageAnnotationSelected && (
+                                  <Stack mt={2}>
+                                    <CloudGridStyle item spacing={1} xs={12} minHeight={200}>
+                                      <Grid item md={8} xs={12}>
+                                        <Grid container spacing={2}>
+                                          <Grid item>
+                                            <Button
+                                              variant="contained"
+                                              fullWidth={false}
+                                              onClick={() => handleOpenDrivePicker()}>
+                                              Drive
+                                            </Button>
+                                          </Grid>
+                                          <Grid item>
+                                            <DropboxChooser
+                                              appKey={process.env.NEXT_PUBLIC_DROPBOX_APP_KEY}
+                                              success={(files: any) => dropBoxImageHandler(files)}
+                                              cancel={() => console.log('closed')}
+                                              multiselect={true}
+                                              extensions={['.jpg', '.jpeg']}>
+                                              <Button variant="contained" fullWidth={false}>
+                                                DropBox
+                                              </Button>
+                                            </DropboxChooser>
+                                          </Grid>
+                                        </Grid>
+                                      </Grid>
+                                    </CloudGridStyle>
+                                  </Stack>
+                                )}
+                              </Grid>
+                            </Grid>
                           </Grid>
                         )}
 
@@ -487,7 +605,7 @@ const ProjectFormComponent: React.FC<ProjectFormComponentProps> = ({ isEdit }) =
                               <RHFUploadMultiFile
                                 name="annotationFile"
                                 accept="application/json"
-                                minHeight={400}
+                                minHeight={420}
                                 maxSize={31045728555}
                                 label="Drop or Select JSON file"
                                 onDrop={handleJSONDrop}
