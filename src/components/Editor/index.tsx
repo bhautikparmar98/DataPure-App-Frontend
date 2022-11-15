@@ -20,7 +20,9 @@ const Editor = () => {
   const imageId: string = useSelector((state: RootState) => state.classes.imageId);
   const [annotationId, setAnnotationId] = useState('');
 
-  const { images, removeImage, isAnnotatorRedo } = useFetchImage(id);
+  const storedImgId = localStorage.getItem(id) || '';
+
+  const { images, removeImage, isAnnotatorRedo } = useFetchImage(id, storedImgId);
 
   const { addComment, deleteComment } = useImageComments({
     isAnnotatorRedo,
