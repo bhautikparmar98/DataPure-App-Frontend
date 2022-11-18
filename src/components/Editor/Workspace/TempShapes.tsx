@@ -16,7 +16,7 @@ const TempShapes = ({ lines, rects = [], classColor, stageScale }: Shapes) => (
         {...rects[0]}
         listening={false}
         key={'temp-rect'}
-        strokeWidth={5 / stageScale}
+        strokeWidth={3 / stageScale}
         fill={classColor.replace(')', ', 0.35)').replace('rgb', 'rgba')}
       />
     )}

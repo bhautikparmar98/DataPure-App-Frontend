@@ -97,7 +97,7 @@ const Shapes = ({
                         stroke: classItem.color,
                         width: shape.width * bgWidthScale,
                         height: shape.height * bgHeightScale,
-                        strokeWidth: 5 / stageScale,
+                        strokeWidth: 3 / stageScale,
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}
