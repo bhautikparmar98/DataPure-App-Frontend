@@ -177,12 +177,18 @@ const Workspace: any = ({
                 bgY={bgY}
                 bgWidthScale={bgWidthScale}
                 bgHeightScale={bgHeightScale}
+                stageScale={stageScale.stageScale}
               />
             </Group>
           </Layer>
 
           <Layer>
-            <TempShapes lines={lines} rects={rects} classColor={classes[selectedClassIndex]?.color} />
+            <TempShapes
+              lines={lines}
+              rects={rects}
+              classColor={classes[selectedClassIndex]?.color}
+              stageScale={stageScale.stageScale}
+            />
             {tooltip.text.length > 0 && (
               <Group>
                 <Rect
