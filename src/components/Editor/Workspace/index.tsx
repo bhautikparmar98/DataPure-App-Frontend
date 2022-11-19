@@ -108,13 +108,11 @@ const Workspace: any = ({
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
-  let commentFactor = 1,
-    mainScale = stageScale.stageScale;
-  if (stageScale.stageScale > 1) {
-    commentFactor = Math.min(1 / mainScale, 1 / 20);
-  } else {
-    commentFactor = Math.min(mainScale / 10, 2);
+  let commentFactor = Math.min(stageScale.stageScale / 10, 2);
+  if (stageScale.stageScale >= 1) {
+    commentFactor = Math.min(1 / stageScale.stageScale, 1 / 20);
   }
+
   return (
     <div
       ref={workspaceRef}
@@ -230,8 +228,8 @@ const Workspace: any = ({
                   image={image}
                   scaleX={commentFactor * 0.5}
                   scaleY={commentFactor * 0.5}
-                  x={comment.x * bgWidthScale + bgX + (1500 / 2) * commentFactor}
-                  y={comment.y * bgHeightScale + bgY + (1500 / 2) * commentFactor}
+                  x={comment.x * bgWidthScale + bgX + (-1500 / 2) * commentFactor}
+                  y={comment.y * bgHeightScale + bgY + (-1500 / 2) * commentFactor}
                   alt="Comment"
                   type="Comment"
                   draggable
