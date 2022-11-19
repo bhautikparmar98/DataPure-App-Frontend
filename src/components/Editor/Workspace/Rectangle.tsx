@@ -17,6 +17,7 @@ interface IRectangle {
   otherProps?: any;
   bgWidthScale: number;
   bgHeightScale: number;
+  stageScale: number;
 }
 
 const Rectangle = ({
@@ -30,12 +31,13 @@ const Rectangle = ({
   bgY,
   bgWidthScale,
   bgHeightScale,
+  stageScale,
   ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
-  const props = useMemo(() => shapeProps, []);
+  const props = useMemo(() => shapeProps, [shapeProps.strokeWidth]);
 
   const dispatch = useDispatch();
   // For Rectangle transformation (size & rotation)
@@ -133,7 +135,11 @@ const Rectangle = ({
 
 // this needs some optimization
 const propsAreEqual = (prev: IRectangle, next: IRectangle) => {
-  return prev.isSelected === next.isSelected && isEqual(prev.shapeProps, next.shapeProps);
+  return (
+    prev.stageScale === next.stageScale &&
+    prev.isSelected === next.isSelected &&
+    isEqual(prev.shapeProps, next.shapeProps)
+  );
 };
 
 export default memo(Rectangle, propsAreEqual);

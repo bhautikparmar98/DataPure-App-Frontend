@@ -5,6 +5,7 @@ import { setComments as setCommentsAction } from 'src/redux/slices/classes/class
 import { ROLES, Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { RootState } from 'src/redux/store';
+import _ from 'lodash';
 interface Comment {
   text: string;
   x: number;
@@ -63,6 +64,7 @@ const useComment = (
       textarea.disabled = true;
       textarea.style.backgroundColor = '#fff';
     }
+    textarea.tabIndex = 2;
     textarea.focus();
     return textarea;
   };
@@ -77,11 +79,11 @@ const useComment = (
     const { x = 0, y = 0 } = e.target.getStage()!.getPointerPosition()!;
 
     const textarea = createStyledTextarea(x, y, text);
-
     textarea.addEventListener('keydown', function (e) {
       if (e.code === 'Enter' && textarea.value.length > 0) {
-        comments[commendIndex].text = textarea.value;
-        const newComments = comments.map((comment, i) => {
+        const currentComments = _.cloneDeep(comments);
+        currentComments[commendIndex].text = textarea.value;
+        const newComments = currentComments.map((comment, i) => {
           if (i === commendIndex) comment.text = textarea.value;
           return comment;
         });
@@ -109,8 +111,8 @@ const useComment = (
       const { x = 0, y = 0 } = bg!.getStage()!.getRelativePointerPosition();
       const { x: bgX = 0, y: bgY = 0 } = bg?.attrs;
 
-      const absoluteX = (x - 65 - bgX) / bgWidthScale;
-      const absoluteY = (y - 65 - bgY) / bgHeightScale;
+      const absoluteX = (x - bgX) / bgWidthScale;
+      const absoluteY = (y - bgY) / bgHeightScale;
 
       const { x: stageX = 0, y: stageY = 0 } = e.target?.getStage()!.getPointerPosition()!;
 
@@ -122,7 +124,7 @@ const useComment = (
           if (e.code === 'Enter' && textarea.value.length > 0) {
             const newComments = [...comments, { text: textarea.value, x: absoluteX, y: absoluteY }];
 
-            onAddComment(textarea.value, (x - bgX) / bgWidthScale - 65, (y - bgY) / bgHeightScale - 65);
+            onAddComment(textarea.value, (x - bgX) / bgWidthScale, (y - bgY) / bgHeightScale);
             dispatch(setCommentsAction({ newComments }));
 
             document.body!.removeChild(textarea);

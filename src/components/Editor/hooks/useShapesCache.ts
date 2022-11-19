@@ -22,23 +22,10 @@ interface Props {
 */
 
 const useShapesCache = ({ stageRef, zooming }: Props) => {
-  const stageDragging = useSelector(
-    (state: RootState) => state.editor.stageDragging
-  );
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
 
-  // const shapes = stageRef.current?.find(
-  //   "#shapes_group"
-  // )[0] as Konva.Group | null;
-  // const bgLayer = stageRef.current?.find(
-  //   "#background_layer"
-  // )[0] as Konva.Layer | null;
-
-  const [cachedShapes, setCachedShapes] = useState<Konva.Group | null>(null);
   const [shouldCache, setShouldCache] = useState(false);
   const [cachedVisible, setCachedVisible] = useState(false);
-  // const lastTimeUpdated = useSelector(
-  //   (state: RootState) => state.classes.lastUpdate
-  // );
 
   //show or hide cache
   const handleShapesCaching = () => {
@@ -51,38 +38,6 @@ const useShapesCache = ({ stageRef, zooming }: Props) => {
       setCachedVisible(false);
     }
   };
-
-  // const setNewCache = useCallback(
-  //   _.debounce(() => {
-  //     if (stageDragging || zooming) return;
-  //     if (shapes && shapes.children && shapes.children.length > 0) {
-  //       if (cachedShapes) {
-  //         bgLayer?.findOne("#shapes_clone")?.destroy();
-  //       }
-  //       //create new cache
-  //       const newCache = shapes?.clone();
-  //       if (newCache) {
-  //         newCache.cache({ drawBorder: true });
-  //         newCache.hide();
-  //         newCache.attrs.id = "shapes_clone";
-  //         newCache.attrs.opacity = 0.6;
-  //         bgLayer?.add(newCache);
-  //         setCachedShapes(newCache);
-  //       }
-  //     }
-  //   }, 400),
-  //   [lastTimeUpdated]
-  //   // [shapes, zooming, stageDragging, lastTimeUpdated]
-  // );
-
-  //update cache when classes change
-  // useEffect(() => {
-  //   setNewCache();
-  // }, [shapes]);
-
-  // useEffect(() => {
-  //   lastTimeUpdated && setNewCache();
-  // }, [lastTimeUpdated]);
 
   //show cache while zooming/stageDragging
   useEffect(() => {

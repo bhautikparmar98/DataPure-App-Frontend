@@ -27,6 +27,7 @@ interface IShapes {
   bgY: number;
   bgWidthScale: number;
   bgHeightScale: number;
+  stageScale: number;
   handleShapeMove: (e: any, classId: number, group: any, annotationId: string) => void;
   showTooltip: (e: Konva.KonvaEventObject<DragEvent>) => void;
   hideTooltip: () => void;
@@ -45,6 +46,7 @@ const Shapes = ({
   bgY,
   bgWidthScale,
   bgHeightScale,
+  stageScale,
 }: IShapes) => {
   const handleShapeClick = useCallback((e: any, shapeId: string) => {
     selectShape(shapeId);
@@ -95,7 +97,7 @@ const Shapes = ({
                         stroke: classItem.color,
                         width: shape.width * bgWidthScale,
                         height: shape.height * bgHeightScale,
-                        strokeWidth: 1,
+                        strokeWidth: 3 / stageScale,
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}
@@ -106,6 +108,7 @@ const Shapes = ({
                       bgY={bgY}
                       bgWidthScale={bgWidthScale}
                       bgHeightScale={bgHeightScale}
+                      stageScale={stageScale}
                     />
                   )}
                 </Group>
