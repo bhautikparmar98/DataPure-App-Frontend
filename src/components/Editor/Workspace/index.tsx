@@ -108,6 +108,13 @@ const Workspace: any = ({
 
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
+  let commentFactor = 1,
+    mainScale = stageScale.stageScale;
+  if (stageScale.stageScale > 1) {
+    commentFactor = Math.min(1 / mainScale, 1 / 20);
+  } else {
+    commentFactor = Math.min(mainScale / 10, 2);
+  }
   return (
     <div
       ref={workspaceRef}
@@ -218,17 +225,17 @@ const Workspace: any = ({
               comments.map((comment, commendIndex) => (
                 <Image
                   key={commendIndex}
-                  width={15 / stageScale.stageScale}
-                  height={15 / stageScale.stageScale}
+                  width={1500}
+                  height={1500}
                   image={image}
-                  scaleX={stageScale.stageScale * 5}
-                  scaleY={stageScale.stageScale * 5}
-                  x={comment.x * bgWidthScale + bgX}
-                  y={comment.y * bgHeightScale + bgY}
+                  scaleX={commentFactor * 0.5}
+                  scaleY={commentFactor * 0.5}
+                  x={comment.x * bgWidthScale + bgX + (1500 / 2) * commentFactor}
+                  y={comment.y * bgHeightScale + bgY + (1500 / 2) * commentFactor}
                   alt="Comment"
                   type="Comment"
                   draggable
-                  onClick={(e) => handleCommentClick(e, (comment as any).value, commendIndex)}
+                  onClick={(e) => handleCommentClick(e, comment.text, commendIndex)}
                   onMouseEnter={(_) => setCursorStyle('pointer')}
                   onMouseLeave={(_) => setCursorStyle()}
                 />

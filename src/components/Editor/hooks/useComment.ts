@@ -5,6 +5,7 @@ import { setComments as setCommentsAction } from 'src/redux/slices/classes/class
 import { ROLES, Tool } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
 import { RootState } from 'src/redux/store';
+import _ from 'lodash';
 interface Comment {
   text: string;
   x: number;
@@ -63,6 +64,7 @@ const useComment = (
       textarea.disabled = true;
       textarea.style.backgroundColor = '#fff';
     }
+    textarea.tabIndex = 2;
     textarea.focus();
     return textarea;
   };
@@ -77,11 +79,11 @@ const useComment = (
     const { x = 0, y = 0 } = e.target.getStage()!.getPointerPosition()!;
 
     const textarea = createStyledTextarea(x, y, text);
-
     textarea.addEventListener('keydown', function (e) {
       if (e.code === 'Enter' && textarea.value.length > 0) {
-        comments[commendIndex].text = textarea.value;
-        const newComments = comments.map((comment, i) => {
+        const currentComments = _.cloneDeep(comments);
+        currentComments[commendIndex].text = textarea.value;
+        const newComments = currentComments.map((comment, i) => {
           if (i === commendIndex) comment.text = textarea.value;
           return comment;
         });
