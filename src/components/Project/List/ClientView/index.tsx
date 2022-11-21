@@ -13,6 +13,7 @@ import ProjectGrid from '../Shared/ProjectGrid';
 import { IProject } from '../types/project';
 import DeleteProjectModal from './DeleteProjectModal';
 import ProjectListHeader from './Header';
+import ClientProjectStatistics from './Statistics';
 
 const ClientProjectsComponent = () => {
   const { themeStretch } = useSettings();
@@ -102,6 +103,9 @@ const ClientProjectsComponent = () => {
         )}
 
         <ProjectGrid
+          renderStatistics={(project) => (
+            <ClientProjectStatistics project={project} />
+          )}
           projects={projects}
           syncProjectData={() => getProjects()}
           actions={[
