@@ -2,8 +2,10 @@ import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { useCallback } from 'react';
 import { Group, Line } from 'react-konva';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
+import { selectInstance } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
 import Rectangle from './Rectangle';
 
@@ -48,11 +50,31 @@ const Shapes = ({
   bgHeightScale,
   stageScale,
 }: IShapes) => {
-  const handleShapeClick = useCallback((e: any, shapeId: string) => {
-    selectShape(shapeId);
-    showTooltip(e);
-    e.cancelBubble = true; // to not trigger parents click
-  }, []);
+  const dispatch = useDispatch();
+  const handleShapeClick = useCallback(
+    (
+      e: any,
+      shapeId: string,
+      type: typeof TOOLS.RECTANGLE | typeof TOOLS.LINE,
+      instanceId?: string,
+      classIndex?: number
+    ) => {
+      selectShape(shapeId);
+      showTooltip(e);
+
+      if (type === TOOLS.RECTANGLE) {
+        dispatch(
+          selectInstance({
+            instanceId,
+            classIndex,
+          })
+        );
+      }
+
+      e.cancelBubble = true; // to not trigger parents click
+    },
+    []
+  );
 
   const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
 
@@ -81,7 +103,7 @@ const Shapes = ({
                       draggable={currentTool === TOOLS.SELECT}
                       class={classItem.name}
                       isSelected={shape.id === selectedId}
-                      onClick={(e) => handleShapeClick(e, shape.id)}
+                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.LINE)}
                       opacity={0.7}
                       stroke={classItem.color}
                       strokeWidth={3}
@@ -101,7 +123,7 @@ const Shapes = ({
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId}
-                      onClick={(e) => handleShapeClick(e, shape.id)}
+                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i)}
                       onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
                       bgX={bgX}

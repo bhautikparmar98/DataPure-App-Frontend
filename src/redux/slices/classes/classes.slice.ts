@@ -8,6 +8,7 @@ import uniqid from 'uniqid';
 type State = {
   classes: Class[];
   history: [Class[]];
+  highlightedInstance: string;
   historyStep: number;
   selectedClassIndex: number;
   currentAnnotationId: number | null;
@@ -21,6 +22,7 @@ type State = {
 const initialState = {
   classes: [],
   history: [] as unknown as [Class[]],
+  highlightedInstance: '',
   historyStep: 0,
   selectedClassIndex: 0,
   currentAnnotationId: 0,
@@ -283,6 +285,19 @@ const classesSlice = createSlice({
       state.classes = state.history[state.historyStep];
       state.lastTimeUpdated = new Date().getTime();
     },
+    selectInstance: (state, action) => {
+      const { classIndex, instanceId } = action.payload;
+      if (classIndex >= 0 && typeof instanceId === 'string') {
+        state.classes[classIndex].annotations.map((anno) => {
+          if (anno.id === instanceId) {
+            state.highlightedInstance = instanceId;
+          }
+        });
+      }
+    },
+    deselectInstance: (state) => {
+      state.highlightedInstance = '';
+    },
   },
 });
 
@@ -300,5 +315,7 @@ export const {
   setComments,
   undoHistory,
   redoHistory,
+  selectInstance,
+  deselectInstance,
 } = classesSlice.actions;
 export default classesSlice.reducer;
