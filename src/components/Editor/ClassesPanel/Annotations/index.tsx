@@ -49,6 +49,9 @@ type Props = {
 };
 
 function Annotations({ classes, updateFiltersChecks }: Props) {
+
+  const [expanded, setExpanded] = useState<string | false>(false)
+
   const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
 
   const highlightedInstance = useSelector((state: RootState) => state.classes.highlightedInstance);
@@ -71,14 +74,21 @@ function Annotations({ classes, updateFiltersChecks }: Props) {
   useEffect(() => {
     if (highlightedInstance && highlightedClass) {
       //open the class and scroll to it
+      document.getElementById(highlightedInstance)?.scrollIntoView({behavior:'smooth'})
+      panelToggler(true,`panel_${highlightedClass?._id}`)
     }
   }, [highlightedInstance]);
+
+  const panelToggler = (isExpanded:boolean,panel_Id:string) =>{
+    setExpanded(isExpanded ? panel_Id : false)
+  }
 
   return (
     <div className={styles.list}>
       {classes.length > 0 &&
         classes.map((classItem, index) => (
-          <Accordion
+          <Accordion expanded={expanded === `panel_${classItem._id}`} 
+            onChange={(event,isExpanded)=>panelToggler(isExpanded,`panel_${classItem._id}`)}
             className={selectedClassIndex === index ? styles.activeAccordion : ''}
             key={classItem._id}
             sx={{ marginBottom: 3 }}
@@ -109,7 +119,7 @@ function Annotations({ classes, updateFiltersChecks }: Props) {
                       classIndex={index}
                       selectedClassIndex={selectedClassIndex}
                       visible={visible}
-                      selected={false}
+                      selected={highlightedInstance === id}
                       annoIndex={i}
                       key={`${classItem._id}-${i}`}
                       toggleOne={toggleOne}

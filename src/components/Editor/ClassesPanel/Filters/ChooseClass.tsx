@@ -2,6 +2,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Class } from 'src/constants';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store';
 
 interface Props {
   classes: Class[];
@@ -18,6 +20,10 @@ const ChooseClass = ({
     'Choose class from the list'
   );
 
+  const highlightedInstance = useSelector((state: RootState) => state.classes.highlightedInstance);
+  const highlightedClass = classes.find((classItem) =>
+    classItem.annotations.find((anno) => anno.id === highlightedInstance)
+  );
   const classesList = useMemo(
     () => classes.map((classItem) => classItem.name),
     [classes.length]
@@ -40,6 +46,16 @@ const ChooseClass = ({
     const name = classes[selectedClassIndex]?.name;
     if (name) setChosenClassName(classes[selectedClassIndex]?.name);
   }, [classes.length]);
+
+  useEffect(()=>{
+    if(highlightedClass){
+      console.log("changinf class")
+      setChosenClassName(highlightedClass?.name);
+    }
+  },[highlightedInstance])
+
+  console.log(highlightedInstance)
+
 
   return (
     <>
@@ -79,7 +95,7 @@ const ChooseClass = ({
 const propsAreEqual = (prev: Props, next: Props) => {
   return (
     prev.classes.length === next.classes.length &&
-    prev.selectedClassIndex === next.selectedClassIndex
+    prev.selectedClassIndex === next.selectedClassIndex 
   );
 };
 

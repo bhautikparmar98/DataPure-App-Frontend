@@ -15,6 +15,11 @@ import styled from "@emotion/styled";
 import styles from "./filters.module.css";
 
 import useActions from "../hooks/useActions";
+import { useSelector } from "react-redux";
+import { RootState } from "src/redux/store";
+import { useEffect, useState } from "react";
+import useChecks from "../hooks/useChecks";
+import { Class } from "src/constants";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -69,10 +74,24 @@ const FilterActions = ({
     selectedClassIndex,
   });
 
+
+  const [actionsEnable, setActionsEnable] = useState(false)
+  const highlightedInstance = useSelector((state: RootState) => state.classes.highlightedInstance);
+
+  // useEffect(()=>{
+  //   if(highlightedInstance) {
+  //     console.log(highlightedInstance)
+  //     setActionsEnable(true)
+  //   }else{
+  //     setActionsEnable(false)
+  //   }
+  // },[highlightedInstance])
+
+
   return (
     <Box
       component="form"
-      noValidate
+      noValidate 
       sx={{
         display: "grid",
         gridTemplateColumns: { sm: "1fr 1fr" },

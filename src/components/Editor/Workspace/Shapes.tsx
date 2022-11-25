@@ -70,6 +70,14 @@ const Shapes = ({
           })
         );
       }
+      if (type === TOOLS.LINE) {
+        dispatch(
+          selectInstance({
+            instanceId,
+            classIndex,
+          })
+        );
+      }
 
       e.cancelBubble = true; // to not trigger parents click
     },
@@ -103,7 +111,7 @@ const Shapes = ({
                       draggable={currentTool === TOOLS.SELECT}
                       class={classItem.name}
                       isSelected={shape.id === selectedId}
-                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.LINE)}
+                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.LINE, annotation.id, i)}
                       opacity={0.7}
                       stroke={classItem.color}
                       strokeWidth={3}

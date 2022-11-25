@@ -40,13 +40,15 @@ const Annotation = ({
   };
   return (
     <ListItem
+      id={id}
       key={`${id}-listItem`}
       sx={{
         marginTop: -1,
         paddingBottom: 0,
-        paddingTop: 1,
+        paddingTop: 0,
         height: 40,
         background: selected ? 'purple' : 'transparent',
+        color: selected ? 'white' : 'black'
       }}>
       {selectedClassIndex === classIndex ? (
         <FormControlLabel
@@ -73,7 +75,8 @@ const propsAreEqual = (prev: Props, next: Props) => {
     prev.checked === next.checked &&
     prev.visible === next.visible &&
     prev.selectedClassIndex === next.selectedClassIndex &&
-    prev.toggleOne === next.toggleOne
+    prev.toggleOne === next.toggleOne &&
+    prev.selected === next.selected
   );
 };
 

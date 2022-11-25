@@ -86,7 +86,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
             flexDirection: 'column',
             margin: 'auto',
             position: 'relative',
-            top: -88,
+            top: 30,
           }}>
           {Object.values(TOOLS)
             .slice(0, 4)
@@ -122,7 +122,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               </ListItem>
             ))}
           {/* Undo & Redo icons */}
-          <ListItem disablePadding>
+          <ListItem disablePadding style={{marginTop:'350%'}}>
             <ListItemButton
               sx={{
                 minHeight: 48,
