@@ -100,7 +100,7 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
     setImages(imagesToStore);
 
     //return only the image that needs to be loaded for the 1st time. others are stored in the `images` state
-    if (fetchedData.data.images?.length) {
+    if (fetchedData.data.images?.length && imgId) {
       fetchedData.data.images = fetchedData.data.images.filter((img: any) => img._id === imgId);
     }
 

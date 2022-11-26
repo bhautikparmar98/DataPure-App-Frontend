@@ -42,14 +42,13 @@ const Editor = () => {
   // Fetch project images IDs if not exist
   useEffect(() => {
     const loadProjectImagesIds = async () => {
-      const response = await axiosInstance.get(`/project/${id}/images`);
-      const { images } = response.data;
-      if (images) {
-        const imagesIds = images.map((img: any) => img._id);
-        dispatch(addProjectIds({ projectId: id, imagesIds }));
+      const response = await axiosInstance.get(`/project/${id}/${role.toLowerCase()}/review/ids`);
+      const { ids } = response.data;
+      if (ids) {
+        dispatch(addProjectIds({ projectId: id, imagesIds: ids }));
       }
     };
-    if (!projectImagesIds[id]) {
+    if (role === ROLES.CLIENT.value && !projectImagesIds[id]) {
       loadProjectImagesIds();
     }
 
@@ -114,6 +113,7 @@ const Editor = () => {
       if (typeof imgId === 'string' && imgId?.length > 0) {
         const found = Object.entries(imagesMap).find(([id], i) => id === imgId);
 
+        console.log({ found });
         if (found) {
           const foundIndex = projectImagesIds[id]?.indexOf(imgId);
           setImgIndex(foundIndex > 0 ? foundIndex : 0);
