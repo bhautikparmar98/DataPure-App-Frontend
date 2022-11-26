@@ -24,6 +24,7 @@ export const editorSlice = createSlice({
   reducers: {
     resetEditor: (state) => {
       state = initialState;
+      return state;
     },
     setTool: (state, action) => {
       state.tool = action.payload.tool;

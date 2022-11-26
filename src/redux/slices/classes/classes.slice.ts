@@ -83,6 +83,7 @@ const classesSlice = createSlice({
 
     resetState: (state) => {
       state = initialState;
+      return state;
     },
 
     selectClass: (state, action) => {
