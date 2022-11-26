@@ -9,6 +9,7 @@ import axios from 'src/utils/axios';
 import { resetEditor } from 'src/redux/slices/editor/editor.slice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
+import cloneDeep from 'lodash/cloneDeep';
 
 const useFetchImage = (projId: string | undefined, imageId: string, take = 20) => {
   const router = useRouter();
@@ -53,8 +54,6 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
             state: fetchedData.data,
           })
         );
-
-        if (ROLES.CLIENT.value === role) setImages(fetchedData.data.images);
       } else {
         dispatch(resetState());
         dispatch(resetEditor());
@@ -97,6 +96,14 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
     const fetchedData = await axios.get(
       `/project/${projId}/${role.toLowerCase()}/review?skip=${firstImgToFetchIndex}&take=${step * 2}`
     );
+    const imagesToStore = cloneDeep(fetchedData.data.images);
+    setImages(imagesToStore);
+
+    //return only the image that needs to be loaded for the 1st time. others are stored in the `images` state
+    if (fetchedData.data.images?.length) {
+      fetchedData.data.images = fetchedData.data.images.filter((img: any) => img._id === imgId);
+    }
+
     return fetchedData;
   };
 
