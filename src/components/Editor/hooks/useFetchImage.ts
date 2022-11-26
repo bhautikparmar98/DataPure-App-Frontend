@@ -90,7 +90,7 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
       // consider this: projectImages=[img1, img2, ..., currentImgToReview, ..., img30,]
       //we are taking 10 last images and 10 next images with respect to the currentImgToReview
       // step =  20 ==> this means we take 10 images before and 10 after the current images as the client may review forward or backward in the projectImages array
-      step = 10;
+
       firstImgToFetchIndex = Math.max(imgToReviewIndex - step, 0);
     }
 

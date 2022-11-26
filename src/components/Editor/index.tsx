@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Iconify from 'src/components/Shared/Iconify';
 import { ROLES } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { initState } from 'src/redux/slices/classes/classes.slice';
+import { initState, resetState } from 'src/redux/slices/classes/classes.slice';
 import ClassesPanel from './ClassesPanel';
 import axiosInstance from 'src/utils/axios';
 import useFetchImage from './hooks/useFetchImage';
@@ -14,7 +14,7 @@ import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 import { RootState } from 'src/redux/store';
 import _ from 'lodash';
-import { addProjectIds } from 'src/redux/slices/editor/editor.slice';
+import { addProjectIds, resetEditor } from 'src/redux/slices/editor/editor.slice';
 
 const Editor = () => {
   const router = useRouter();
@@ -52,6 +52,11 @@ const Editor = () => {
     if (!projectImagesIds[id]) {
       loadProjectImagesIds();
     }
+
+    return () => {
+      dispatch(resetState());
+      dispatch(resetEditor());
+    };
   }, []);
 
   //images count shall
@@ -227,6 +232,7 @@ const Editor = () => {
           HEIGHT={HEIGHT}
           onAddComment={addComment}
           onDeleteComment={deleteComment}
+          fetchingNewImages={fetchingNewImages}
           setAnnotationId={(a: string) => {
             setAnnotationId(a);
           }}

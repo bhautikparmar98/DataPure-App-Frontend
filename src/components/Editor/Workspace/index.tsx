@@ -31,6 +31,7 @@ interface IProps {
   onAddComment: (text: string, x: number, y: number) => void;
   onDeleteComment: (commentId: string) => void;
   setAnnotationId: (a: string) => void;
+  fetchingNewImages: boolean;
 }
 
 const Workspace: any = ({
@@ -38,6 +39,7 @@ const Workspace: any = ({
   LAYERS_PANEL_WIDTH,
   WIDTH,
   HEIGHT,
+  fetchingNewImages,
   onAddComment,
   onDeleteComment,
   setAnnotationId,
@@ -123,7 +125,7 @@ const Workspace: any = ({
       }}
       tabIndex={0}
       onKeyUp={handleKeyUp}>
-      {backgroundStatus === 'loaded' && classes.length > 0 ? (
+      {!fetchingNewImages && backgroundStatus === 'loaded' && classes.length > 0 ? (
         <Stage
           width={WIDTH}
           height={HEIGHT}
