@@ -9,6 +9,7 @@ import axios from 'src/utils/axios';
 import { resetEditor } from 'src/redux/slices/editor/editor.slice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
+import cloneDeep from 'lodash/cloneDeep';
 
 const useFetchImage = (projId: string | undefined, imageId: string, take = 20) => {
   const router = useRouter();
@@ -53,8 +54,6 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
             state: fetchedData.data,
           })
         );
-
-        if (ROLES.CLIENT.value === role) setImages(fetchedData.data.images);
       } else {
         dispatch(resetState());
         dispatch(resetEditor());
@@ -90,13 +89,21 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 20) =
       // consider this: projectImages=[img1, img2, ..., currentImgToReview, ..., img30,]
       //we are taking 10 last images and 10 next images with respect to the currentImgToReview
       // step =  20 ==> this means we take 10 images before and 10 after the current images as the client may review forward or backward in the projectImages array
-      step = 10;
+
       firstImgToFetchIndex = Math.max(imgToReviewIndex - step, 0);
     }
 
     const fetchedData = await axios.get(
       `/project/${projId}/${role.toLowerCase()}/review?skip=${firstImgToFetchIndex}&take=${step * 2}`
     );
+    const imagesToStore = cloneDeep(fetchedData.data.images);
+    setImages(imagesToStore);
+
+    //return only the image that needs to be loaded for the 1st time. others are stored in the `images` state
+    if (fetchedData.data.images?.length) {
+      fetchedData.data.images = fetchedData.data.images.filter((img: any) => img._id === imgId);
+    }
+
     return fetchedData;
   };
 
