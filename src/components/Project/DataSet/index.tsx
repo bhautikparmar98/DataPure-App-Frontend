@@ -25,11 +25,21 @@ import AddImagesDialog from './AddImages';
 import ClassesAccordion from './ClassesAccordion';
 import DataSetCard from './DataSetCard';
 import { IImage } from './types';
+import ShowUserlistDialog from './showList/showUserlistDialog';
 
 // ----------------------------------------------------------------------
 
 interface ProjectDataSetComponentProps {
   projectId: string | string[];
+}
+
+export interface ListProp {
+  open: boolean;
+  onClose: () => void;
+  project: IProject | null;
+  Users?:any[];
+  setProject: any;
+  typeofUser: string
 }
 
 //------------------------------------------------------------------------
@@ -61,6 +71,8 @@ export const ProjectDataSetComponent: React.FC<
   const [numberOfLoaded, setNumberOfLoaded] = useState(0);
   const [loading, setLoading] = useState(false);
   const [addImagesModalOpened, setAddImagesModalOpened] = useState(false);
+  const [viewAnnotatorsModalOpened, setviewAnnotatorsModalOpened] = useState(false);
+  const [viewQAsModalOpened, setviewQAsModalOpened] = useState(false);
   const [project, setProject] = useState<IProject | null>(null);
   const [getProjectLoading, setGetProjectLoading] = useState(false);
   const [rerenderProject, setRerenderProject] = useState(0);
@@ -69,7 +81,9 @@ export const ProjectDataSetComponent: React.FC<
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [deleteImageLoading, setDeleteImageLoading] = useState(false);
   const open = Boolean(anchorEl);
-
+  const [QAs, setQAs] = useState<any[]>([]);
+  const [annotators, setAnnotators] = useState<any[]>([]);
+  
   const loadMoreHandler = () => {
     const arr = imagesList.slice(0, numberOfLoaded + LOAD_MORE_COUNT);
     setFilteredImageList(arr);
@@ -170,6 +184,29 @@ export const ProjectDataSetComponent: React.FC<
   };
 
   useEffect(() => {
+    const getQAs = async () => {
+      try {
+        const response = await axiosInstance.get('/user/qa');
+        const { qas } = response.data;
+
+        setQAs(qas);
+      } catch (error) {
+        console.log('error', error);
+        enqueueSnackbar('Something went wrong.', { variant: 'error' });
+      }
+    };
+
+    const getAnnotators = async () => {
+      try {
+        const response = await axiosInstance.get('/user/annotator');
+        const { annotators } = response.data;
+
+        setAnnotators(annotators);
+      } catch (error) {
+        console.log('error getting annotators', error);
+        enqueueSnackbar('Something went wrong.', { variant: 'error' });
+      }
+    };
     const getProjectImages = async () => {
       if (!projectId)
         return enqueueSnackbar('Invalid Project', { variant: 'error' });
@@ -194,6 +231,8 @@ export const ProjectDataSetComponent: React.FC<
 
     getProjectImages();
     getProject();
+    getQAs();
+    getAnnotators();
   }, [projectId]);
 
   useEffect(() => {
@@ -223,6 +262,22 @@ export const ProjectDataSetComponent: React.FC<
                 Delete
               </Button>
             )}
+            {role === ROLES.CLIENT.value && <>
+              <Button
+              variant="contained"
+              onClick={() => setviewAnnotatorsModalOpened(true)}
+              sx={{ mx: 1 }}
+             >View Annotators
+            </Button>
+            <Button variant="contained" sx={{ mx: 1 }} 
+              onClick={() => {
+                setviewQAsModalOpened(true)
+                setProject(project)
+              }}
+              >View QAs
+            </Button>
+            </>
+            }
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
@@ -270,6 +325,22 @@ export const ProjectDataSetComponent: React.FC<
         onFinishAddingImages={addingImagesHandler}
         projectId={projectId}
         projectType={project?.type}
+      />
+      <ShowUserlistDialog 
+        open={viewQAsModalOpened}
+        onClose={() => setviewQAsModalOpened(false)}
+        project={project}
+        Users={QAs}
+        setProject={setProject}
+        typeofUser="QAs"
+      />
+      <ShowUserlistDialog
+        open={viewAnnotatorsModalOpened}
+        onClose={() => setviewAnnotatorsModalOpened(false)}
+        project={project}
+        Users={annotators}
+        setProject={setProject}
+        typeofUser="Annotators"
       />
 
       <ClassesAccordion project={project} loading={getProjectLoading} />
