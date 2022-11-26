@@ -2,29 +2,32 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Next: Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Next: Node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "debug"],
+      "port": 9229,
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Next.js: debug server-side",
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run dev"
-    },
+    }
+  ],
+  "compounds": [
     {
-      "name": "Next.js: debug client-side",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:3000",
-      "skipFiles": ["<node_internals>/**", "node_modules/**"]
-    },
-    {
-      "name": "Next.js: debug full stack",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "npm run dev",
-      "serverReadyAction": {
-        "pattern": "started server on .+, url: (https?://.+)",
-        "uriFormat": "%s",
-        "action": "debugWithChrome"
-      },
-      "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      "name": "Next: Full",
+      "configurations": ["Next: Node", "Next: Chrome"]
     }
   ]
 }

@@ -14,6 +14,15 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+
+  // Debugger settings
+  webpack(config) {
+    config.output = config.output || {};
+    config.output.devtoolModuleFilenameTemplate = function (info) {
+      return 'file:///' + encodeURI(info.absoluteResourcePath);
+    };
+    return config;
+  },
 };
 
 module.exports = nextConfig;

@@ -6,7 +6,7 @@ type State = {
   tool: Tool;
   stageDragging: boolean;
   preview: string;
-  projectsIds: {
+  projectImagesIds: {
     [projectId: string]: string[];
   };
 };
@@ -15,7 +15,7 @@ const initialState: State = {
   tool: TOOLS.RECTANGLE as Tool,
   stageDragging: false,
   preview: '',
-  projectsIds: {},
+  projectImagesIds: {},
 };
 
 export const editorSlice = createSlice({
@@ -40,7 +40,7 @@ export const editorSlice = createSlice({
 
     addProjectIds: (state, { payload }) => {
       const { projectId, imagesIds } = payload;
-      if (typeof projectId === 'string' && imagesIds?.length >= 0) state.projectsIds[projectId] = imagesIds;
+      if (typeof projectId === 'string' && imagesIds?.length >= 0) state.projectImagesIds[projectId] = imagesIds;
     },
   },
 });

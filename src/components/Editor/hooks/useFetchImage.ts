@@ -10,11 +10,11 @@ import { resetEditor } from 'src/redux/slices/editor/editor.slice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
 
-const useFetchImage = (projId: string | undefined, imageId: string, take = 1) => {
+const useFetchImage = (projId: string | undefined, imageId: string, take = 20) => {
   const router = useRouter();
   const { role } = useAuth();
-  const totalProjectsIds = useSelector((state: RootState) => state.editor.projectsIds);
-  const projectIds = projId ? totalProjectsIds[projId] : [];
+  const totalProjectImagesIds = useSelector((state: RootState) => state.editor.projectImagesIds);
+  const imagesIds = projId ? totalProjectImagesIds[projId] : [];
 
   const dispatch = useDispatch();
   const [isAnnotatorRedo, setIsAnnotatorRedo] = useState(false);
@@ -68,22 +68,36 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 1) =>
     }
   };
 
-  const fetchLimitedReviewImages = async () => {
-    if (projectIds?.length && imageId) {
-      const imgToReviewIndex = projectIds.indexOf(imageId);
+  // fetch limited number of images according to the clicked `image` to review. Taking 20 only if we know the image to be reviewed (the rest will be fetched when `next` or `previous` arrows of review are clicked)
+  const fetchLimitedReviewImages = async (id?: string) => {
+    let step = 10,
+      firstImgToFetchIndex = 0;
+    let imgId = id || imageId;
+    //imageId will be empty string if the client opens the page without being redirected to it from the `/review` page
+    if (imgId) {
+      let validImagesIds = imagesIds;
+      //fetch the project IDs to know the count and then update the `step` and firstImageToFetchIndex accordingly
+      if (!imagesIds?.length || !validImagesIds) {
+        const response = await axios.get(`/project/${projId}/images`);
+        const images = response?.data?.images;
+        if (images.length > 0) {
+          validImagesIds = images.map((img: { _id: string }) => img._id);
+        }
+      }
+
+      const imgToReviewIndex = validImagesIds.indexOf(imgId);
 
       // consider this: projectImages=[img1, img2, ..., currentImgToReview, ..., img30,]
       //we are taking 10 last images and 10 next images with respect to the currentImgToReview
-      // take =  20 ==> this means we take some images before and after the current images as the client may review forward or backward in the projectImages array
-      const firstImgToFetchIndex = Math.max(imgToReviewIndex - 10, 0);
-      const skipCount = firstImgToFetchIndex;
-      // !TODO: reset take to 20
-      const take = 2;
-      const fetchedData = await axios.get(
-        `/project/${projId}/${role.toLowerCase()}/review?skip=${skipCount}&take=${take}`
-      );
-      return fetchedData;
+      // step =  20 ==> this means we take 10 images before and 10 after the current images as the client may review forward or backward in the projectImages array
+      step = 10;
+      firstImgToFetchIndex = Math.max(imgToReviewIndex - step, 0);
     }
+
+    const fetchedData = await axios.get(
+      `/project/${projId}/${role.toLowerCase()}/review?skip=${firstImgToFetchIndex}&take=${step * 2}`
+    );
+    return fetchedData;
   };
 
   const removeImage = (imgId: string) => {
@@ -93,9 +107,10 @@ const useFetchImage = (projId: string | undefined, imageId: string, take = 1) =>
   };
 
   return {
-    images,
+    limitedImages: images,
     removeImage,
     isAnnotatorRedo,
+    fetchLimitedReviewImages,
   };
 };
 

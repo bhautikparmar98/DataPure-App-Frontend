@@ -243,7 +243,7 @@ const Workspace: any = ({
       ) : (
         <div
           style={{
-            height: HEIGHT - 2,
+            height: HEIGHT,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
