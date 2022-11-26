@@ -1,11 +1,5 @@
 import { Icon } from '@iconify/react';
-import {
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
+import { Checkbox, FormControlLabel, IconButton, ListItem, ListItemText } from '@mui/material';
 import { memo, ChangeEvent } from 'react';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
 
@@ -22,22 +16,10 @@ interface Props {
   toggleOne: (e: ChangeEvent<HTMLInputElement>, instanceId: string) => void;
 }
 
-const Annotation = ({
-  id,
-  classIndex,
-  visible,
-  annoIndex,
-  selectedClassIndex,
-  checked,
-  toggleOne,
-}: Props) => {
+const Annotation = ({ id, classIndex, visible, annoIndex, selectedClassIndex, checked, toggleOne }: Props) => {
   const dispatch = useDispatch();
 
-  const handleAnnotationToggle = (
-    classIndex: number,
-    annotationId: string,
-    visible: boolean
-  ) => {
+  const handleAnnotationToggle = (classIndex: number, annotationId: string, visible: boolean) => {
     dispatch(
       updateAnnotation({
         classId: classIndex,
@@ -59,27 +41,14 @@ const Annotation = ({
         <FormControlLabel
           label={`Instance ${annoIndex + 1}`}
           sx={{ paddingLeft: 2, flex: 1 }}
-          control={
-            <Checkbox
-              checked={checked || false}
-              onChange={(e) => toggleOne(e, id)}
-            />
-          }
+          control={<Checkbox checked={checked || false} onChange={(e) => toggleOne(e, id)} />}
         />
       ) : (
-        <ListItemText
-          sx={{ paddingLeft: 5.6 }}
-          primary={`Instance ${annoIndex + 1}`}
-        />
+        <ListItemText sx={{ paddingLeft: 5.6 }} primary={`Instance ${annoIndex + 1}`} />
       )}
-      <IconButton
-        onClick={() => handleAnnotationToggle(classIndex, id, !visible)}>
+      <IconButton onClick={() => handleAnnotationToggle(classIndex, id, !visible)}>
         {visible ? (
-          <Icon
-            icon="majesticons:eye"
-            className={styles.eyeIcon}
-            fontSize={20}
-          />
+          <Icon icon="majesticons:eye" className={styles.eyeIcon} fontSize={20} />
         ) : (
           <Icon icon="eva:eye-off-fill" className={styles.eyeIcon} />
         )}

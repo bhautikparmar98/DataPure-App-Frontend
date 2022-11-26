@@ -22,7 +22,7 @@ export default function ProjectDataSet() {
   const router = useRouter();
   const query = router.query;
 
-  const id = query.id;
+  const id = query.id as string;
 
   if (!id) {
     return {
