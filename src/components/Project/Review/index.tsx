@@ -67,7 +67,9 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
   const reviewHandler = (imageId: string | undefined) => {
     if (typeof imageId === 'string') {
       localStorage.setItem(projectId, imageId);
-      const imagesIds = imageList.map((img) => img._id);
+      const imagesIds = imageList
+        .filter((img) => img.status === IMAGE_STATUS.PENDING_CLIENT_REVIEW.value)
+        .map((img) => img._id);
       dispatch(addProjectIds({ projectId, imagesIds }));
     }
     router.push(`/editor/${projectId}`);
