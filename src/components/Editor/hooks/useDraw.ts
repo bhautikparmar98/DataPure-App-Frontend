@@ -150,7 +150,7 @@ const useDraw = (
         })
       );
     },
-    [stageRef, stageDragging, currentTool]
+    [stageRef, stageDragging, currentTool, bgWidthScale, bgHeightScale]
   );
 
   return {
