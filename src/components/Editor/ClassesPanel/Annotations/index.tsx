@@ -2,7 +2,7 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 import { Class } from 'src/constants';
@@ -13,9 +13,7 @@ import useChecks from '../hooks/useChecks';
 import Summary from './Summary';
 
 const Accordion = memo(
-  styled((props: AccordionProps) => (
-    <MuiAccordion disableGutters elevation={0} square {...props} />
-  ))(({ theme }) => ({
+  styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(({ theme }) => ({
     border: `1px solid ${theme.palette.divider}`,
     '&:not(:last-child)': {
       borderBottom: 0,
@@ -48,38 +46,62 @@ enum AllChecked {
 type Props = {
   classes: Class[];
   updateFiltersChecks: (newChecks: Checks) => void;
+  checks : Checks;
 };
 
-function Annotations({ classes, updateFiltersChecks }: Props) {
-  const selectedClassIndex = useSelector(
-    (state: RootState) => state.classes.selectedClassIndex
+function Annotations({ classes, updateFiltersChecks ,checks}: Props) {
+
+  const [expanded, setExpanded] = useState<string | false>(false)
+
+  const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
+  const highlightedInstance = useSelector((state: RootState) => state.classes.highlightedInstance);
+  const highlightedClass = classes.find((classItem) =>
+    classItem.annotations.find((anno) => anno.id === highlightedInstance)
   );
 
-  const selectedClassName = useSelector(
-    (state: RootState) => state.classes.classes[selectedClassIndex]?.name || ''
-  );
+  const selectedClassName = useSelector((state: RootState) => state.classes.classes[selectedClassIndex]?.name || '');
+  const multiSelectmode = useSelector((state: RootState) => state.editor.multiSelectmode);
+  
+
   const selectedClassIndexInSorted = useMemo(
-    () =>
-      classes.findIndex((classItem) => classItem.name === selectedClassName),
-    [classes, selectedClassIndex]
+    () => classes.findIndex((classItem) => classItem.name === selectedClassName),
+    [classes, selectedClassIndex] 
   );
 
-  const { toggleOne, toggleAll, checks, allChecked } = useChecks({
+  const { toggleOne, toggleAll, allChecked } = useChecks({
     classes,
     selectedClassIndex,
     updateFiltersChecks,
   });
 
+  const checkedInstancesId :any = []
+  for( let instanceId in checks ){
+    checkedInstancesId.push(instanceId)
+  }
+
+
+  useEffect(() => {
+    if (highlightedInstance && highlightedClass) {
+      //open the class and scroll to it
+      document.getElementById(highlightedInstance)?.scrollIntoView({behavior:'smooth'})
+      panelToggler(true,`panel_${highlightedClass?._id}`)
+    }
+  }, [highlightedInstance]);
+
+  const panelToggler = (isExpanded:boolean,panel_Id:string) =>{
+    setExpanded(isExpanded ? panel_Id : false)
+  }
+
   return (
     <div className={styles.list}>
       {classes.length > 0 &&
         classes.map((classItem, index) => (
-          <Accordion
-            className={
-              selectedClassIndex === index ? styles.activeAccordion : ''
-            }
+          <Accordion expanded={expanded === `panel_${classItem._id}`} 
+            onChange={(event,isExpanded)=>panelToggler(isExpanded,`panel_${classItem._id}`)}
+            className={selectedClassIndex === index ? styles.activeAccordion : ''}
             key={classItem._id}
-            sx={{ marginBottom: 3 }}>
+            sx={{ marginBottom: 3 }}
+            id={classItem._id === highlightedClass?._id ? 'highlightedClass' : ''}>
             <Summary
               index={index}
               selectedClassIndexInSorted={selectedClassIndexInSorted}
@@ -106,6 +128,7 @@ function Annotations({ classes, updateFiltersChecks }: Props) {
                       classIndex={index}
                       selectedClassIndex={selectedClassIndex}
                       visible={visible}
+                      selected={checkedInstancesId.includes(id) || highlightedInstance === id}
                       annoIndex={i}
                       key={`${classItem._id}-${i}`}
                       toggleOne={toggleOne}

@@ -6,6 +6,7 @@ type State = {
   tool: Tool;
   stageDragging: boolean;
   preview: string;
+  multiSelectmode: boolean;
   projectImagesIds: {
     [projectId: string]: string[];
   };
@@ -15,7 +16,8 @@ const initialState: State = {
   tool: TOOLS.RECTANGLE as Tool,
   stageDragging: false,
   preview: '',
-  projectImagesIds: {},
+  multiSelectmode: false,
+  projectImagesIds: {}
 };
 
 export const editorSlice = createSlice({
@@ -28,6 +30,11 @@ export const editorSlice = createSlice({
     },
     setTool: (state, action) => {
       state.tool = action.payload.tool;
+      if(action.payload.tool === TOOLS.MULTIPLESELECT){
+        state.multiSelectmode = true
+      }else{
+        state.multiSelectmode = false
+      }
     },
 
     startDragging: (state, { payload }) => {

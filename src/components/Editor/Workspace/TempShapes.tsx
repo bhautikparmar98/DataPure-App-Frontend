@@ -7,9 +7,11 @@ interface Shapes {
   rects: Konva.ShapeConfig[];
   classColor: string;
   stageScale: number;
+  Area: Konva.ShapeConfig[];
 }
 
-const TempShapes = ({ lines, rects = [], classColor, stageScale }: Shapes) => (
+const TempShapes = ({ lines, rects = [], Area = [], classColor, stageScale }: Shapes) => (
+  
   <>
     {rects.length > 0 && (
       <Rect
@@ -18,6 +20,15 @@ const TempShapes = ({ lines, rects = [], classColor, stageScale }: Shapes) => (
         key={'temp-rect'}
         strokeWidth={3 / stageScale}
         fill={classColor.replace(')', ', 0.35)').replace('rgb', 'rgba')}
+      />
+    )}
+     {Area.length > 0 && (
+      <Rect
+        {...Area[0]}
+        listening={false}
+        key={'temp-rect'}
+        strokeWidth={3 / stageScale}
+        fill="rgba(237, 250, 248,0.35)"
       />
     )}
     {lines.map((options, l) => (

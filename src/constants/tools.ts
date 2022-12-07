@@ -1,4 +1,5 @@
 export const TOOLS = {
+  MULTIPLESELECT: 'MultipleSelect',
   SELECT: 'Select',
   LINE: 'Line',
   RECTANGLE: 'Rectangle',

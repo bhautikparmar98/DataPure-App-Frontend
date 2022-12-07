@@ -11,12 +11,22 @@ interface Props {
   annoIndex: number;
   classIndex: number;
   selectedClassIndex: number;
+  selected: boolean;
   visible: boolean;
   checked: boolean;
   toggleOne: (e: ChangeEvent<HTMLInputElement>, instanceId: string) => void;
 }
 
-const Annotation = ({ id, classIndex, visible, annoIndex, selectedClassIndex, checked, toggleOne }: Props) => {
+const Annotation = ({
+  id,
+  classIndex,
+  visible,
+  annoIndex,
+  selectedClassIndex,
+  checked,
+  selected,
+  toggleOne,
+}: Props) => {
   const dispatch = useDispatch();
 
   const handleAnnotationToggle = (classIndex: number, annotationId: string, visible: boolean) => {
@@ -30,12 +40,15 @@ const Annotation = ({ id, classIndex, visible, annoIndex, selectedClassIndex, ch
   };
   return (
     <ListItem
+      id={id}
       key={`${id}-listItem`}
       sx={{
         marginTop: -1,
         paddingBottom: 0,
-        paddingTop: 1,
+        paddingTop: 0,
         height: 40,
+        background: selected ? 'purple' : 'transparent',
+        color: selected ? 'white' : 'black'
       }}>
       {selectedClassIndex === classIndex ? (
         <FormControlLabel
@@ -62,7 +75,8 @@ const propsAreEqual = (prev: Props, next: Props) => {
     prev.checked === next.checked &&
     prev.visible === next.visible &&
     prev.selectedClassIndex === next.selectedClassIndex &&
-    prev.toggleOne === next.toggleOne
+    prev.toggleOne === next.toggleOne &&
+    prev.selected === next.selected
   );
 };
 

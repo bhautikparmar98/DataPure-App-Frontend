@@ -1,5 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Class } from 'src/constants';
+import { RootState } from 'src/redux/store';
 
 interface Checks {
   [instanceId: string]: boolean;
@@ -27,9 +29,11 @@ const useChecks = ({
     AllChecked['allUnchecked']
   );
 
+
   useEffect(() => {
     updateFiltersChecks(checks);
   }, [checks]);
+
 
   const toggleOne = useCallback(
     (e: ChangeEvent<HTMLInputElement>, id: string) => {
@@ -102,6 +106,7 @@ const useChecks = ({
     toggleOne,
     toggleAll,
     checks,
+    setChecks,
     allChecked,
   };
 };
