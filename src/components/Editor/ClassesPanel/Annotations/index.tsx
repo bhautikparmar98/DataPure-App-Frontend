@@ -46,30 +46,39 @@ enum AllChecked {
 type Props = {
   classes: Class[];
   updateFiltersChecks: (newChecks: Checks) => void;
+  checks : Checks;
 };
 
-function Annotations({ classes, updateFiltersChecks }: Props) {
+function Annotations({ classes, updateFiltersChecks ,checks}: Props) {
 
   const [expanded, setExpanded] = useState<string | false>(false)
 
   const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
-
   const highlightedInstance = useSelector((state: RootState) => state.classes.highlightedInstance);
   const highlightedClass = classes.find((classItem) =>
     classItem.annotations.find((anno) => anno.id === highlightedInstance)
   );
 
   const selectedClassName = useSelector((state: RootState) => state.classes.classes[selectedClassIndex]?.name || '');
+  const multiSelectmode = useSelector((state: RootState) => state.editor.multiSelectmode);
+  
+
   const selectedClassIndexInSorted = useMemo(
     () => classes.findIndex((classItem) => classItem.name === selectedClassName),
-    [classes, selectedClassIndex]
+    [classes, selectedClassIndex] 
   );
 
-  const { toggleOne, toggleAll, checks, allChecked } = useChecks({
+  const { toggleOne, toggleAll, allChecked } = useChecks({
     classes,
     selectedClassIndex,
     updateFiltersChecks,
   });
+
+  const checkedInstancesId :any = []
+  for( let instanceId in checks ){
+    checkedInstancesId.push(instanceId)
+  }
+
 
   useEffect(() => {
     if (highlightedInstance && highlightedClass) {
@@ -119,7 +128,7 @@ function Annotations({ classes, updateFiltersChecks }: Props) {
                       classIndex={index}
                       selectedClassIndex={selectedClassIndex}
                       visible={visible}
-                      selected={highlightedInstance === id}
+                      selected={checkedInstancesId.includes(id) || highlightedInstance === id}
                       annoIndex={i}
                       key={`${classItem._id}-${i}`}
                       toggleOne={toggleOne}

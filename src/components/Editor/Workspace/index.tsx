@@ -1,7 +1,9 @@
+import { useSelect } from '@mui/base';
 import Konva from 'konva';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import { useSelector } from 'react-redux';
+import { Root } from 'rehype-raw';
 import useZoom from 'src/components/Editor/hooks/useZoom';
 import { Class, TOOLS } from 'src/constants';
 import { RootState } from 'src/redux/store';
@@ -47,6 +49,7 @@ const Workspace: any = ({
   const classes = useSelector((state: RootState) => state.classes.classes);
   const src = useSelector((state: RootState) => state.classes.src);
   const selectedClassIndex = useSelector((state: RootState) => state.classes.selectedClassIndex);
+  const multiselectedAnnotators = useSelector((state: RootState) => state.classes.multiselectedAnnotators)
   const [preAnnotation, setPreAnnotation] = useState<any>();
 
   const classId: string = classes[selectedClassIndex]?._id;
@@ -64,6 +67,8 @@ const Workspace: any = ({
   });
 
   const { selectShape, selectedId, checkDeselect } = useSelectShape();
+
+
   const { handleKeyDown, handleKeyUp } = useKeyboard(workspaceRef, stageRef, selectedId);
 
   const {
@@ -71,6 +76,7 @@ const Workspace: any = ({
     handleMouseUp,
     handleMouseMove,
     handleComment,
+    Area,
     rects,
     lines,
     handleShapeMove,
@@ -82,6 +88,9 @@ const Workspace: any = ({
     lineHandleMouseDown,
     lineHandleMouseUp,
     lineHandleMouseMove,
+    handleMultipleSelectMouseDown,
+    handleMultipleSelectMouseUp,
+    handleMultipleSelectMouseMove
   } = useDraw(
     selectedClassIndex,
     classId,
@@ -105,7 +114,7 @@ const Workspace: any = ({
     stageRef,
     zooming,
   });
-
+  
   const [image] = useImage(`/tools/${TOOLS.COMMENT}.png`);
 
   let commentFactor = Math.min(stageScale.stageScale / 10, 2);
@@ -138,9 +147,11 @@ const Workspace: any = ({
               ? rectHandleMouseMove
               : currentTool === TOOLS.LINE
               ? lineHandleMouseMove
+              : currentTool === TOOLS.MULTIPLESELECT
+              ? handleMultipleSelectMouseMove
               : () => {}
           }
-          onMouseUp={currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
+          onMouseUp={currentTool === TOOLS.MULTIPLESELECT ? handleMultipleSelectMouseUp : currentTool === TOOLS.RECTANGLE ? rectHandleMouseUp : lineHandleMouseUp}
           onMouseDown={(e: any) => {
             setAnnotationId(e.target?.attrs ? e.target.attrs.id : '');
             currentTool === TOOLS.RECTANGLE
@@ -149,7 +160,9 @@ const Workspace: any = ({
               ? lineHandleMouseDown(e)
               : currentTool === TOOLS.COMMENT
               ? handleComment(e)
-              : () => {};
+              : currentTool === TOOLS.MULTIPLESELECT
+              ? handleMultipleSelectMouseDown(e)
+              : () => {}
           }}
           // onMouseUp={handleMouseUp}
           // onMouseDown={(e: any) => {
@@ -191,6 +204,7 @@ const Workspace: any = ({
             <TempShapes
               lines={lines}
               rects={rects}
+              Area={Area}
               classColor={classes[selectedClassIndex]?.color}
               stageScale={stageScale.stageScale}
             />

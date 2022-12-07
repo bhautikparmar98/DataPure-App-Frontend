@@ -9,12 +9,13 @@ import Preview from './Preview';
 import RequestRedo from './RequestRedo';
 import SubmitAnnotations from './SubmitAnnotations';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Annotations from './Annotations';
 import useAnnotationSubmit from './hooks/useAnnotationSubmit';
 import useAttributes from './hooks/useAttributes';
 import useSortedClasses from './hooks/useSortedClasses';
 import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
+import { RootState } from 'src/redux/store';
 
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
@@ -33,6 +34,18 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
   const { handleSubmit, handleReset, handleApproveImage } = useAnnotationSubmit();
 
   const [checks, setChecks] = useState<Checks>({});
+
+  const multiselectAnnotators = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+
+  const multiSelectChecks : Checks = {};
+  
+  multiselectAnnotators.forEach((anno:any)=> {
+    multiSelectChecks[anno.id] = true
+  });
+
+  useEffect(()=>{
+    setChecks(multiSelectChecks)
+  },[JSON.stringify(multiSelectChecks)])
 
   const updateFiltersChecks = useCallback((newChecks: Checks) => setChecks(newChecks), [checks]);
 
@@ -147,7 +160,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
             <>
               <Preview />
               <Filters checks={checks} sortBy={sortBy} />
-              <Annotations classes={sortedClasses} updateFiltersChecks={updateFiltersChecks} />
+              <Annotations checks={checks}  classes={sortedClasses} updateFiltersChecks={updateFiltersChecks} />
             </>
           ) : selectedAnnotationData?.attributes && Object.keys(selectedAnnotationData.attributes).length ? (
             <>

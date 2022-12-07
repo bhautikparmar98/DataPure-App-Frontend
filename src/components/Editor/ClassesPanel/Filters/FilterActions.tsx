@@ -87,6 +87,8 @@ const FilterActions = ({
   //   }
   // },[highlightedInstance])
 
+  
+  const multiSelectmode = useSelector((state: RootState) => state.editor.multiSelectmode);
 
   return (
     <Box
@@ -220,7 +222,7 @@ const FilterActions = ({
             <Autocomplete
               disablePortal
               id="editor-classes-selection"
-              options={classesFilters.filter(
+              options={ multiSelectmode ? classesFilters :classesFilters.filter(
                 (_classItem, i) => i !== selectedClassIndex
               )}
               sx={{ mt: 2, mb: 4 }}

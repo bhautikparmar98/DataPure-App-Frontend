@@ -5,7 +5,7 @@ import { Group, Line } from 'react-konva';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
-import { selectInstance } from 'src/redux/slices/classes/classes.slice';
+import { selectInstance , selectClass } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
 import Rectangle from './Rectangle';
 
@@ -48,7 +48,7 @@ const Shapes = ({
   bgY,
   bgWidthScale,
   bgHeightScale,
-  stageScale,
+  stageScale
 }: IShapes) => {
   const dispatch = useDispatch();
   const handleShapeClick = useCallback(
@@ -60,6 +60,7 @@ const Shapes = ({
       classIndex?: number
     ) => {
       selectShape(shapeId);
+      dispatch(selectClass({classIndex}))
       showTooltip(e);
 
       if (type === TOOLS.RECTANGLE) {
@@ -85,6 +86,12 @@ const Shapes = ({
   );
 
   const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
+  const multiselectedAnnotators : any  = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+
+  const multiSelectshapeIds : any = []
+  multiselectedAnnotators.forEach((anno: any) => {
+    multiSelectshapeIds.push(anno.shapeId)
+  });
 
   return (
     <>
@@ -130,7 +137,7 @@ const Shapes = ({
                         strokeWidth: 3 / stageScale,
                       }}
                       classItemName={classItem.name}
-                      isSelected={shape.id === selectedId}
+                      isSelected={shape.id === selectedId || multiSelectshapeIds.includes(shape.id)}
                       onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i)}
                       onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
@@ -152,3 +159,7 @@ const Shapes = ({
 
 // export default memo(Shapes);
 export default Shapes;
+function selectedClassIndex(arg0: { classIndex: number | undefined; }): any {
+  throw new Error('Function not implemented.');
+}
+

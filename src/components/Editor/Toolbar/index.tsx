@@ -42,6 +42,7 @@ const ICONS = {
   [TOOLS.RECTANGLE]: 'bx:rectangle',
   [TOOLS.SELECT]: 'la:mouse-pointer',
   [TOOLS.COMMENT]: 'cil:comment-bubble',
+  [TOOLS.MULTIPLESELECT]: 'cil-object-group',
   [TOOLS.PAN]: '',
 
   // [TOOLS.ERASER]: 'clarity:eraser-line',
@@ -86,10 +87,10 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
             flexDirection: 'column',
             margin: 'auto',
             position: 'relative',
-            top: 30,
+            top: 10,
           }}>
           {Object.values(TOOLS)
-            .slice(0, 4)
+            .slice(0, 5)
             .filter((key) => {
               if (key === TOOLS.COMMENT && role === ROLES.ANNOTATOR.value && !isAnnotatorRedo) return false;
               return true;
@@ -122,7 +123,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               </ListItem>
             ))}
           {/* Undo & Redo icons */}
-          <ListItem disablePadding style={{marginTop:'350%'}}>
+          <ListItem disablePadding style={{marginTop:'260%'}}>
             <ListItemButton
               sx={{
                 minHeight: 48,

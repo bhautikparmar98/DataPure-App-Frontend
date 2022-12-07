@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import { ShapeConfig } from 'konva/lib/Shape';
 
 // import _ from 'lodash';
@@ -17,6 +17,7 @@ type State = {
   imageId: string;
   attributes: any;
   lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
+  multiselectedAnnotators : any;
 };
 
 const initialState = {
@@ -31,6 +32,7 @@ const initialState = {
   imageId: '',
   attributes: {},
   lastTimeUpdated: 0,
+  multiselectedAnnotators : []
 } as State;
 
 const classesSlice = createSlice({
@@ -54,7 +56,7 @@ const classesSlice = createSlice({
           delete shape.fill;
           return shape;
         });
-        anno = {
+        anno = { 
           id: id || uniqid(),
           classId,
           shapes: purifiedShapes,
@@ -89,6 +91,11 @@ const classesSlice = createSlice({
 
     selectClass: (state, action) => {
       state.selectedClassIndex = action.payload.classIndex;
+    },
+
+    setMultiselectAnnotators: (state, action) => {
+      // console.log(action.payload.multiselectedAnnotatorsArray)
+      state.multiselectedAnnotators = action.payload.multiselectedAnnotatorsArray;
     },
 
     deleteAnnotation: (state, action) => {
@@ -179,15 +186,14 @@ const classesSlice = createSlice({
     //used for class panel bulk action
     toggleAnnotationVisibility: (state, action) => {
       const { classes } = state;
-      const { classId, annotationIds, visible } = action.payload;
-      const annotations = classes[classId]?.annotations || [];
-      const newAnnotations = annotations.map((anno) => {
-        if (annotationIds.includes(anno.id)) {
-          anno.visible = visible;
-        }
-        return anno;
-      });
-      classes[classId].annotations = newAnnotations;
+      const { annotationIds, visible } = action.payload;
+      classes.forEach(cls => {
+        cls.annotations.forEach((anno:any)=>{
+          if (annotationIds.includes(anno.id)) {  
+            anno.visible = visible;
+          }
+        })
+      })
       state.classes = classes;
       state.history.push(classes);
       state.historyStep++;
@@ -197,10 +203,10 @@ const classesSlice = createSlice({
     //used for class panel bulk action
     deleteAnnotations: (state, action) => {
       const { classes } = state;
-      const { classId, annotationIds } = action.payload;
-      const annotations = classes[classId]?.annotations || [];
-      const newAnnotations = annotations.filter((anno) => !annotationIds.includes(anno.id));
-      classes[classId].annotations = newAnnotations;
+      const { annotationIds } = action.payload;
+      classes.forEach(cls => {
+        cls.annotations = cls.annotations.filter((anno) => !annotationIds.includes(anno.id));
+      })
       state.classes = classes;
       state.lastTimeUpdated = new Date().getTime();
       state.history.push(classes);
@@ -214,23 +220,28 @@ const classesSlice = createSlice({
 
       const newClassId = classes[newClassIndex]._id;
 
-      let oldClassAnnotations = classes[oldClassIndex]?.annotations || [];
+      const AllClassIndexes :number[] = [];
+      classes.forEach((cls,index)=>{
+        AllClassIndexes.push(index)
+      })
+
       let newClassAnnotations = classes[newClassIndex]?.annotations || [];
-
+      AllClassIndexes.forEach((index:number)=>{
+      let currentClassAnnotations = classes[index]?.annotations || [];
       const newAnnos: Annotation[] = [];
-      oldClassAnnotations = oldClassAnnotations.filter((anno) => {
-        if (annotationIds.includes(anno.id)) {
-          anno.classId = newClassId;
-          newAnnos.push(anno);
-          return false;
+      currentClassAnnotations = currentClassAnnotations.filter((anno) => {
+        if (annotationIds.includes(anno.id) && anno.classId !== newClassId) {
+          anno.classId = newClassId
+          newAnnos.push(anno)
+          return false
         }
-        return true;
+        return true
       });
-
-      classes[oldClassIndex].annotations = oldClassAnnotations;
-
+      
+      classes[index].annotations = currentClassAnnotations;
       newClassAnnotations = [...newClassAnnotations, ...newAnnos];
       classes[newClassIndex].annotations = [...newClassAnnotations];
+    })
       state.classes = classes;
       state.history.push(classes);
       state.historyStep++;
@@ -297,6 +308,7 @@ const classesSlice = createSlice({
     },
     deselectInstance: (state) => {
       state.highlightedInstance = '';
+      state.multiselectedAnnotators = [];
     },
   },
 });
@@ -317,5 +329,6 @@ export const {
   redoHistory,
   selectInstance,
   deselectInstance,
+  setMultiselectAnnotators
 } = classesSlice.actions;
 export default classesSlice.reducer;

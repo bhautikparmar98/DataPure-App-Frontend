@@ -9,6 +9,7 @@ import useComment from './useComment';
 import useLine from './useLine';
 import useRect from './useRect';
 import { RootState } from 'src/redux/store';
+import useMultipleSelect from './useMultipleSelect';
 
 const getNewShapeMove = (e: any, group: any, bgWidthScale: number, bgHeightScale: number) => {
   const shape = _.cloneDeep(group);
@@ -77,6 +78,11 @@ const useDraw = (
     classId,
     selectedClassColor
   );
+
+  //Multiple Select
+   const { handleMultipleSelectMouseDown, handleMultipleSelectMouseUp, handleMultipleSelectMouseMove, Area } = useMultipleSelect(
+    bgWidthScale, bgHeightScale
+   );
 
   const { handleComment, handleCommentClick, comments } = useComment(
     bgLayerRef,
@@ -154,6 +160,7 @@ const useDraw = (
   );
 
   return {
+    Area,
     rects,
     lines,
     handleMouseDown,
@@ -169,6 +176,9 @@ const useDraw = (
     lineHandleMouseDown,
     lineHandleMouseUp,
     lineHandleMouseMove,
+    handleMultipleSelectMouseDown,
+    handleMultipleSelectMouseUp,
+    handleMultipleSelectMouseMove
   };
 };
 
