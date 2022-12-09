@@ -1,6 +1,6 @@
 import { FC, memo, useCallback, useEffect, useState } from 'react';
 // MUI
-import { Button, Container, TextField } from '@mui/material';
+import { Box, Button, Container, TextField } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import Iconify from 'src/components/Shared/Iconify';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
@@ -29,6 +29,8 @@ interface Checks {
 const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) => {
   const { sortedClasses, sortBy, lastSortType } = useSortedClasses();
   const [selectedAnnotationData, setSelectedAnnotationData] = useState<any>({});
+  const imageName: string = useSelector((state: RootState) => state.classes.imageName);
+
   const dispatch = useDispatch();
 
   const { handleSubmit, handleReset, handleApproveImage } = useAnnotationSubmit();
@@ -154,6 +156,7 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
             overflowX: 'hidden',
           }}>
           <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
+          <Box component="div" sx={{ ml:11, mt:-3, mb:2 }}>{imageName}</Box>
           <ToggleSwitch onChangeHandler={handleChange} value={Switchs} />
 
           {Switchs === 'Annotation' ? (

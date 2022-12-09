@@ -5,7 +5,7 @@ import { Group, Line } from 'react-konva';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
-import { selectInstance , selectClass } from 'src/redux/slices/classes/classes.slice';
+import { selectInstance , selectClass, setMultiselectAnnotators } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
 import Rectangle from './Rectangle';
 
@@ -57,11 +57,25 @@ const Shapes = ({
       shapeId: string,
       type: typeof TOOLS.RECTANGLE | typeof TOOLS.LINE,
       instanceId?: string,
-      classIndex?: number
+      classIndex?: number,
+      annoIndex?: number,
+      className? : string,
+      classId? : string,
+      points?:any,
+      height?:number,
+      width?:number,
+      x?:number,
+      y?:number
     ) => {
+      console.log(shapeId)
       selectShape(shapeId);
       dispatch(selectClass({classIndex}))
       showTooltip(e);
+      console.log(classIndex, annoIndex)
+      const multiselectedAnnotatorsArray = []
+      multiselectedAnnotatorsArray.push({ classId, className ,height, points, id: instanceId, shapeId,
+        type, width, x, y })
+      dispatch(setMultiselectAnnotators({ multiselectedAnnotatorsArray }))
 
       if (type === TOOLS.RECTANGLE) {
         dispatch(
@@ -92,11 +106,13 @@ const Shapes = ({
   multiselectedAnnotators.forEach((anno: any) => {
     multiSelectshapeIds.push(anno.shapeId)
   });
+  console.log(multiselectedAnnotators)
+  
 
   return (
     <>
       {classes.map((classItem: Class, i) =>
-        classItem.annotations.map((annotation) =>
+        classItem.annotations.map((annotation,annoIndex) =>
           annotation.shapes?.map(
             (shape, m) =>
               annotation.visible && (
@@ -126,7 +142,7 @@ const Shapes = ({
                       lineCap="round"
                     />
                   ) : (
-                    <Rectangle
+                    (<Rectangle
                       key={shape.id + '-rect'}
                       shapeProps={{
                         ...shape,
@@ -138,7 +154,9 @@ const Shapes = ({
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId || multiSelectshapeIds.includes(shape.id)}
-                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i)}
+                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i, 
+                                    annoIndex, classItem.name, classItem._id, [], shape.height, shape.width, 
+                                    shape.x, shape.y )}
                       onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
                       bgX={bgX}
@@ -146,13 +164,41 @@ const Shapes = ({
                       bgWidthScale={bgWidthScale}
                       bgHeightScale={bgHeightScale}
                       stageScale={stageScale}
-                    />
-                  )}
+                    />) 
+                  )
+                  }
+                  {/* {
+                  multiselectedAnnotators.map((anno: any) => {
+                    multiSelectshapeIds.includes(shape.id) || true || (<Rectangle
+                      key={anno.shapeId + '-rect'}
+                      shapeProps={{
+                        ...anno,
+                        fill: classItem.color.replace(')', ', 0.35)').replace('rgb', 'rgba'),
+                        width: anno.width * bgWidthScale,
+                        stroke: classItem.color,
+                        height: anno.height * bgHeightScale,
+                        strokeWidth: 3 / stageScale,
+                      }}
+                      classItemName={anno.className}
+                      isSelected={true}
+                      onClick={(e) => {}}
+                      onDblClick={hideShapeTemporarily}
+                      hideTransformer={stageDragging || zooming}
+                      bgX={bgX}
+                      bgY={bgY}
+                      bgWidthScale={bgWidthScale}
+                      bgHeightScale={bgHeightScale}
+                      stageScale={stageScale}
+                    />)
+                   })
+                   } */}
                 </Group>
               )
           )
         )
-      )}
+      )
+      }
+      
     </>
   );
 };

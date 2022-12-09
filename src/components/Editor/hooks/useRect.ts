@@ -30,6 +30,10 @@ const useRect = (
         // if (!bg || bg.length === 0) return;
 
         let { x, y } = bg[0].getRelativePointerPosition()!;
+        // this addition is for to start rectangle draw from center of plus, however this addition values
+        // will get chnage as per svg size of Rectangle cursor i.e Plus
+        x = x + 12
+        y = y + 12
         // We are getting the values of the x & y relative to the background coords as the background might have different coords in different user screens
         let { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
 
@@ -60,7 +64,11 @@ const useRect = (
       if (newAnnotation.length === 1) {
         const sx = newAnnotation[0].x || 0;
         const sy = newAnnotation[0].y || 0;
-        const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+        let { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+        // this addition is for to start rectangle draw from center of plus, however this addition values
+        // will get chnage as per svg size of Rectangle cursor i.e Plus
+        x = x + 12
+        y = y + 12
         const width = x - sx;
         const height = y - sy;
 
@@ -96,8 +104,11 @@ const useRect = (
       if (newAnnotation.length === 1) {
         const sx = newAnnotation[0].x!;
         const sy = newAnnotation[0].y!;
-        const { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
-
+        let { x, y } = event.target.getStage()!.getRelativePointerPosition()!;
+        // this addition is for to start rectangle draw from center of plus, however this addition values
+        // will get chnage as per svg size of Rectangle cursor i.e Plus
+        x = x + 12
+        y = y + 12
         const bg = event.target.getStage()?.find('#canvasBackground')!;
         // if (!bg || bg.length === 0) return;
         const { x: bgX, y: bgY, width: bgWidth, height: bgHeight } = bg[0].attrs;
