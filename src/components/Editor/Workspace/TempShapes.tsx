@@ -10,8 +10,8 @@ interface Shapes {
   Area: Konva.ShapeConfig[];
 }
 
-const TempShapes = ({ lines, rects = [], Area = [], classColor, stageScale }: Shapes) => (
-  
+const TempShapes = ({ lines = [], rects = [], Area = [], classColor, stageScale }: Shapes) => (
+
   <>
     {rects.length > 0 && (
       <Rect
@@ -47,7 +47,7 @@ const TempShapes = ({ lines, rects = [], Area = [], classColor, stageScale }: Sh
 );
 
 function propsChanged(_prevProps: any, nextProps: Shapes) {
-  const { lines, rects = [] } = nextProps;
+  const { lines = [], rects = [] } = nextProps;
   return lines.length > 1 || rects.length > 1;
 }
 export default memo(TempShapes, propsChanged);

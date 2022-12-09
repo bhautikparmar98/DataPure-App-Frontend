@@ -8,6 +8,7 @@ import { setMultiselectAnnotators } from 'src/redux/slices/classes/classes.slice
 import { useSelect } from '@mui/base';
 import useSelectShape from './useSelectShape';
 import useTooltip from './useTooltip';
+import { shape } from '@mui/system';
 
 
 
@@ -127,13 +128,17 @@ const useMultipleSelect = (bgWidthScale: number, bgHeightScale: number) => {
               const anno_y1 = shapeData.y
               const anno_y2 = anno_y1 + shapeData.height
               if (x1 < anno_x1 && x2 > anno_x2 && y1 < anno_y1 && y2 > anno_y2) {
-                multiselectedAnnotatorsArray.push({ id: id, classId: classId, shapeId: shapeData.id, className: name })
+                multiselectedAnnotatorsArray.push({ id, classId, shapeId: shapeData.id, className: name, 
+                  width:shapeData.width, height: shapeData.height, points: shapeData.points, x:shapeData.x, y:shapeData.y, 
+                  type:shapeData.type})
                 multiselectShapeIds.push(shapeData.id)
               }
             }
             if (shapeData.type == "Line") {
               if (sx < shapeData.points[0] && sy < shapeData.points[1] && x > shapeData.points[2] && y > shapeData.points[3]) {
-                multiselectedAnnotatorsArray.push({ id: id, classId: classId, shapeId: shapeData.id, className: name })
+                multiselectedAnnotatorsArray.push({ id, classId, shapeId: shapeData.id, className: name ,
+                  width:shapeData.width, height: shapeData.height, points: shapeData.points, x:shapeData.x, y:shapeData.y, 
+                  type:shapeData.type})
                 multiselectShapeIds.push(shapeData.id)
               }
             }

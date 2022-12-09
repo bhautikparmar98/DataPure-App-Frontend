@@ -15,6 +15,7 @@ type State = {
   comments: { text: string; x: number; y: number; _id?: string }[];
   src: string;
   imageId: string;
+  imageName: string;
   attributes: any;
   lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
   multiselectedAnnotators : any;
@@ -30,6 +31,7 @@ const initialState = {
   comments: [],
   src: '',
   imageId: '',
+  imageName: '',
   attributes: {},
   lastTimeUpdated: 0,
   multiselectedAnnotators : []
@@ -47,7 +49,7 @@ const classesSlice = createSlice({
       )
         return state;
 
-      const { src, project, annotations, _id } = action.payload.state?.images[0];
+      const { src, project, annotations, _id, fileName } = action.payload.state?.images[0];
 
       const purifiedAnnos = annotations?.map((anno: any) => {
         const { id, classId, shapes, visible, attributes } = anno;
@@ -80,6 +82,7 @@ const classesSlice = createSlice({
         comments: [],
         src,
         imageId: _id,
+        imageName: fileName,
         selectedClassIndex: 0,
         lastTimeUpdated: new Date().getTime(),
       };
