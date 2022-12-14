@@ -49,6 +49,7 @@ type Props = {
   classesFilters: {
     label: string;
     classId: number;
+    color: string;
   }[];
   sortBy: (sortType: "a-z" | "newest" | "oldest") => void;
 };

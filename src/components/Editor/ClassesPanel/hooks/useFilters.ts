@@ -12,6 +12,7 @@ const useFilters = () => {
   const classesFilters = classes.map((classItem, i) => ({
     label: classItem.name,
     classId: i,
+    color: classItem.color
   }));
 
   const handleClassSelect = useCallback(

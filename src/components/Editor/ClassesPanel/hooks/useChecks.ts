@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Class } from 'src/constants';
+import { setChecks } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
 
 interface Checks {
@@ -24,25 +25,36 @@ const useChecks = ({
   selectedClassIndex,
   updateFiltersChecks,
 }: Props) => {
-  const [checks, setChecks] = useState<Checks>({});
+
   const [allChecked, setAllChecked] = useState<AllChecked>(
     AllChecked['allUnchecked']
   );
+  const multiselectAnnotators = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+  const checks = useSelector((state: RootState) => state.classes.checks);
+  const dispatch = useDispatch()
+
+  const multiSelectChecks : Checks = {};
+  
+  multiselectAnnotators.forEach((anno:any)=> {
+    multiSelectChecks[anno.id] = true
+  });
 
 
-  useEffect(() => {
-    updateFiltersChecks(checks);
-  }, [checks]);
+  useEffect(()=>{
+     const newChecks = multiSelectChecks
+     dispatch(setChecks({newChecks}))
+  },[JSON.stringify(multiSelectChecks)])
 
+  
 
   const toggleOne = useCallback(
     (e: ChangeEvent<HTMLInputElement>, id: string) => {
       const newChecks = { ...checks };
       const checked = e.target.checked;
       newChecks[id] = checked;
-      setChecks(newChecks);
+      dispatch(setChecks({newChecks}))
     },
-    [checks]
+    [JSON.stringify(checks)]
   );
 
   //toggle all checkboxes to be all checked or unchecked
@@ -52,27 +64,26 @@ const useChecks = ({
     );
 
     const checksStatus = e.target.checked;
+    const newChecks: Checks = {};
 
     if (checksStatus === true) {
       setAllChecked(AllChecked['allChecked']);
-      const newChecks: Checks = {};
       instancesIds.forEach((id: string) => {
         newChecks[id] = true;
       });
-      setChecks(newChecks);
+      dispatch(setChecks({newChecks}))
 
       return;
     }
 
     setAllChecked(AllChecked['allUnchecked']);
-    setChecks({});
+    dispatch(setChecks({newChecks}));
   };
 
   // test new `checks` state and make changes accordingly
-  const shouldChangeAllChecked = () => {
+  const shouldChangeAllChecked = () => {  
     const annosCount = classes[selectedClassIndex]?.annotations?.length;
     const checkedIds = Object.keys(checks).filter((id: string) => checks[id]);
-
     if (!annosCount || annosCount === 0) return;
 
     if (checkedIds.length === 0) {
@@ -89,7 +100,8 @@ const useChecks = ({
   };
 
   const resetChecks = () => {
-    setChecks({});
+    const newChecks: Checks = {};
+    dispatch(setChecks({newChecks}));
     setAllChecked(AllChecked['allUnchecked']);
   };
 
@@ -99,16 +111,17 @@ const useChecks = ({
 
   //reset checks after selection of new class or deletion for an instance
   useEffect(() => {
-    resetChecks();
+    if(JSON.stringify(checks) === '{}') resetChecks();
   }, [selectedClassIndex, classes[selectedClassIndex]?.annotations?.length]);
 
   return {
     toggleOne,
     toggleAll,
     checks,
-    setChecks,
     allChecked,
   };
 };
 
 export default useChecks;
+
+

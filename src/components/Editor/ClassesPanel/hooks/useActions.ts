@@ -2,9 +2,13 @@ import { useState } from 'react';
 import {
   changeAnnotationsClass,
   deleteAnnotations,
+  setMultiselectAnnotators,
   toggleAnnotationVisibility,
 } from 'src/redux/slices/classes/classes.slice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store';
+import _ from 'lodash';
+
 
 interface Checks {
   [instanceId: string]: boolean;
@@ -23,8 +27,10 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
 
   const dispatch = useDispatch();
 
+  const multiselectedAnnotators : any  = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+
   const getCheckedIds = () => {
-    const ids: string[] = [];
+    const ids: string[] = []; 
     for (const [key, checked] of Object.entries(checks)) {
       if (checked) ids.push(key);
     }
@@ -42,7 +48,15 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
         visible,
       })
     );
-  };
+    let multiselectedAnnotatorsArray : any = _.cloneDeep(multiselectedAnnotators); 
+    multiselectedAnnotatorsArray = multiselectedAnnotatorsArray.map((anno:any)=>{
+      if(checkedIds.includes(anno.id)) anno.visible = !anno.visible
+      return anno
+    })
+    dispatch(
+      setMultiselectAnnotators({multiselectedAnnotatorsArray})
+    )
+  }; 
   const deleteInstances = () => {
     const checkedIds = getCheckedIds();
     dispatch(
@@ -51,6 +65,8 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
         annotationIds: checkedIds,
       })
     );
+    const multiselectedAnnotatorsArray : any = []
+    dispatch(setMultiselectAnnotators({multiselectedAnnotatorsArray}))
 
     setDeleteModelVisible(false);
   };
@@ -65,7 +81,8 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
           annotationIds: checkedIds,
         })
       );
-
+      const multiselectedAnnotatorsArray : any = []
+      dispatch(setMultiselectAnnotators({multiselectedAnnotatorsArray}))
       handleChangeClassModalVisibility();
     }
   };
@@ -81,10 +98,10 @@ const useActions = ({ checks, selectedClassIndex }: Props) => {
   // set the target class that we want instances to be moved to
   const handleNewClassChange = (
     _: any,
-    classItem: { label: string; classId: number } | null
+    classItem: { label: string; classId: number; color:string} | null
   ) => {
     if (classItem && classItem?.classId >= 0) {
-      classItem?.classId >= 0 && setNewClassIndex(classItem.classId);
+        setNewClassIndex(classItem.classId);
     }
   };
 

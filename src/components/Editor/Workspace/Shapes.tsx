@@ -1,12 +1,13 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Group, Line } from 'react-konva';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Class, Tool, TOOLS } from 'src/constants';
-import { selectInstance , selectClass, setMultiselectAnnotators } from 'src/redux/slices/classes/classes.slice';
+import { selectInstance, selectClass, setMultiselectAnnotators, setChecks } from 'src/redux/slices/classes/classes.slice';
 import { RootState } from 'src/redux/store';
+import { Checks } from '../ClassesPanel';
 import Rectangle from './Rectangle';
 
 const hideShapeTemporarily = (e: KonvaEventObject<MouseEvent>) => {
@@ -59,22 +60,25 @@ const Shapes = ({
       instanceId?: string,
       classIndex?: number,
       annoIndex?: number,
-      className? : string,
-      classId? : string,
-      points?:any,
-      height?:number,
-      width?:number,
-      x?:number,
-      y?:number
+      className?: string,
+      classId?: string,
+      points?: any,
+      height?: number,
+      width?: number,
+      x?: number,
+      y?: number,
+      color?: string,
+      shape?: any
     ) => {
-      console.log(shapeId)
       selectShape(shapeId);
-      dispatch(selectClass({classIndex}))
+      dispatch(selectClass({ classIndex }))
       showTooltip(e);
-      console.log(classIndex, annoIndex)
       const multiselectedAnnotatorsArray = []
-      multiselectedAnnotatorsArray.push({ classId, className ,height, points, id: instanceId, shapeId,
-        type, width, x, y })
+      multiselectedAnnotatorsArray.push({
+        classId, className, height, points, id: instanceId, shapeId,
+        type, width, x, y, color, visible: true, shape, classIndex
+      })
+
       dispatch(setMultiselectAnnotators({ multiselectedAnnotatorsArray }))
 
       if (type === TOOLS.RECTANGLE) {
@@ -99,20 +103,33 @@ const Shapes = ({
     []
   );
 
-  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
-  const multiselectedAnnotators : any  = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+  const multiSelectChecks: Checks = {};
 
-  const multiSelectshapeIds : any = []
+  const stageDragging = useSelector((state: RootState) => state.editor.stageDragging);
+  const multiselectedAnnotators: any = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+
+  const multiSelectshapeIds: any = []
   multiselectedAnnotators.forEach((anno: any) => {
-    multiSelectshapeIds.push(anno.shapeId)
+    multiSelectshapeIds.push(anno.shapeId);
+    multiSelectChecks[anno.id] = true;
   });
-  console.log(multiselectedAnnotators)
-  
+
+
+  useEffect(() => {
+    const newChecks = multiSelectChecks
+    dispatch(setChecks({ newChecks }))
+  }, [JSON.stringify(multiSelectChecks)])
+
+
+  useEffect(() => {
+    if (multiselectedAnnotators.length === 0) hideTooltip()
+  }, [multiselectedAnnotators.length])
+
 
   return (
     <>
       {classes.map((classItem: Class, i) =>
-        classItem.annotations.map((annotation,annoIndex) =>
+        classItem.annotations.map((annotation, annoIndex) =>
           annotation.shapes?.map(
             (shape, m) =>
               annotation.visible && (
@@ -142,7 +159,7 @@ const Shapes = ({
                       lineCap="round"
                     />
                   ) : (
-                    (<Rectangle
+                    (!multiSelectshapeIds.includes(shape.id) && <Rectangle
                       key={shape.id + '-rect'}
                       shapeProps={{
                         ...shape,
@@ -154,9 +171,9 @@ const Shapes = ({
                       }}
                       classItemName={classItem.name}
                       isSelected={shape.id === selectedId || multiSelectshapeIds.includes(shape.id)}
-                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i, 
-                                    annoIndex, classItem.name, classItem._id, [], shape.height, shape.width, 
-                                    shape.x, shape.y )}
+                      onClick={(e) => handleShapeClick(e, shape.id, TOOLS.RECTANGLE, annotation.id, i,
+                        annoIndex, classItem.name, classItem._id, [], shape.height, shape.width,
+                        shape.x, shape.y, classItem.color, shape)}
                       onDblClick={hideShapeTemporarily}
                       hideTransformer={stageDragging || zooming}
                       bgX={bgX}
@@ -164,41 +181,58 @@ const Shapes = ({
                       bgWidthScale={bgWidthScale}
                       bgHeightScale={bgHeightScale}
                       stageScale={stageScale}
-                    />) 
+                      multiselectedAnnotators={multiselectedAnnotators}
+                    />
+                    )
                   )
                   }
-                  {/* {
-                  multiselectedAnnotators.map((anno: any) => {
-                    multiSelectshapeIds.includes(shape.id) || true || (<Rectangle
-                      key={anno.shapeId + '-rect'}
-                      shapeProps={{
-                        ...anno,
-                        fill: classItem.color.replace(')', ', 0.35)').replace('rgb', 'rgba'),
-                        width: anno.width * bgWidthScale,
-                        stroke: classItem.color,
-                        height: anno.height * bgHeightScale,
-                        strokeWidth: 3 / stageScale,
-                      }}
-                      classItemName={anno.className}
-                      isSelected={true}
-                      onClick={(e) => {}}
-                      onDblClick={hideShapeTemporarily}
-                      hideTransformer={stageDragging || zooming}
-                      bgX={bgX}
-                      bgY={bgY}
-                      bgWidthScale={bgWidthScale}
-                      bgHeightScale={bgHeightScale}
-                      stageScale={stageScale}
-                    />)
-                   })
-                   } */}
                 </Group>
               )
           )
         )
       )
       }
-      
+      { //for placing selected annotator at Top layer for resizing from each corner
+        multiselectedAnnotators.map((anno: any, index: any) =>
+        (
+          anno.visible && anno.type === "Rectangle" &&
+          <Group key={anno.shapeId}
+            x={0}
+            y={0}
+            draggable={currentTool === TOOLS.SELECT && !stageDragging}
+            name={anno.className}
+            onDragStart={hideTooltip}
+            tabIndex={1}
+            classId={anno.classIndex}
+            annotationId={anno.id}
+            onDragEnd={(e) => handleShapeMove(e, anno.classIndex, anno.shape, anno.id!)}>
+            <Rectangle
+              key={anno.shapeId + '-rect'}
+              shapeProps={{
+                ...anno,
+                fill: anno.color.replace(')', ', 0.35)').replace('rgb', 'rgba'),
+                width: anno.width * bgWidthScale,
+                stroke: anno.color,
+                height: anno.height * bgHeightScale,
+                strokeWidth: 3 / stageScale,
+              }}
+              classItemName={anno.className}
+              isSelected={true}
+              onClick={(e) => { }}
+              onDblClick={hideShapeTemporarily}
+              hideTransformer={stageDragging || zooming}
+              bgX={bgX}
+              bgY={bgY}
+              bgWidthScale={bgWidthScale}
+              bgHeightScale={bgHeightScale}
+              stageScale={stageScale}
+              multiselectedAnnotators={multiselectedAnnotators}
+            />
+          </Group>
+        )
+        )
+
+      }
     </>
   );
 };
