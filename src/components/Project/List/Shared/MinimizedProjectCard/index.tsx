@@ -51,7 +51,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
           {metaButton && <MetaDataCreationModel project={project} syncProjectData={syncProjectData} />}
         </Box>
         <Box my={1}>
-          <Typography variant="body2">
+          <Typography variant="body2" sx={{fontSize:13}}>
             <strong>Due By: </strong>
             <span style={{ color: theme.palette.text.secondary }}>{fDate(project.dueAt)}</span>
 
@@ -84,7 +84,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
           {actions.map((a, index) => {
             if (a.variant === 'icon') {
               return (
-                <IconButton color={a.color || 'primary'} edge="end" key={index} onClick={() => a.action(project)}>
+                <IconButton color={a.color || 'primary'} edge="end" key={index} sx={{ px: 1, marginRight: 1 }} onClick={() => a.action(project)}>
                   <Iconify icon={a.icon as any} />
                 </IconButton>
               );
@@ -93,7 +93,7 @@ const MinimizedProjectCard: React.FC<MinimizedProjectCardProps> = ({
             return (
               <Button
                 key={index}
-                sx={{ px: 1 }}
+                sx={{ px: 1, marginRight: 1 }}
                 variant={a.variant as any}
                 color="primary"
                 onClick={() => a.action(project)}>
