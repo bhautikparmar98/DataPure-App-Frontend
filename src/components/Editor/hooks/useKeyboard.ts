@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { ROLES, TOOLS } from 'src/constants';
 import useAuth from 'src/hooks/useAuth';
-import { deleteAnnotation, undoHistory, redoHistory } from 'src/redux/slices/classes/classes.slice';
+import { deleteAnnotation, undoHistory, redoHistory, deleteAnnotations, setMultiselectAnnotators, setChecks } from 'src/redux/slices/classes/classes.slice';
 import { startDragging, setTool } from 'src/redux/slices/editor/editor.slice';
 import { RootState } from 'src/redux/store';
 import useCursor from './useCursor';
@@ -19,6 +19,13 @@ const useKeyboard = (
   const currentTool = useSelector((state: RootState) => state.editor.tool);
   const dispatch = useDispatch();
 
+  const checks = useSelector((state: RootState) => state.classes.checks);
+
+  const checkedIds : string[] = [];
+  for (const [key, checked] of Object.entries(checks)) {
+    if (checked) checkedIds.push(key);
+  }
+ 
   const stage = stageRef.current;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -59,11 +66,19 @@ const useKeyboard = (
 
   const handleShapeDeletion = useCallback(() => {
     if (!stage) return;
-    const { classId, annotationId } = stage.find('#' + selectedId)[0]?.parent?.attrs || {};
-    if (classId >= 0 && annotationId?.length > 0) {
-      dispatch(deleteAnnotation({ classId, annotationId }));
+    const multiselectedAnnotatorsArray : any = []
+    dispatch(setMultiselectAnnotators({multiselectedAnnotatorsArray}))
+    // for multiple selection Delete using keyboard
+    if(checkedIds.length > 0){
+      const newChecks :any = {}
+      dispatch(setChecks({newChecks}))
+      dispatch(
+        deleteAnnotations({
+          annotationIds: checkedIds,
+        })
+      );
     }
-  }, [selectedId]);
+  }, [selectedId, checkedIds]);
 
   const handleKeyUp = useCallback(() => {
     dispatch(startDragging({ stageDragging: false }));

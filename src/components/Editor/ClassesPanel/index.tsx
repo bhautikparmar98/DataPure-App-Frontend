@@ -16,13 +16,14 @@ import useAttributes from './hooks/useAttributes';
 import useSortedClasses from './hooks/useSortedClasses';
 import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
 import { RootState } from 'src/redux/store';
+import { setChecks } from 'src/redux/slices/classes/classes.slice';
 
 interface ClassPanelProps {
   onRequestRedoFinish: (imgId: string) => void;
   annotationId: String | undefined;
 }
 
-interface Checks {
+export interface Checks {
   [instanceId: string]: boolean;
 }
 
@@ -35,21 +36,15 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
 
   const { handleSubmit, handleReset, handleApproveImage } = useAnnotationSubmit();
 
-  const [checks, setChecks] = useState<Checks>({});
+ 
 
-  const multiselectAnnotators = useSelector((state: RootState) => state.classes.multiselectedAnnotators);
+  const checks = useSelector((state: RootState) => state.classes.checks);
 
-  const multiSelectChecks : Checks = {};
   
-  multiselectAnnotators.forEach((anno:any)=> {
-    multiSelectChecks[anno.id] = true
-  });
 
-  useEffect(()=>{
-    setChecks(multiSelectChecks)
-  },[JSON.stringify(multiSelectChecks)])
-
-  const updateFiltersChecks = useCallback((newChecks: Checks) => setChecks(newChecks), [checks]);
+  const updateFiltersChecks = useCallback((newChecks: Checks) => {
+    dispatch(setChecks({newChecks}))
+  }, [checks]);
 
   const { project } = useAttributes();
 

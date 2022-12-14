@@ -119,7 +119,7 @@ const useMultipleSelect = (bgWidthScale: number, bgHeightScale: number) => {
       const y2 = y1 + height
 
       if (xValid && yValid) {
-        classes.forEach(({ annotations, name }) => {
+        classes.forEach(({ annotations, name,color },i) => {
           annotations.forEach(({ id, classId, shapes }) => {
             const shapeData = shapes[0]
             if (shapeData.type == "Rectangle") {
@@ -130,7 +130,7 @@ const useMultipleSelect = (bgWidthScale: number, bgHeightScale: number) => {
               if (x1 < anno_x1 && x2 > anno_x2 && y1 < anno_y1 && y2 > anno_y2) {
                 multiselectedAnnotatorsArray.push({ id, classId, shapeId: shapeData.id, className: name, 
                   width:shapeData.width, height: shapeData.height, points: shapeData.points, x:shapeData.x, y:shapeData.y, 
-                  type:shapeData.type})
+                  type:shapeData.type, color, visible:true, classIndex: i, shape:shapeData})
                 multiselectShapeIds.push(shapeData.id)
               }
             }
@@ -138,7 +138,7 @@ const useMultipleSelect = (bgWidthScale: number, bgHeightScale: number) => {
               if (sx < shapeData.points[0] && sy < shapeData.points[1] && x > shapeData.points[2] && y > shapeData.points[3]) {
                 multiselectedAnnotatorsArray.push({ id, classId, shapeId: shapeData.id, className: name ,
                   width:shapeData.width, height: shapeData.height, points: shapeData.points, x:shapeData.x, y:shapeData.y, 
-                  type:shapeData.type})
+                  type:shapeData.type, color, visible:true, classIndex: i, shape:shapeData})
                 multiselectShapeIds.push(shapeData.id)
               }
             }

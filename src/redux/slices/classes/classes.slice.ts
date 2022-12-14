@@ -1,5 +1,6 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 import { ShapeConfig } from 'konva/lib/Shape';
+import { Checks } from 'src/components/Editor/ClassesPanel';
 
 // import _ from 'lodash';
 import { Annotation, Class, TOOLS } from 'src/constants';
@@ -19,6 +20,7 @@ type State = {
   attributes: any;
   lastTimeUpdated: number; //? this flag is relied on as a factor to update logic when needed
   multiselectedAnnotators : any;
+  checks : Checks
 };
 
 const initialState = {
@@ -34,7 +36,8 @@ const initialState = {
   imageName: '',
   attributes: {},
   lastTimeUpdated: 0,
-  multiselectedAnnotators : []
+  multiselectedAnnotators : [],
+  checks: {}
 } as State;
 
 const classesSlice = createSlice({
@@ -96,8 +99,11 @@ const classesSlice = createSlice({
       state.selectedClassIndex = action.payload.classIndex;
     },
 
+    setChecks: (state, action) => {
+      state.checks = action.payload.newChecks;
+    },
+
     setMultiselectAnnotators: (state, action) => {
-      // console.log(action.payload.multiselectedAnnotatorsArray)
       state.multiselectedAnnotators = action.payload.multiselectedAnnotatorsArray;
     },
 
@@ -332,6 +338,7 @@ export const {
   redoHistory,
   selectInstance,
   deselectInstance,
-  setMultiselectAnnotators
+  setMultiselectAnnotators,
+  setChecks
 } = classesSlice.actions;
 export default classesSlice.reducer;

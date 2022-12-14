@@ -1,10 +1,11 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
+import _ from 'lodash';
 import isEqual from 'lodash/isEqual';
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Rect, Transformer } from 'react-konva';
 import { useDispatch } from 'react-redux';
-import { updateShape } from 'src/redux/slices/classes/classes.slice';
+import { setMultiselectAnnotators, updateShape } from 'src/redux/slices/classes/classes.slice';
 interface IRectangle {
   shapeProps: Konva.ShapeConfig;
   isSelected: boolean;
@@ -13,11 +14,12 @@ interface IRectangle {
   bgY: number;
   classItemName: string;
   onClick: (e: KonvaEventObject<Event>) => void;
-  onDblClick: (e: KonvaEventObject<MouseEvent>) => void;
+  onDblClick: (e: KonvaEventObject<MouseEvent>, index?:any) => void;
   otherProps?: any;
   bgWidthScale: number;
   bgHeightScale: number;
   stageScale: number;
+  multiselectedAnnotators:any;
 }
 
 const Rectangle = ({
@@ -32,12 +34,13 @@ const Rectangle = ({
   bgWidthScale,
   bgHeightScale,
   stageScale,
+  multiselectedAnnotators,
   ...otherProps
 }: IRectangle) => {
   const shapeRef = useRef<Konva.Rect>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
-  const props = useMemo(() => shapeProps, [shapeProps.strokeWidth]);
+  const props = useMemo(() => shapeProps, []);
 
   const dispatch = useDispatch();
   // For Rectangle transformation (size & rotation)
@@ -51,11 +54,13 @@ const Rectangle = ({
             y: newAttrs?.y || 0,
             width: newAttrs?.width || 0,
             height: newAttrs?.height || 0,
-            id: newAttrs?.id || '',
+            id: newAttrs?.shapeId || '',
             points: newAttrs?.points || [],
           },
         })
       );
+      const multiselectedAnnotatorsArray : any = []
+      dispatch(setMultiselectAnnotators({ multiselectedAnnotatorsArray }))
     }
   }, []);
 
@@ -86,14 +91,14 @@ const Rectangle = ({
   }, []);
 
   useEffect(() => {
-    if (isSelected) {
+    if (multiselectedAnnotators.length > 0) {
       // we need to attach transformer manually
       if (trRef?.current?.nodes && trRef?.current?.getLayer && shapeRef.current) {
         trRef.current.nodes([shapeRef.current]);
         trRef.current.getLayer()?.batchDraw();
       }
     }
-  }, [isSelected]);
+  }, [JSON.stringify(multiselectedAnnotators)]);
 
   return (
     <>

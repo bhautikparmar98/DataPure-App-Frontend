@@ -4,7 +4,7 @@ import Konva from 'konva';
 import _ from 'lodash';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { setMultiselectAnnotators, updateAnnotation } from 'src/redux/slices/classes/classes.slice';
 import useComment from './useComment';
 import useLine from './useLine';
 import useRect from './useRect';
@@ -155,6 +155,8 @@ const useDraw = (
           update: { shapes },
         })
       );
+      const multiselectedAnnotatorsArray : any = []
+      dispatch(setMultiselectAnnotators({ multiselectedAnnotatorsArray }))
     },
     [stageRef, stageDragging, currentTool]
   );
