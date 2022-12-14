@@ -41,7 +41,7 @@ const SuperAdminProjectsComponents = () => {
       component="div"
       sx={{ height: '100%', mt: 0, mb: 0 }}
     >
-      <Grid item xs={6} md={2} style={{ paddingTop: 0, paddingBottom: 0 }}>
+      <Grid item xs={6} md={2} style={{ paddingTop: 0, paddingBottom: 0, zIndex: 0 }}>
         <ClientList
           onSelectedClient={selectClientHandler}
           selectedClientId={selectedClientId}
