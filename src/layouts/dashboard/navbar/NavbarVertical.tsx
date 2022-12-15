@@ -116,7 +116,7 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           PaperProps={{
             sx: {
               width: NAVBAR.DASHBOARD_WIDTH,
-              zIndex: 0,
+              zIndex: 1,
               borderRightStyle: 'dashed',
               bgcolor: 'transparent',
               transition: (theme) =>
