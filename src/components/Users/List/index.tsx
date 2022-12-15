@@ -210,7 +210,7 @@ const UserListComponent = () => {
                     );
                   })}
                   {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableRow style={{ height: ("small" ? 33 : 53) * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}
@@ -230,7 +230,7 @@ const UserListComponent = () => {
         </Scrollbar>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
           count={usersTotalCount}
           rowsPerPage={rowsPerPage}
