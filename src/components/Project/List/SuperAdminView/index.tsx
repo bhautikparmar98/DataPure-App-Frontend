@@ -48,7 +48,7 @@ const SuperAdminProjectsComponents = () => {
         />
       </Grid>
 
-      <Grid item xs={6} md={10}>
+      <Grid item xs={6} md={10} style={{ overflowY: "auto", height: 'calc(100vh - 0px)', paddingBottom: 10 }}>
         <Container
           maxWidth={themeStretch ? false : 'lg'}
           // style={{ display: 'flex' }}
