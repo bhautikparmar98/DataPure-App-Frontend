@@ -77,7 +77,7 @@ const useUserListLogic = () => {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0;
+    page > 0 ? Math.max(0, rowsPerPage - userList.length) : 0;
 
   const filteredUsers = applySortFilter(
     userList,
