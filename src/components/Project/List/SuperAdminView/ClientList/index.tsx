@@ -40,7 +40,7 @@ const ClientList: React.FC<ClientListProps> = ({
   }, []);
 
   return (
-    <Paper elevation={3} sx={{ height: '100%', display: 'flex', flex: 1 }}>
+    <Paper elevation={3} sx={{ overflowY: "auto", height: 'calc(100vh - 0px)', display: 'flex', flex: 1 }}>
       <Stack flex={1} pt={1}>
         <Box paddingY={3} paddingX={3}>
           <Typography variant="h5">Active Clients</Typography>
