@@ -1,6 +1,20 @@
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Stack, AppBar, Toolbar } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import { alpha } from '@mui/material/styles';;
+import InputBase from '@mui/material/InputBase';
+import Badge from '@mui/material/Badge';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import MailIcon from '@mui/icons-material/Mail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreIcon from '@mui/icons-material/MoreVert';
+
 // hooks
 import useOffSetTop from 'src/hooks/useOffSetTop';
 import useResponsive from 'src/hooks/useResponsive';
@@ -18,6 +32,7 @@ import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import ContactsPopover from './ContactsPopover';
 import NotificationsPopover from './NotificationsPopover';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -77,43 +92,74 @@ export default function DashboardHeader({
   const isDesktop = useResponsive('up', 'lg');
 
   return (
-    <RootStyle
-      isCollapse={isCollapse}
-      isOffset={isOffset}
-      verticalLayout={verticalLayout}
-      style={{ display: noHeader && isDesktop ? 'none' : undefined }}
-    >
-      <Toolbar
-        sx={{
-          minHeight: '100% !important',
-          px: { lg: 5 },
-        }}
-      >
-        {isDesktop && verticalLayout && <Logo sx={{ mr: 2.5 }} />}
-
-        {!isDesktop && (
+    <Box sx={{ flexGrow: 1 }} >
+       <AppBar sx={{color:"rgba(48,63,191,255)"}}>
+      <Toolbar>
+       {!isDesktop && (
           <IconButtonAnimate
             onClick={onOpenSidebar}
             sx={{ mr: 1, color: 'text.primary' }}
           >
-            <Iconify icon="eva:menu-2-fill" />
+            <Iconify icon="eva:menu-2-fill" color='white'/>
           </IconButtonAnimate>
         )}
-
-        <Searchbar />
+        <Logo sx={{ mr: 2.5 }} />
+        {isDesktop && <Typography sx={{color:'white'}}>DATAPURE</Typography> }
         <Box sx={{ flexGrow: 1 }} />
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 0.5, sm: 1.5 }}
-        >
-          {/* <LanguagePopover />
-          <NotificationsPopover />
-          <ContactsPopover /> */}
-          <AccountPopover />
-        </Stack>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Searchbar />
+            <IconButton
+              size="large"
+              aria-label="show 1 new notifications"
+              color="inherit"
+            >
+              <Badge sx={{mr:1}} badgeContent={1} color="error">
+                <NotificationsIcon sx={{color:"white"}} />
+              </Badge>
+            </IconButton>
+          </Box>
+        <AccountPopover />
       </Toolbar>
-    </RootStyle>
+    </AppBar>
+    </Box>
+   
+    // <RootStyle
+    //   isCollapse={isCollapse}
+    //   isOffset={isOffset}
+    //   verticalLayout={verticalLayout}
+    //   style={{ display: noHeader && isDesktop ? 'none' : undefined }}
+    // >
+    //   <Toolbar
+    //     sx={{
+    //       minHeight: '100% !important',
+    //       px: { lg: 5 },
+    //     }}
+    //   >
+    //     {isDesktop && verticalLayout && <Logo sx={{ mr: 2.5 }} />}
+
+    //     {!isDesktop && (
+    //       <IconButtonAnimate
+    //         onClick={onOpenSidebar}
+    //         sx={{ mr: 1, color: 'text.primary' }}
+    //       >
+    //         <Iconify icon="eva:menu-2-fill" />
+    //       </IconButtonAnimate>
+    //     )}
+
+    //     <Searchbar />
+    //     <Box sx={{ flexGrow: 1 }} />
+
+    //     <Stack
+    //       direction="row"
+    //       alignItems="center"
+    //       spacing={{ xs: 0.5, sm: 1.5 }}
+    //     >
+    //       {/* <LanguagePopover />
+    //       <NotificationsPopover />
+    //       <ContactsPopover /> */}
+    //       <AccountPopover />
+    //     </Stack>
+    //   </Toolbar>
+    // </RootStyle>
   );
 }

@@ -6,6 +6,10 @@ export function fDate(date: Date | string | number) {
   return format(new Date(date), 'd MMMM yyyy');
 }
 
+export function f1Date(date: Date | string | number) {
+  return format(new Date(date), 'MMMM, d yyyy');
+}
+
 export function fDateTime(date: Date | string | number) {
   return format(new Date(date), 'dd MMM yyyy p');
 }

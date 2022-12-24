@@ -15,15 +15,18 @@ interface proertiesProps {
   defaultValue: string;
   descriptions: string;
   required: boolean;
+  setOpenListView:()=>void;
+  openlistView: boolean
 }
 
 interface MetaDataCreationProps {
   project: IProject;
   syncProjectData: any;
+  setOpenListView: any;
+  openlistView: boolean;
 }
 
-const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({ project, syncProjectData }) => {
-  const [openlistView, setOpenListView] = useState(false);
+const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({ project, syncProjectData, setOpenListView, openlistView }) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -43,9 +46,9 @@ const MetaDataCreationModel: React.FC<MetaDataCreationProps> = ({ project, syncP
 
   return (
     <Box>
-      <Button variant={'contained'} color={'primary'} onClick={() => setOpenListView(!openlistView)} size={'small'}>
+      {/* <Button variant={'contained'} color={'primary'} onClick={() => setOpenListView(!openlistView)} size={'small'}>
         {'Meta data'}
-      </Button>
+      </Button> */}
       <MetaPropertiesList
         list={project.attributes}
         open={openlistView}

@@ -60,7 +60,7 @@ export default function ReviewListHead({
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
+          <Checkbox sx={{color:'white', align:'center', paddingLeft:'26px'}}
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={(event) => onSelectAllClick(event.target.checked)}

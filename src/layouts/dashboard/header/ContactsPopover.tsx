@@ -67,7 +67,7 @@ export default function ContactsPopover() {
         </Typography>
 
         <Scrollbar sx={{ height: ITEM_HEIGHT * 6 }}>
-          {_contacts.map((contact) => (
+          {_contacts.map((contact:any) => (
             <MenuItem key={contact.id}>
               <ListItemAvatar sx={{ position: 'relative' }}>
                 <Avatar src={contact.avatar} />

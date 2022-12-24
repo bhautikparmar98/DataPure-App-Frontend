@@ -8,6 +8,7 @@ export default function Dialog(theme: Theme) {
       styleOverrides: {
         paper: {
           boxShadow: theme.customShadows.dialog,
+          backgroundColor: 'rgba(244,246,254,255)',
           '&.MuiPaper-rounded': {
             borderRadius: Number(theme.shape.borderRadius) * 2,
           },

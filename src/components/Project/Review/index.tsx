@@ -14,21 +14,27 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import BasicTimeline from 'src/components/Shared/BasicTimeLine';
 import HeaderBreadcrumbs from 'src/components/Shared/HeaderBreadcrumbs';
 import Image from 'src/components/Shared/Image';
 import Label from 'src/components/Shared/Label';
 import Scrollbar from 'src/components/Shared/Scrollbar';
 import SearchNotFound from 'src/components/Shared/SearchNotFound';
 import { IMAGE_STATUS } from 'src/constants/ImageStatus';
+import useAuth from 'src/hooks/useAuth';
 import useSettings from 'src/hooks/useSettings';
 import { addProjectIds } from 'src/redux/slices/editor/editor.slice';
 import { PATH_DASHBOARD } from 'src/routes/dashboard/paths';
-import { fDate } from 'src/utils/formatTime';
+import axiosInstance from 'src/utils/axios';
+import { fDate, f1Date } from 'src/utils/formatTime';
 import useDatasetReview from './hooks/useDatasetReview';
 import ReviewHeaderToolBar from './ReviewHeaderToolBar';
 import ReviewListHead from './ReviewListHead';
+import { IProject } from '../List/types/project';
+import _ from 'lodash';
+
 
 interface ProjectDataSetReviewProps {
   projectId: string;
@@ -63,6 +69,26 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
 
   const router = useRouter();
   const dispatch = useDispatch();
+  const { user } = useAuth();
+
+  const [projects, setProjects] = useState<IProject[]>([]);
+
+  const getProjects = async () => {
+    if (user === null) throw new Error('Client can not be null');
+    try {
+      const response = await axiosInstance.get(`/user/${user.id}/project`);
+      const { projects } = response.data;
+      setProjects(projects);
+    } catch (error) {
+      console.log('error', error)
+    }
+  };
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
+  const currentproject = projects.find(p=> p._id === projectId)
 
   const reviewHandler = (imageId: string | undefined) => {
     if (typeof imageId === 'string') {
@@ -77,8 +103,9 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
 
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
+    
       <HeaderBreadcrumbs
-        heading="Review Images"
+        heading={currentproject?.name !== undefined ? currentproject?.name : '' }
         links={[
           { name: 'Projects', href: PATH_DASHBOARD.project.list },
           {
@@ -136,7 +163,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
                       <TableCell padding="checkbox">
                         <Checkbox checked={isItemSelected} onClick={() => handleClick(fileName)} />
                       </TableCell>
-                      <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                      <TableCell align='center'>{page * rowsPerPage + index + 1}</TableCell>
                       <TableCell align="center">
                         <Image
                           disabledEffect
@@ -149,17 +176,16 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
                           }}
                         />
                       </TableCell>
-                      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant="subtitle2" noWrap>
+                      <TableCell sx={{  alignItems: 'center' }}>
                           {fileName.length > 30 ? fileName.slice(0, 30) + '...' : fileName}
-                        </Typography>
                       </TableCell>
                       <TableCell style={{ minWidth: 160 }}>{fDate(createdAt)}</TableCell>
-                      <TableCell align="center">{dateAnnotated ? fDate(dateAnnotated) : '_'}</TableCell>
+                      <TableCell align="center">{dateAnnotated ? f1Date(dateAnnotated) : '_'}</TableCell>
                       <TableCell align="center" style={{ minWidth: 160 }}>
-                        <Label color={IMAGE_STATUS[status as keyof typeof IMAGE_STATUS].color as any}>
+                        <BasicTimeline value={IMAGE_STATUS[status as keyof typeof IMAGE_STATUS].value as any}/>
+                        {/* <Label color={IMAGE_STATUS[status as keyof typeof IMAGE_STATUS].color as any}>
                           {IMAGE_STATUS[status as keyof typeof IMAGE_STATUS].label}
-                        </Label>
+                        </Label> */}
                       </TableCell>
                       <TableCell align="center" color="default">
                         <Button

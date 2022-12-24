@@ -13,11 +13,13 @@ import SuperAdminProjectStatistics from '../Statistics';
 interface SuperAdminClientProjectsProps {
   clientId: number | null;
   admins: any[];
+  setAdmins: any
 }
 
 const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
   clientId,
   admins,
+  setAdmins
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -111,6 +113,7 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
         flexDirection='column'
         justifyContent='center'
         alignItems='center'
+        sx={{pt:7}}
       >
         <Iconify icon='clarity:home-solid' width={100} height={100} />
         <Typography variant='subtitle2'>
@@ -143,6 +146,7 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
         admins={admins}
         selectedProject={selectedProject}
         onAssignFinish={assignAdminToProjectFinishHandler}
+        setAdmins={setAdmins}
       />
       <ProjectGrid
         projects={projects}
@@ -154,7 +158,7 @@ const SuperAdminClientProjects: React.FC<SuperAdminClientProjectsProps> = ({
             label: '',
             action: (project: IProject) => downloadOutputHandler(project),
             variant: 'icon',
-            icon: 'ant-design:download-outlined',
+            icon: 'material-symbols:download-for-offline-outline-rounded',
             disabled: downloadLoading,
           },
           {

@@ -16,6 +16,8 @@ const InputStyle = styled(TextField, {
       easing: theme.transitions.easing.easeInOut,
       duration: theme.transitions.duration.shorter,
     }),
+    borderRadius: 40,
+    border: '1px solid rgba(97,111,228,255)',
     '&.Mui-focused': {
       boxShadow: theme.customShadows.z12,
     },

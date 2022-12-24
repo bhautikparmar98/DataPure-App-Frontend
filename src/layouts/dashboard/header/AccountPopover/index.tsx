@@ -24,6 +24,7 @@ import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { styled } from '@mui/material/styles';
 import MenuPopover from 'src/components/Shared/MenuPopover';
+import { ROLES } from 'src/constants';
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ const IconButtonWithNoHover = styled(IconButton)({
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
 
   const isMountedRef = useIsMountedRef();
 
@@ -107,16 +108,19 @@ export default function AccountPopover() {
         }}
       >
         <Avatar alt={user?.fullName} />
-        <Typography
-          variant="subtitle2"
-          noWrap
-          color="CaptionText"
-          style={{ fontWeight: 'bold', paddingLeft: 10, paddingRight: 10 }}
-        >
-          {user?.fullName}
-        </Typography>
-
-        <KeyboardArrowDownIcon width={12} />
+        <Box>
+        <Typography variant="subtitle2" 
+             color="CaptionText"
+             style={{ fontWeight: 'bold', paddingLeft: 10, paddingRight: 10 , color:"white"}}
+              noWrap>
+            {user?.fullName}
+          </Typography>
+          <Typography variant="body2" noWrap sx={{ color: 'white' }} style={{float:'left', paddingLeft: 10}}>
+            {ROLES[role].label}
+          </Typography>
+        </Box>
+        <KeyboardArrowDownIcon width={12} style={{color:"white"}} />
+          
       </IconButtonWithNoHover>
 
       <MenuPopover
