@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 // next
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -25,6 +25,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { styled } from '@mui/material/styles';
 import MenuPopover from 'src/components/Shared/MenuPopover';
 import { ROLES } from 'src/constants';
+import { SettingsContext } from 'src/contexts/SettingsContext';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +40,7 @@ const MENU_OPTIONS = [
   // },
   {
     label: 'Settings',
-    linkTo: '/',
+    linkTo: '/'
   },
 ];
 
@@ -70,8 +71,11 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const ctx = useContext(SettingsContext)
+
+  const handleClose = (label:string = '') => {
     setOpen(null);
+    if(label === "Settings") ctx.setShowSetting(true)
   };
 
   const handleLogout = async () => {
@@ -126,7 +130,7 @@ export default function AccountPopover() {
       <MenuPopover
         open={Boolean(open)}
         anchorEl={open}
-        onClose={handleClose}
+        onClose={()=>handleClose()}
         sx={{
           p: 0,
           mt: 1.5,
@@ -150,11 +154,14 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <NextLink key={option.label} href={option.linkTo} passHref>
-              <MenuItem key={option.label} onClick={handleClose}>
+            option.label !== "Settings" ? <NextLink key={option.label} href={option.linkTo} passHref>
+              <MenuItem key={option.label} onClick={()=>handleClose(option.label)}>
                 {option.label}
               </MenuItem>
             </NextLink>
+            :  <MenuItem key={option.label} onClick={()=>handleClose(option.label)}>
+                  {option.label}
+                </MenuItem>
           ))}
         </Stack>
 

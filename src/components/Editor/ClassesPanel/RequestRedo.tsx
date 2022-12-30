@@ -71,7 +71,7 @@ const RequestRedo: React.FC<RequestRedoProps> = ({ onRequestRedoFinish }) => {
       {/* <DoneIcon sx={{ color:'white', fontSize: 30, backgroundColor:"green" , borderRadius: 1}}/>
       <CancelIcon sx={{ color:'white', fontSize: 30, backgroundColor:"red" , borderRadius: 1}}/> */}
       {(ROLES.QA.value === role || ROLES.CLIENT.value === role) && (
-        <Button variant="contained" sx={{mt:-4}} color="error" onClick={() => requestRedoHandler(imageId)}>
+        <Button variant="contained" sx={{mt:-4, mr:2, backgroundColor:'#ff3030'}}  onClick={() => requestRedoHandler(imageId)}>
           Request Redo
         </Button>
       )}

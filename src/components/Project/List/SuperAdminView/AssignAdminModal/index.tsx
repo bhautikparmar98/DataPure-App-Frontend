@@ -69,9 +69,6 @@ const AssignAdminModal: React.FC<AssignAdminModalProps> = ({
     })
   }
 
-  // console.log('prev selected',prevSelectedAdmin.current)
-  // console.log('selected Admin', selectedAdminId )
-
   const assignAdminHandler = async (adminId: any) => {
     if (!selectedProject) return;
     const admin = adminsClone.find((admin:any)=>admin.id === adminId)

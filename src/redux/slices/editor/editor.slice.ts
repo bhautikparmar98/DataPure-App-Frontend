@@ -10,6 +10,7 @@ type State = {
   projectImagesIds: {
     [projectId: string]: string[];
   };
+  projectName: string;
 };
 
 const initialState: State = {
@@ -17,7 +18,8 @@ const initialState: State = {
   stageDragging: false,
   preview: '',
   multiSelectmode: false,
-  projectImagesIds: {}
+  projectImagesIds: {},
+  projectName: ''
 };
 
 export const editorSlice = createSlice({

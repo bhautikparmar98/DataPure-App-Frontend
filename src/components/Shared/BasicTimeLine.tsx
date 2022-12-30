@@ -21,9 +21,9 @@ export default function BasicTimeline({value}:any) {
 
   console.log(value)
 
-  let color1 = "grey"
-  let color2 = 'grey'
-  let color3 = 'grey'
+  let color1 : any = 'grey'
+  let color2 : any = 'grey'
+  let color3 :any = 'grey'
 
   switch(value) {
     case 'ANNOTATION_INPROGRESS':

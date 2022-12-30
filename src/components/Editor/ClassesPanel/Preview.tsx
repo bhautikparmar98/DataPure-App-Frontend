@@ -7,13 +7,13 @@ const Preview = () => {
   return src?.length > 0 ? (
     <Grid
       sx={{
-        border: '5px solid yellow',
+        border: '5px solid rgba(48,63,191,255)',
         background: '#C6C6C6',
         height: 150,
       }}
       alignItems="center"
       container>
-      <img src={src} alt="workspace preview" style={{ margin: 'auto', width: 'auto', maxHeight: 140 }} />
+      <img src={src} alt="workspace preview" style={{ margin: '0px', width: 'inherit', maxHeight: 140 }} />
     </Grid>
   ) : null;
 };

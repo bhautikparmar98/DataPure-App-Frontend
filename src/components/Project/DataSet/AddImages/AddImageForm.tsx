@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 // @mui
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
@@ -267,7 +267,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
   return (
     <FormProvider methods={methods}>
       <Stack color="text.secondary" sx={{ mt: 2, display: 'flex' }}>
-        <Box display="flex" gap="4px">
+        <Box display="flex" gap="4px" sx={{p:0, minHeight:'auto'}}>
           <UploadMultiFile
             accept="image/*"
             files={images}
@@ -280,6 +280,7 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
             uploading={uploading}
             progress={progress}
             buffer={progress + 5}
+            label="Drop or Select Images files"
           />
           {projectType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value ? (
             <RHFUploadMultiFile
@@ -298,20 +299,25 @@ const ClassForm: React.FC<ClassFormProps> = ({ onSubmit, projectId, projectType,
         {images.length !== 0 && <Typography variant="subtitle2">You have uploaded {images.length} images</Typography>}
       </Stack>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ mt: 6 }} spacing={2}>
+      <Box sx={{ mt: 4, display:'flex', justifyContent:'flex-end' }}>
+        <Button sx={{backgroundColor:'white', border:'1px solid blue', color:'blue'}}
+                        onClick={onClose}
+                        variant="outlined">
+                      Cancel
+        </Button>
         <LoadingButton
+          sx={{align:'right',ml:1}}
           type="submit"
           variant="contained"
-          fullWidth
           disabled={
             images.length === 0 ||
             loading ||
             (projectType === IMAGE_DATA_TYPE.PRE_ANNOTATED_DATA.value && jsonData.length === 0)
           }
           onClick={submitHandler}>
-          Add
+          Confirm
         </LoadingButton>
-      </Stack>
+      </Box>
     </FormProvider>
   );
 };

@@ -257,7 +257,7 @@ export const ProjectDataSetComponent: React.FC<
     option: any = {}
   ) => {
     if (option.title === 'Delete') {
-      //..
+      deleteImagesHandler()
     }
     if (option.title === 'Edit') {
       //..
@@ -335,8 +335,8 @@ export const ProjectDataSetComponent: React.FC<
                 <Iconify icon="simple-line-icons:calender" sx={{ mr:1,  color:'red'}}></Iconify>
                 <Typography sx={{mr:1.5, color:'red'}}>{date}</Typography>  
 
-                <Typography sx={{ bgcolor: 'transparent', color: 'rgba(48,63,191,255)', fontSize:'1.2rem', mr:1,
-                          fontcursor: 'pointer', alignItems:'flex-start' }}>
+                <Typography  onClick={() => setAddImagesModalOpened(true)} sx={{ bgcolor: 'transparent', color: 'rgba(48,63,191,255)', fontSize:'1.2rem', mr:1,
+                          cursor: 'pointer', alignItems:'flex-start' }}>
                   {'+ Add More'}
                 </Typography>
           

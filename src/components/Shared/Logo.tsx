@@ -16,7 +16,7 @@ const Logo = forwardRef<any, Props>(({ disabledLink = false, sx }, ref) => {
 
   const logo = (
     <Box ref={ref} sx={{ width: 30, height: 30, cursor: 'pointer', ...sx }}>
-      <Image src="/images/logo.png" alt="login" />
+      <Image src="/images/logo.png" alt="login" style={{ filter:'brightness(100)'}}/>
     </Box>
   );
 

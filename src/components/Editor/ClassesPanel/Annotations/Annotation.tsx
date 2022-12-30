@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { Checkbox, FormControlLabel, IconButton, ListItem, ListItemText } from '@mui/material';
 import { memo, ChangeEvent } from 'react';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
+import { grey } from '@mui/material/colors';
 
 import { useDispatch } from 'react-redux';
 import styles from './annotations.module.css';
@@ -54,7 +55,15 @@ const Annotation = ({
         <FormControlLabel
           label={`Instance ${annoIndex + 1}`}
           sx={{ paddingLeft: 2, flex: 1 }}
-          control={<Checkbox checked={checked || false} onChange={(e) => toggleOne(e, id)} />}
+          control={<Checkbox 
+            checked={checked || false} 
+            sx={{
+              color: grey[800],
+              '&.Mui-checked': {
+                color: grey[600],
+              },
+            }}
+            onChange={(e) => toggleOne(e, id)} />}
         />
       ) : (
         <ListItemText sx={{ paddingLeft: 5.6 }} primary={`Instance ${annoIndex + 1}`} />

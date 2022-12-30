@@ -42,4 +42,6 @@ export type SettingsContextProps = {
   onChangeDirection: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeColor: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLayout: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  showSetting: boolean;
+  setShowSetting : React.Dispatch<React.SetStateAction<boolean>>;
 };

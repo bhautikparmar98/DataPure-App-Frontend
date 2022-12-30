@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,7 +14,9 @@ import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 import { RootState } from 'src/redux/store';
 import _ from 'lodash';
+//import RequestRedo from './RequestRedo';
 import { addProjectIds, resetEditor } from 'src/redux/slices/editor/editor.slice';
+import RequestRedo from './ClassesPanel/RequestRedo';
 
 const Editor = () => {
   const router = useRouter();
@@ -27,6 +29,7 @@ const Editor = () => {
   const storedImgId = localStorage.getItem(id) || '';
 
   const { limitedImages, removeImage, isAnnotatorRedo, fetchLimitedReviewImages } = useFetchImage(id, storedImgId);
+  const imageName: string = useSelector((state: RootState) => state.classes.imageName);
 
   const limitedImagesMap: { [imgId: string]: [] } = {};
   limitedImages.forEach((img: any) => {
@@ -34,6 +37,8 @@ const Editor = () => {
   });
 
   const [imagesMap, setImagesMap] = useState<{ [imgId: string]: any[] }>(limitedImagesMap);
+
+  console.log(imagesMap)
 
   useEffect(() => {
     setImagesMap(limitedImagesMap);
@@ -112,6 +117,8 @@ const Editor = () => {
 
       if (typeof imgId === 'string' && imgId?.length > 0) {
         const found = Object.entries(imagesMap).find(([id], i) => id === imgId);
+
+        console.log(imagesMap)
 
         console.log({ found });
         if (found) {
@@ -224,6 +231,16 @@ const Editor = () => {
   return (
     <div id="editor">
       <Toolbar isAnnotatorRedo={isAnnotatorRedo} />
+      <Box  style={{ backgroundColor: '#f3f5f9' , display:'flex', justifyContent:'space-between', height:'60px'}}>
+        <Box></Box>
+        <Box sx={{pt:1}}>
+           <Typography sx={{fontWeight:'bold', textAlign:'center'}} >{localStorage.getItem('currentProjectName')}</Typography>
+           <Typography sx={{fontSize:'small', textAlign:'center'}}>{imageName}</Typography>
+        </Box>
+        <Box sx={{alignSelf:'right',mt:2, mr:3}}>
+             <RequestRedo onRequestRedoFinish={requestRedoHandler} />
+        </Box>
+      </Box>
       <div style={{ marginLeft: 70 }}>
         <Workspace
           TOOLBAR_WIDTH={TOOLBAR_WIDTH}

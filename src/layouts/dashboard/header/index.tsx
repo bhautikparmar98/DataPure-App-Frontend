@@ -3,17 +3,17 @@ import { styled } from '@mui/material/styles';
 import { Box, Stack, AppBar, Toolbar } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { alpha } from '@mui/material/styles';;
-import InputBase from '@mui/material/InputBase';
+// import AccountCircle from '@mui/icons-material/AccountCircle';
+// import { alpha } from '@mui/material/styles';
+// import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import MailIcon from '@mui/icons-material/Mail';
+// import MenuItem from '@mui/material/MenuItem';
+// import Menu from '@mui/material/Menu';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import SearchIcon from '@mui/icons-material/Search';
+// import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
+//import MoreIcon from '@mui/icons-material/MoreVert';
 
 // hooks
 import useOffSetTop from 'src/hooks/useOffSetTop';
@@ -29,10 +29,10 @@ import { IconButtonAnimate } from 'src/components/Shared/animate';
 //
 import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
-import LanguagePopover from './LanguagePopover';
-import ContactsPopover from './ContactsPopover';
-import NotificationsPopover from './NotificationsPopover';
-import { useState } from 'react';
+// import LanguagePopover from './LanguagePopover';
+// import ContactsPopover from './ContactsPopover';
+// import NotificationsPopover from './NotificationsPopover';
+// import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -91,6 +91,7 @@ export default function DashboardHeader({
 
   const isDesktop = useResponsive('up', 'lg');
 
+
   return (
     <Box sx={{ flexGrow: 1 }} >
        <AppBar sx={{color:"rgba(48,63,191,255)"}}>
@@ -107,7 +108,7 @@ export default function DashboardHeader({
         {isDesktop && <Typography sx={{color:'white'}}>DATAPURE</Typography> }
         <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <Searchbar />
+            {!window.location.href.includes('review') && <Searchbar />}
             <IconButton
               size="large"
               aria-label="show 1 new notifications"
@@ -118,7 +119,7 @@ export default function DashboardHeader({
               </Badge>
             </IconButton>
           </Box>
-        <AccountPopover />
+          <AccountPopover />  
       </Toolbar>
     </AppBar>
     </Box>
