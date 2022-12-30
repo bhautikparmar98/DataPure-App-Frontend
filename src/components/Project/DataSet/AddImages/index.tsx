@@ -1,7 +1,8 @@
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { useSnackbar } from 'notistack';
 import React from 'react';
+import Iconify from 'src/components/Shared/Iconify';
 import { IImage } from '../types';
 import AddImageForm from './AddImageForm';
 
@@ -38,8 +39,13 @@ const AddImagesDialog: React.FC<AddClassProps> = ({ open, onClose, onFinishAddin
         },
       }}>
       <Box width="100%">
-        <DialogTitle>Add More Images</DialogTitle>
-        <DialogContent>
+        <Box  sx={{display:'flex', width:'inherit', justifyContent:'space-between', backgroundColor:'white'}}>
+          <DialogTitle sx={{color:'blue', p:2}}> Add More Images</DialogTitle>
+          <IconButton onClick={onClose} sx={{pb:0, mr:1}}>
+            <Iconify icon={'ic:twotone-close'} width='2rem' height='2rem' color='error' style={{color: 'red'}} />
+          </IconButton>
+        </Box>
+        <DialogContent sx={{m:1, width:'500px'}}>
           <AddImageForm onSubmit={submitHandler} projectId={projectId} projectType={projectType} onClose={onClose} />
         </DialogContent>
       </Box>

@@ -117,7 +117,7 @@ const FilterActions = ({
           MenuProps={{
             disableScrollLock: true,
           }}
-          sx={{ height: 40 }}
+          sx={{ height: 40 , backgroundColor:'white'}}
           disabled={!Object.values(checks).find((check) => check === true)}
         >
           <MenuItem value={0} sx={{ display: "none" }}>
@@ -159,7 +159,7 @@ const FilterActions = ({
           MenuProps={{
             disableScrollLock: true,
           }}
-          sx={{ height: 40 }}
+          sx={{ height: 40, backgroundColor:'white' }}
         >
           <MenuItem value={0} sx={{ display: "none" }}>
             Sort By

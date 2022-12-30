@@ -42,7 +42,7 @@
   margin: 0;
   text-align: center;
   cursor: pointer;
-  color: white;
+  color: black;
 }
 
 /* switch highlighters wrapper (sliding left / right) 
@@ -61,8 +61,9 @@
 /* switch box highlighter */
 .switch {
   border-radius: 3rem;
-  background: white;
+  background: #303fbf;
   height: 100%;
+  color:black
 }
 
 /* switch box labels
@@ -74,7 +75,7 @@
   text-align: center;
   opacity: 0;
   display: block;
-  color: black;
+  color: white;
   position: absolute;
   top: 0;
   left: 0;

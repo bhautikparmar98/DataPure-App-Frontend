@@ -42,7 +42,14 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
               top: 16,
               left: 16,
               zIndex: 10,
-              backgroundColor: 'background.paper',
+              backgroundColor: 'white',
+              p:0,
+              color:'blue',
+              height:'1.1rem',
+              width:'18px',
+              '&:hover':{
+                backgroundColor: 'white',
+              }
             }}
             checked={isChecked(_id)}
             onClick={() => onSelectCard(_id)}
@@ -69,7 +76,7 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
         <Image alt={fileName} src={src} ratio="1/1" />
       </Box>
 
-      <Stack spacing={2} sx={{ p: 1, px: 2 }}>
+      <Stack spacing={2} sx={{ p: 1, px: 2 , color: '#015dd3'}}>
         <Typography variant="subtitle2" noWrap>
           {fileName}
         </Typography>
@@ -83,7 +90,7 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
             <Typography
               component="span"
               fontSize={12}
-              sx={{ color: 'text.disabled' }}
+              sx={{ color: '#505050' }}
             >
               {fDate(image.createdAt)}
             </Typography>
@@ -93,7 +100,7 @@ export const DataSetCard: React.FC<DataSetCardProps> = ({
             <Typography
               component="span"
               fontSize={12}
-              sx={{ color: 'text.disabled' }}
+              sx={{ color: '#505050' }}
             >
               {index + 1} / {totalLength}
             </Typography>

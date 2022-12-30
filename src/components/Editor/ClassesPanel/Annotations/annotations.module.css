@@ -6,6 +6,7 @@
 
 .classTitle {
   font-size: 14px !important;
+  display:contents
 }
 
 .circle {
@@ -25,4 +26,21 @@
 .eyeIcon {
   color: #757575;
   cursor: pointer;
+}
+
+.list::-webkit-scrollbar-track {
+  border: 1px solid white;
+  padding: 2px 0;
+  background-color: rgba(250, 248, 248, 0.3);;
+}
+
+.list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px grey;
+  background-color: #c2c0c0;
+  border: 1px solid white;
 }

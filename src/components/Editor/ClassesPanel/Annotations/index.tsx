@@ -100,7 +100,7 @@ function Annotations({ classes, updateFiltersChecks ,checks}: Props) {
             onChange={(event,isExpanded)=>panelToggler(isExpanded,`panel_${classItem._id}`)}
             className={selectedClassIndex === index ? styles.activeAccordion : ''}
             key={classItem._id}
-            sx={{ marginBottom: 3 }}
+            sx={{ backgroundColor: 'white', border:'none'}}
             id={classItem._id === highlightedClass?._id ? 'highlightedClass' : ''}>
             <Summary
               index={index}

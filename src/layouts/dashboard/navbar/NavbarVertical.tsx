@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
-import { Box, Drawer, Stack } from '@mui/material';
+import { Box, Drawer, Stack, Typography } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 // hooks
 import useCollapseDrawer from 'src/hooks/useCollapseDrawer';
@@ -74,15 +74,15 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           flexShrink: 0,
           ...(isCollapse && { alignItems: 'center' }),
         }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack direction="row" alignItems="center">
           <Logo />
-
+          <Typography sx={{color:'rgba(48,63,191,255)' ,ml:'20px', fontSize:20, fontWeight:700}}>DATAPURE</Typography>
           {isDesktop && !isCollapse && (
             <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
           )}
         </Stack>
 
-        <NavbarAccount isCollapse={isCollapse} />
+        {/* <NavbarAccount isCollapse={isCollapse} /> */}
       </Stack>
 
       <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />

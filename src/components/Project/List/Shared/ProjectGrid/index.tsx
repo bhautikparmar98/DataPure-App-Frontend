@@ -37,7 +37,7 @@ const ProjectGrid: React.FC<ProjectBodyListProps> = ({
   const { themeStretch } = useSettings();
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} sx={{mt:5}}>
       {projects.map((p) => (
         <Grid item xl={themeStretch ? 3 : 4} lg={4} md={4} sm={6} xs={12} key={p._id}>
           <MinimizedProjectCard

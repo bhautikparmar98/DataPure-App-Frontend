@@ -28,7 +28,10 @@ export function NavItemRoot({
         primary={title}
         isCollapse={isCollapse}
       />
-      {!isCollapse && (
+      <ArrowIcon open={open} />
+      {/* <KeyboardArrowDownIcon width={12} style={{color:"white"}} /> */}
+      
+      {isCollapse && (
         <>
           {info && info}
           {children && <ArrowIcon open={open} />}
@@ -144,7 +147,7 @@ export function ArrowIcon({ open }: ArrowIconProps) {
   return (
     <Iconify
       icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
-      sx={{ width: 16, height: 16, ml: 1 }}
+      sx={{ width: 26, height: 26}}
     />
   );
 }

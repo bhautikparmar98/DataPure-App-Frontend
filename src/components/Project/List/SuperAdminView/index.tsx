@@ -56,6 +56,7 @@ const SuperAdminProjectsComponents = () => {
           <SuperAdminClientProjects
             clientId={selectedClientId}
             admins={admins}
+            setAdmins={setAdmins}
           />
         </Container>
       </Grid>

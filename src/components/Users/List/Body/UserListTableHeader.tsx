@@ -48,6 +48,7 @@ export default function UserListTableHeader({
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
+            sx={{ml:2.5}}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               onSelectAllClick(event.target.checked)
             }

@@ -87,7 +87,7 @@ export default function MegaMenuMobile({ navConfig }: Props) {
 
 function ParentItem({ icon, title, hasSub, ...other }: ParentItemProps) {
   return (
-    <ListItemButton sx={{ textTransform: 'capitalize', height: 44 }} {...other}>
+    <ListItemButton sx={{ textTransform: 'capitalize', height: 44 , backgroundColor:'rgba(97,111,228,255)'}} {...other}>
       <ListItemIcon sx={{ width: 22, height: 22 }}>{icon}</ListItemIcon>
       <ListItemText primaryTypographyProps={{ typography: 'body2' }}>{title}</ListItemText>
       {hasSub && <Box component={Iconify} icon={'eva:arrow-ios-forward-fill'} />}

@@ -65,6 +65,7 @@ const ChooseClass = ({
           fontFamily: 'Proxima Nova',
           fontSize: 16,
           lineHeight: 2.3,
+          color:'rgba(48,63,191,255)'
         }}>
         Choose Class ({classes.length})
       </label>
@@ -78,7 +79,7 @@ const ChooseClass = ({
           disableScrollLock: true,
         }}
         onChange={handleOptionChange}
-        sx={{ height: 40 }}>
+        sx={{ height: 40 , backgroundColor: 'white', border: 'none'}}>
         <MenuItem value="Choose class from the list" sx={{ display: 'none' }}>
           Choose Class
         </MenuItem>

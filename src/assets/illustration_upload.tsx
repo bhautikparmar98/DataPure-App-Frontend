@@ -1,6 +1,7 @@
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Box, BoxProps } from '@mui/material';
+import { Box, BoxProps, Typography } from '@mui/material';
+import Iconify from 'src/components/Shared/Iconify';
 
 // ----------------------------------------------------------------------
 
@@ -11,8 +12,21 @@ export default function UploadIllustration({ ...other }: BoxProps) {
   const PRIMARY_DARKER = theme.palette.primary.darker;
 
   return (
-    <Box {...other}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 360">
+    <Box sx={{display:'flex', justifyContent:'center', wdith:"100%"}} {...other}>
+      <Iconify icon="ic:round-cloud-upload" width="10rem" height="10rem" style={{color: "#616fe4", marginLeft:'55px'}}></Iconify>
+      <Box sx={{ p: 3 }}>
+        <Typography gutterBottom variant="h5">
+          {'Drag and drop to Upload'}
+        </Typography>
+          <Typography
+            variant="body2"
+            component="span"
+            sx={{ color: 'primary.main', textDecoration: 'underline' }}
+          >
+            or browse
+          </Typography>
+      </Box>
+      {/* <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 360">
         <defs>
           <linearGradient id="BG" x1="19.496%" x2="77.479%" y1="71.822%" y2="16.69%">
             <stop offset="0%" stopColor={PRIMARY_MAIN} />
@@ -530,7 +544,7 @@ export default function UploadIllustration({ ...other }: BoxProps) {
             d="M200.058 225.406l-.699-.681a.721.721 0 010-1.065l6.127-5.984a.753.753 0 01.546-.231c.206 0 .404.083.545.231l6.127 5.978a.733.733 0 010 1.065l-.699.682a.768.768 0 01-1.091 0l-3.622-3.727v8.843a.725.725 0 01-.219.523.76.76 0 01-.534.217h-1.009a.75.75 0 01-.759-.74v-8.832l-3.622 3.726a.768.768 0 01-1.091-.005z"
           />
         </g>
-      </svg>
+      </svg> */}
     </Box>
   );
 }

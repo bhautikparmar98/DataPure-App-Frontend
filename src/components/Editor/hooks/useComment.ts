@@ -46,27 +46,86 @@ const useComment = (
   const createStyledTextarea = (x: number, y: number, value = '') => {
     document.querySelector('.editor-comment-popup')?.remove();
 
+    const div = document.createElement('div')
+    div.style.position = 'fixed'
+    div.style.top = `${y + 6}px`
+    div.style.left = `${x-53}px`;
+    div.style.backgroundColor = 'white'
+    div.style.borderRadius = '50px 50px 0px 50px'
+    div.style.width = '47px'
+    div.style.height = '47px'
+    
+    const circle = document.createElement('span')
+    circle.style.position = 'fixed'
+    circle.style.top = `${y + 13}px`
+    circle.style.left = `${x-47}px`;
+    circle.style.backgroundColor = '#ff3030'
+    circle.style.borderRadius = '100%'
+    circle.style.color = "white"
+    circle.style.width = '35px'
+    circle.style.height = '35px'
+    circle.style.textAlign = 'center'
+    circle.style.paddingTop = '5px'
+    circle.innerHTML = "#1"
+
+
+    div.appendChild(circle)
+
+    const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const iconPath = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'path'
+    );
+    iconSvg.setAttribute('width','1.5em' );
+    iconSvg.setAttribute('height','1.5em' );
+    iconSvg.setAttribute('preserveAspectRatio','xMidYMid meet' );
+    iconSvg.setAttribute('viewBox', '0 0 16 16');
+    iconPath.setAttribute('fill', 'none');
+    iconPath.setAttribute('stroke', 'white');
+    iconPath.setAttribute(
+      'd',
+      'm1.75 9.75l2.5 2.5m3.5-4l2.5-2.5m-4.5 4l2.5 2.5l6-6.5'
+    );
+    iconPath.setAttribute('stroke-linecap', 'round');
+    iconPath.setAttribute('stroke-linejoin', 'round');
+    iconPath.setAttribute('stroke-width', '1.5');
+    iconSvg.appendChild(iconPath);
+    iconSvg.style.position = 'fixed'
+    iconSvg.style.top = `${y + 17}px`
+    iconSvg.style.left = `${x+210}px`;
+    iconSvg.style.backgroundColor = '#ff3030'
+    iconSvg.style.borderRadius = '100%'
+
     const textarea = document.createElement('textarea');
-    document.body!.appendChild(textarea);
+   
     textarea.style.position = 'fixed';
     textarea.style.top = `${y + 10}px`;
     textarea.style.left = `${x}px`;
     textarea.style.width = '250px';
-    textarea.style.minHeight = '72px';
+    textarea.style.minHeight = '32px';
     textarea.style.resize = 'none';
     textarea.style.borderRadius = '8px';
     textarea.style.outline = 'none';
     textarea.style.padding = '8px 0 0 10px';
     textarea.placeholder = 'Add a comment';
     textarea.value = value;
-    textarea.classList.add('editor-comment-popup');
+    //textarea.classList.add('editor-comment-popup');
+    //textarea.appendChild(iconSvg)
     if (role === ROLES.ANNOTATOR.value) {
       textarea.disabled = true;
       textarea.style.backgroundColor = '#fff';
     }
     textarea.tabIndex = 2;
     textarea.focus();
-    return textarea;
+    const customTextBox = document.createElement('div')
+    customTextBox.appendChild(textarea)
+    customTextBox.appendChild(iconSvg)
+    customTextBox.appendChild(div)
+    console.log(customTextBox)
+    document.body!.appendChild(customTextBox);
+    customTextBox.classList.add('editor-comment-popup')
+    // console.log(customTextBox.childNodes[0], textarea)
+    return customTextBox.childNodes[0]
   };
 
   const canAddComments = () => {
@@ -78,7 +137,7 @@ const useComment = (
     e.cancelBubble = true;
     const { x = 0, y = 0 } = e.target.getStage()!.getPointerPosition()!;
 
-    const textarea = createStyledTextarea(x, y, text);
+    const textarea = createStyledTextarea(x, y, text) as HTMLTextAreaElement;
     textarea.addEventListener('keydown', function (e) {
       if (e.code === 'Enter' && textarea.value.length > 0) {
         const currentComments = _.cloneDeep(comments);
@@ -118,7 +177,7 @@ const useComment = (
 
       // create textarea and style it
       if (canAddComments()) {
-        const textarea = createStyledTextarea(stageX, stageY);
+        const textarea = createStyledTextarea(stageX, stageY) as HTMLTextAreaElement;
 
         textarea.addEventListener('keydown', function (e) {
           if (e.code === 'Enter' && textarea.value.length > 0) {

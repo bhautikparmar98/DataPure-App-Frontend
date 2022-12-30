@@ -28,22 +28,29 @@ export const ListItemStyle = styled(ListItemButton, {
   ...theme.typography.body2,
   position: 'relative',
   height: NAVBAR.DASHBOARD_ITEM_ROOT_HEIGHT,
+  width: NAVBAR.DASHBOARD_ITEM_ROOT_WIDTH,
   textTransform: 'capitalize',
-  paddingLeft: theme.spacing(2),
+  paddingLeft: theme.spacing(3),
+  marginLeft: theme.spacing(2.5),
   paddingRight: theme.spacing(1.5),
   marginBottom: theme.spacing(0.5),
-  color: theme.palette.text.secondary,
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: 30,
+  backgroundColor: "rgba(97,111,228,255)",
+  color:'white',
+  '&:hover': {
+    backgroundColor: 'rgba(97,111,228,255)',
+  },
   // activeRoot
   ...(activeRoot && {
     ...theme.typography.subtitle2,
-    color: theme.palette.primary.main,
-    backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+    backgroundColor: "rgba(97,111,228,255)",
+    color:'white'
   }),
   // activeSub
   ...(activeSub && {
     ...theme.typography.subtitle2,
-    color: theme.palette.text.primary,
+    backgroundColor: "rgba(97,111,228,255)",
+    color:'white'
   }),
   // subItem
   ...(subItem && {

@@ -54,7 +54,7 @@ const AdminProjectsComponents = () => {
               label: '',
               action: (project: IProject) => downloadOutputHandler(project),
               variant: 'icon',
-              icon: 'ant-design:download-outlined',
+              icon: 'material-symbols:download-for-offline-outline-rounded',
               disabled: downloadLoading,
             },
             {

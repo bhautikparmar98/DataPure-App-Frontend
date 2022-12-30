@@ -37,6 +37,8 @@ const initialState: SettingsContextProps = {
   onResetSetting: () => {},
   setColor: defaultPreset,
   colorOption: [],
+  showSetting: false,
+  setShowSetting : () => {}
 };
 
 const SettingsContext = createContext(initialState);
@@ -51,6 +53,8 @@ function SettingsProvider({
   defaultSettings = {} as SettingsValueProps,
 }: SettingsProviderProps) {
   const [settings, setSettings] = useSettingCookies(defaultSettings);
+
+  const [showSetting, setShowSetting] = useState(false)
 
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSettings({
@@ -128,6 +132,8 @@ function SettingsProvider({
         onChangeLayout,
         // Reset Setting
         onResetSetting,
+        showSetting,
+        setShowSetting
       }}
     >
       {children}

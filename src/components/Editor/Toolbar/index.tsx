@@ -23,7 +23,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing(0, 1),
-  marginBottom: theme.spacing(4),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
@@ -35,12 +34,15 @@ const Drawer = styled(MuiDrawer, {
   flexShrink: 0,
   whiteSpace: 'nowrap',
   boxSizing: 'border-box',
+  '& .MuiDrawer-paper': {
+    backgroundColor: 'rgba(48,63,191,255)'
+  }
 }));
 
 const ICONS = {
   [TOOLS.LINE]: 'ci:line-xl',
   [TOOLS.RECTANGLE]: 'bx:rectangle',
-  [TOOLS.SELECT]: 'la:mouse-pointer',
+  [TOOLS.SELECT]: 'material-symbols:arrow-selector-tool',
   [TOOLS.COMMENT]: 'cil:comment-bubble',
   [TOOLS.MULTIPLESELECT]: 'cil-object-group',
   [TOOLS.PAN]: '',
@@ -73,21 +75,23 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
     [currentTool]
   );
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
 
-      <Drawer variant="permanent" open={open}>
+  return (
+    <Box sx={{ display: 'flex', backgroundColor: 'rgba(48,63,191,255)' }}>
+      <CssBaseline />
+      <Drawer variant="permanent" open={open} >
         <DrawerHeader>
-          <Image src="/images/logo.png" alt="DataPure" sx={{ width: 40 }} />
+          <Image src="/images/logo.png" alt="DataPure" style={{ filter:'brightness(100)'}} sx={{
+            width: 40
+          }}
+           />
         </DrawerHeader>
         <List
           sx={{
             display: 'inline-flex',
             flexDirection: 'column',
             margin: 'auto',
-            position: 'relative',
-            top: 8,
+            position: 'relative'
           }}>
           {Object.values(TOOLS)
             .slice(0, 5)
@@ -102,6 +106,10 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
+                    backgroundColor: text === currentTool ? '#f7f7f7' : 'inherit',
+                    '&:hover': {
+                      backgroundColor: text === currentTool ? '#f7f7f7' : 'inherit'
+                    }
                   }}
                   onClick={(e) => handleToolClick(text)}>
                   <ListItemIcon
@@ -109,13 +117,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                       minWidth: 0,
                       mr: open ? 3 : 'auto',
                       justifyContent: 'center',
-                      color: text === currentTool ? 'royalblue' : 'inherit',
                     }}>
                     <Icon
                       icon={ICONS[text]}
                       width="30"
+                      color={text === currentTool ? 'rgba(48,63,191,255)' : '#f7f7f7'}
                       style={{
-                        transform: text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)',
+                        transform: text === TOOLS.LINE ? 'rotate(45deg)' : 'rotate(0deg)'
                       }}
                     />
                   </ListItemIcon>
@@ -123,7 +131,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               </ListItem>
             ))}
           {/* Undo & Redo icons */}
-          <ListItem disablePadding style={{marginTop:'240%'}}>
+          <ListItem disablePadding >
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -132,7 +140,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
               }}
               disabled={!undoEnabled}
               onClick={() => dispatch(undoHistory())}>
-              <Icon icon={'ant-design:undo-outlined'} width="30" />
+              <Icon icon={'ant-design:undo-outlined'} color='#f7f7f7' width="30" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -144,7 +152,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ isAnnotatorRedo }) => {
                 px: 2.5,
               }}
               onClick={() => dispatch(redoHistory())}>
-              <Icon icon={'ant-design:redo-outlined'} width="30" />
+              <Icon icon={'ant-design:redo-outlined'} color='#f7f7f7' width="30" />
             </ListItemButton>
           </ListItem>
         </List>

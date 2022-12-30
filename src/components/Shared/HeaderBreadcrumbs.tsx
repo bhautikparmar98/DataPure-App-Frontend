@@ -1,9 +1,11 @@
 import isString from 'lodash/isString';
 import { ReactNode } from 'react';
 // @mui
-import { Box, Typography, Link } from '@mui/material';
+import { Box, Typography, Link, IconButton } from '@mui/material';
 //
 import Breadcrumbs, { Props as BreadcrumbsProps } from './Breadcrumbs';
+import Iconify from './Iconify';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -21,13 +23,20 @@ export default function HeaderBreadcrumbs({
   sx,
   ...other
 }: Props) {
+  const router = useRouter()
   return (
     <Box sx={{ mb: 5, ...sx }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h4" gutterBottom>
-            {heading}
-          </Typography>
+          <Box sx={{display:'flex'}}>
+            <IconButton sx={{pb:0}} onClick={()=>{router.push('/project')}}>
+              <Iconify icon="material-symbols:arrow-back-ios-new-rounded">
+              </Iconify>
+            </IconButton>
+            <Typography sx={{mt:2}} variant="h4" gutterBottom>
+              {heading}
+            </Typography>
+          </Box>
           <Breadcrumbs links={links} {...other} />
         </Box>
 

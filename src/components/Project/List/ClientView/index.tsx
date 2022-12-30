@@ -113,11 +113,11 @@ const ClientProjectsComponent = () => {
               label: '',
               action: (project: IProject) => downloadOutputHandler(project),
               variant: 'icon',
-              icon: 'ant-design:download-outlined',
+              icon: 'material-symbols:download-for-offline-outline-rounded',
               disabled: downloadLoading,
             },
             {
-              label: '',
+              label: 'Delete',
               action: (project: IProject) => deleteProject(project),
               variant: 'icon',
               icon: 'ant-design:delete-outlined',

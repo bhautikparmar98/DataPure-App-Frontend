@@ -14,11 +14,13 @@ const useAnnotatorLogic = () => {
 
   const startHandler = (project: IProject) => {
     localStorage.removeItem('redo');
+    localStorage.setItem('currentProjectName',project.name)
     router.push(`/editor/${project._id}`);
   };
 
   const redoHandler = (project: IProject) => {
     localStorage.setItem('redo', 'true');
+    localStorage.setItem('currentProjectName',project.name)
     router.push(`/editor/${project._id}`);
   };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // @mui
-import { Box, Button, Container, Menu, MenuItem, Stack } from '@mui/material';
+import { Box, Button, Container, Menu, MenuItem, Stack, Tooltip, Typography } from '@mui/material';
 // components
 import { SkeletonProductItem } from 'src/components/Shared/skeleton';
 //
@@ -26,6 +26,7 @@ import ClassesAccordion from './ClassesAccordion';
 import DataSetCard from './DataSetCard';
 import { IImage } from './types';
 import ShowUserlistDialog from './showList/showUserlistDialog';
+import { f1Date } from 'src/utils/formatTime';
 
 // ----------------------------------------------------------------------
 
@@ -94,13 +95,6 @@ export const ProjectDataSetComponent: React.FC<
     setImagesList((prev) => [...data, ...prev]);
     setFilteredImageList((prev) => [...data, ...prev]);
     setNumberOfLoaded((prev) => prev + data.length);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const getProject = async () => {
@@ -238,6 +232,57 @@ export const ProjectDataSetComponent: React.FC<
   useEffect(() => {
     if (rerenderProject) getProject();
   }, [rerenderProject]);
+  
+  const options = [
+    { title: 'Archive', icon: "bxs:file-archive" },
+    { title: 'Edit Name', icon: "mdi:pencil" },
+    { title: 'Delete', icon: "mdi:delete" }
+  ];
+
+  const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false)
+
+  const handleMenuClicked = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setShowFilterMenu(false)
+  };
+
+  const handleFilterMenuClicked = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setShowFilterMenu(true)
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLElement>,
+    index: number,
+    option: any = {}
+  ) => {
+    if (option.title === 'Delete') {
+      deleteImagesHandler()
+    }
+    if (option.title === 'Edit') {
+      //..
+    }
+    if (option.title === 'Archive') {
+      //...
+    }
+    //onClick={() => a.action(project)
+    setAnchorEl(null);
+  };
+  const handleClose = (e: any) => {
+    setAnchorEl(null);
+  };
+
+
+  const handleMouseOver = (e: any, index: number) => {
+    if (index !== 2) e.target.style.color = 'rgba(48,63,191,255)'
+  }
+  const handleMouseOut = (e: any, index: number) => {
+    if (index !== 2) e.target.style.color = 'black'
+  }
+
+  const date : string = f1Date(new Date())
+
+  const filterArray = ['Uploaded Succesfully', 'Ready for Review', 'Under Review', 'Completed' ]
 
   return (
     <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -250,7 +295,7 @@ export const ProjectDataSetComponent: React.FC<
         ]}
         action={
           <>
-            {canDelete() && (
+            {/* {canDelete() && (
               <Button
                 variant="outlined"
                 startIcon={<Iconify icon="akar-icons:trash-can" />}
@@ -285,16 +330,88 @@ export const ProjectDataSetComponent: React.FC<
               sx={{ mx: 1 }}
             >
               Add Images
-            </Button>
-            <IconButton
-              id="long-button"
-              aria-controls={open ? 'long-menu' : undefined}
-              aria-expanded={open ? 'true' : undefined}
-              aria-haspopup="true"
-              onClick={handleClick}
-            >
-              <MoreVertIcon />
-            </IconButton>
+            </Button> */}
+            <Box sx={{display:'flex',mt:5, justifyContent:'space-around',alignItems:'center'}}>
+                <Iconify icon="simple-line-icons:calender" sx={{ mr:1,  color:'red'}}></Iconify>
+                <Typography sx={{mr:1.5, color:'red'}}>{date}</Typography>  
+
+                <Typography  onClick={() => setAddImagesModalOpened(true)} sx={{ bgcolor: 'transparent', color: 'rgba(48,63,191,255)', fontSize:'1.2rem', mr:1,
+                          cursor: 'pointer', alignItems:'flex-start' }}>
+                  {'+ Add More'}
+                </Typography>
+          
+                <Tooltip title="Filter list">
+                  <IconButton sx={{p:0}}>
+                    <Iconify icon={'material-symbols:filter-alt'} 
+                      aria-label="more"
+                      id="long-filter"
+                      aria-controls={open ? 'long-menu-filter' : undefined}
+                      aria-expanded={open ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleFilterMenuClicked}
+                    width='2rem' height='2rem' style={{ color: 'rgba(48,63,191,255)' }} />
+                  </IconButton>
+                </Tooltip>    
+                <IconButton>
+                  <Iconify icon="carbon:overflow-menu-vertical"
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={open ? 'long-menu' : undefined}
+                    aria-expanded={open ? 'true' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleMenuClicked}
+                    width="1.5em" height="1.5em" color="#303fbf">
+                  </Iconify>
+                </IconButton>
+            </Box>
+          {!showFilterMenu && <Menu
+            id="long-menu"
+            MenuListProps={{
+              'aria-labelledby': 'long-button',
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: 48 * 4.5,
+                width: '20ch',
+              },
+            }}
+          >
+            {options.map((option, index: number) => (
+              <MenuItem key={option.title}
+                onMouseEnter={(e) => handleMouseOver(e, index)} onMouseOut={(e) => handleMouseOut(e, index)}
+                style={{ color: option.title === 'Delete' ? 'red' : 'black', backgroundColor: 'transparent' }}
+                onClick={(e) => { handleMenuItemClick(e, index, option) }}>
+                <Iconify icon={option.icon} style={{ marginRight: "7px" }} width="1em" height="1em"></Iconify> {option.title}
+              </MenuItem>
+            ))}
+          </Menu>}
+          {showFilterMenu && <Menu
+            id="long-menu"
+            MenuListProps={{
+              'aria-labelledby': 'long-filter',
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: 48 * 4.5,
+                width: '20ch',
+              },
+            }}
+          >
+            {filterArray.map((option, index: number) => (
+              <MenuItem key={option}
+                onMouseEnter={(e) => handleMouseOver(e, index)} onMouseOut={(e) => handleMouseOut(e, index)}
+                style={{ color:'black', backgroundColor: 'transparent' }}
+                onClick={(e) => { handleMenuItemClick(e, index, option) }}>
+                {option}
+              </MenuItem>
+            ))}
+          </Menu>}
           </>
         }
       />
@@ -306,18 +423,6 @@ export const ProjectDataSetComponent: React.FC<
           onFinishAddingClass={addClassHandler}
         />
       </FormProvider>
-
-      <Menu
-        id="long-menu"
-        MenuListProps={{
-          'aria-labelledby': 'long-button',
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={() => setClassAddOpen(true)}>Add Class</MenuItem>
-      </Menu>
 
       <AddImagesDialog
         open={addImagesModalOpened}
@@ -343,7 +448,7 @@ export const ProjectDataSetComponent: React.FC<
         typeofUser="Annotators"
       />
 
-      <ClassesAccordion project={project} loading={getProjectLoading} />
+      <ClassesAccordion project={project} loading={getProjectLoading} setClassAddOpen={setClassAddOpen} />
 
       <Box
         sx={{

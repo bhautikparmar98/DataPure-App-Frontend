@@ -1,5 +1,5 @@
 import { AnimatePresence, m } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import {
@@ -28,6 +28,7 @@ import SettingStretch from './SettingStretch';
 import SettingDirection from './SettingDirection';
 import SettingFullscreen from './SettingFullscreen';
 import SettingColorPresets from './SettingColorPresets';
+import { SettingsContext } from 'src/contexts/SettingsContext';
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +70,8 @@ export default function Settings() {
   } = useSettings();
   const [open, setOpen] = useState(false);
 
+  const ctx = useContext(SettingsContext)
+
   const notDefault =
     themeMode !== defaultSettings.themeMode ||
     themeDirection !== defaultSettings.themeDirection ||
@@ -90,25 +93,27 @@ export default function Settings() {
         }).inLeft;
 
   useEffect(() => {
-    if (open) {
+    if (ctx.showSetting) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-  }, [open]);
+  }, [ctx.showSetting]);
 
   const handleToggle = () => {
-    setOpen((prev) => !prev);
+    //setOpen((prev) => !prev);
+    ctx.setShowSetting((prev => !prev))
   };
 
   const handleClose = () => {
-    setOpen(false);
+    //setOpen(false);
+    ctx.setShowSetting(false)
   };
 
   return (
     <>
       <Backdrop
-        open={open}
+        open={ctx.showSetting}
         onClick={handleClose}
         sx={{
           background: 'transparent',
@@ -116,16 +121,16 @@ export default function Settings() {
         }}
       />
 
-      {!open && (
+      {/* {!ctx.showSetting && (
         <ToggleButton
-          open={open}
+          open={ctx.showSetting}
           notDefault={notDefault}
           onToggle={handleToggle}
         />
-      )}
+      )} */}
 
       <AnimatePresence>
-        {open && (
+        {ctx.showSetting && (
           <>
             <RootStyle {...varSidebar}>
               <Stack

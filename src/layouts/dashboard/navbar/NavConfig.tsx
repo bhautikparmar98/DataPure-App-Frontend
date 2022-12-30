@@ -11,7 +11,7 @@ const getIcon = (name: string) => (
 );
 
 const getIconifyIcon = (name: string) => (
-  <Iconify icon={name} width={15} height={15} sx={{ width: 1, height: 1 }} />
+  <Iconify icon={name} width={15} height={15}  sx={{ width: 1, height: 1 , color:'white'}} />
 );
 
 const ICONS = {

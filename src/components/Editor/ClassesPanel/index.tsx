@@ -6,7 +6,6 @@ import Iconify from 'src/components/Shared/Iconify';
 import { updateAnnotation } from 'src/redux/slices/classes/classes.slice';
 import Filters from './Filters';
 import Preview from './Preview';
-import RequestRedo from './RequestRedo';
 import SubmitAnnotations from './SubmitAnnotations';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -128,15 +127,19 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
     annotationId?.length && getAnnotationMetaData(annotationId);
   }, [annotationId]);
 
+  const totalAnnotations: number = sortedClasses.reduce((initOrReturn, current)=> initOrReturn + current.annotations.length, 0)
+
   return (
-    <div style={{ cursor: 'default' }}>
+    <div style={{ cursor: 'default', border:'none' }}>
       <Drawer
         variant="permanent"
         anchor={'right'}
         open={true}
         PaperProps={{
           sx: {
-            backgroundColor: '#F6F6F6',
+            backgroundColor: '#f3f5f9',
+            marginTop:'61px',
+            position:'absolute'
           },
         }}>
         <Container
@@ -150,14 +153,13 @@ const ClassPanel: FC<ClassPanelProps> = ({ onRequestRedoFinish, annotationId }) 
             overflowY: 'auto',
             overflowX: 'hidden',
           }}>
-          <RequestRedo onRequestRedoFinish={onRequestRedoFinish} />
-          <Box component="div" sx={{ ml:11, mt:-3, mb:2 }}>{imageName}</Box>
           <ToggleSwitch onChangeHandler={handleChange} value={Switchs} />
 
           {Switchs === 'Annotation' ? (
             <>
               <Preview />
               <Filters checks={checks} sortBy={sortBy} />
+              <div style={{color:'#303fbf'}}>Annotations ({totalAnnotations})</div>
               <Annotations checks={checks}  classes={sortedClasses} updateFiltersChecks={updateFiltersChecks} />
             </>
           ) : selectedAnnotationData?.attributes && Object.keys(selectedAnnotationData.attributes).length ? (
