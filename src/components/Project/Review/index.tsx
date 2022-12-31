@@ -34,6 +34,7 @@ import ReviewHeaderToolBar from './ReviewHeaderToolBar';
 import ReviewListHead from './ReviewListHead';
 import { IProject } from '../List/types/project';
 import _ from 'lodash';
+import { current } from '@reduxjs/toolkit';
 
 
 interface ProjectDataSetReviewProps {
@@ -73,6 +74,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
 
   const [projects, setProjects] = useState<IProject[]>([]);
 
+
   const getProjects = async () => {
     if (user === null) throw new Error('Client can not be null');
     try {
@@ -83,12 +85,11 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
       console.log('error', error)
     }
   };
+  const currentProject = projects.find((p:IProject)=> p._id === projectId)
 
   useEffect(() => {
     getProjects();
   }, []);
-
-  const currentproject = projects.find(p=> p._id === projectId)
 
   const reviewHandler = (imageId: string | undefined) => {
     if (typeof imageId === 'string') {
@@ -105,7 +106,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
     <Container maxWidth={themeStretch ? false : 'lg'}>
     
       <HeaderBreadcrumbs
-        heading={currentproject?.name !== undefined ? currentproject?.name : '' }
+        heading={currentProject?.name !== undefined ? currentProject?.name : '' }
         links={[
           { name: 'Projects', href: PATH_DASHBOARD.project.list },
           {
@@ -132,6 +133,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
           onDeleteProducts={() => handleDeleteImages(selected)}
           dense={isDense}
           toggleDense={denseToggleHandler}
+          project={currentProject}
         />
 
         <Scrollbar>
@@ -161,7 +163,7 @@ const ProjectDataSetReview: React.FC<ProjectDataSetReviewProps> = ({ projectId }
                       selected={isItemSelected}
                       aria-checked={isItemSelected}>
                       <TableCell padding="checkbox">
-                        <Checkbox checked={isItemSelected} onClick={() => handleClick(fileName)} />
+                        <Checkbox checked={isItemSelected} onClick={() => handleClick(_id!)} />
                       </TableCell>
                       <TableCell align='center'>{page * rowsPerPage + index + 1}</TableCell>
                       <TableCell align="center">

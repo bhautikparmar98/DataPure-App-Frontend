@@ -269,6 +269,7 @@ const Editor = () => {
               marginLeft: 5,
               cursor: fetchingNewImages ? 'progress' : 'pointer',
               opacity: imgIndex <= 0 ? 0.2 : 1,
+              color: 'rgba(48,63,191,255)'
             }}
             onClick={(e) => getPrevImg()}
           />
@@ -281,6 +282,7 @@ const Editor = () => {
               marginRight: 5,
               cursor: fetchingNewImages ? 'progress' : 'pointer',
               opacity: imgIndex + 1 < imagesCount ? 1 : 0.2,
+              color:'rgba(48,63,191,255)'
             }}
             onClick={(e) => getNextImg()}
           />

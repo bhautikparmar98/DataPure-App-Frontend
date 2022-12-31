@@ -279,9 +279,10 @@ export const ProjectDataSetComponent: React.FC<
   const handleMouseOut = (e: any, index: number) => {
     if (index !== 2) e.target.style.color = 'black'
   }
-
-  const date : string = f1Date(new Date())
-
+  let date : string = ''
+  if(project){
+    date = f1Date(project.dueAt)
+  }
   const filterArray = ['Uploaded Succesfully', 'Ready for Review', 'Under Review', 'Completed' ]
 
   return (
@@ -380,7 +381,7 @@ export const ProjectDataSetComponent: React.FC<
             }}
           >
             {options.map((option, index: number) => (
-              <MenuItem key={option.title}
+              <MenuItem key={option.title} disabled={selectedImages.length === 0}
                 onMouseEnter={(e) => handleMouseOver(e, index)} onMouseOut={(e) => handleMouseOut(e, index)}
                 style={{ color: option.title === 'Delete' ? 'red' : 'black', backgroundColor: 'transparent' }}
                 onClick={(e) => { handleMenuItemClick(e, index, option) }}>

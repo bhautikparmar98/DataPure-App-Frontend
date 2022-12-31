@@ -35,12 +35,14 @@ export default function BlockContent({
             >
               or browse
             </Typography>
-            {label?.includes('Image') && <Typography
+            {label?.includes('Image') ? <Typography
               component="div"
               sx={{fontSize:'small',  textAlign:'center'}}
             >
               jpeg, png, svg, tiff or raw
-            </Typography>}
+            </Typography>:
+            <Typography  sx={{fontSize:'small'}}>&nbsp;</Typography>
+            }
         </Box>
       </Box>
 

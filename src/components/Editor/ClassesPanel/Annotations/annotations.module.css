@@ -1,6 +1,6 @@
 .list {
   /* min-height: min(500px, 60vh) !important; */
-  height: clamp(20vh, 500px, 60vh);
+  height: clamp(10vh, 500px, 30vh);
   overflow-y: auto;
 }
 
@@ -18,9 +18,6 @@
   bottom: -4px;
   margin-right: 5px;
   /* margin-left: 40px; */
-}
-.activeAccordion .circle {
-  /* margin-left: 0; */
 }
 
 .eyeIcon {

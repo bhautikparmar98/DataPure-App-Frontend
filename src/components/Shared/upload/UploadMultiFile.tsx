@@ -43,7 +43,6 @@ export default function UploadMultiFile({
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     ...other,
   });
-
   return (
     <Box sx={{ width: '100%', height: '100%', ...sx }}>
       <DropZoneStyle
@@ -67,12 +66,12 @@ export default function UploadMultiFile({
 
       {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
 
-      {/* <MultiFilePreview
+      {Array.isArray(files) &&  <MultiFilePreview
         files={files}
         showPreview={showPreview}
         onRemove={onRemove}
         onRemoveAll={onRemoveAll}
-      /> */}
+      />}
 
       {helperText && helperText}
     </Box>

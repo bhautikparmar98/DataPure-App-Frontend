@@ -100,7 +100,7 @@ export default function MyApp(props: MyAppProps) {
                         <RtlLayout>
                           <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <ChartStyle />
-                            {/* <Settings /> */}
+                            <Settings />
                             <ProgressBar />
                             {getLayout(<Component {...pageProps} />)}
                           </LocalizationProvider>

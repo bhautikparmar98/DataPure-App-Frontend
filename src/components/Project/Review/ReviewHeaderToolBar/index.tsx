@@ -16,6 +16,8 @@ import Iconify from 'src/components/Shared/Iconify';
 import InputStyle from 'src/components/Shared/InputStyle';
 import React, { useEffect, useState } from 'react';
 import { f1Date } from 'src/utils/formatTime';
+import { IProject } from '../../List/types/project';
+import { leastIndex } from 'd3-array';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +37,7 @@ type Props = {
   onDeleteProducts: VoidFunction;
   dense: boolean;
   toggleDense: () => void;
+  project: IProject | undefined
 };
 
 export default function ReviewHeaderToolBar({
@@ -44,6 +47,7 @@ export default function ReviewHeaderToolBar({
   onDeleteProducts,
   dense,
   toggleDense,
+  project
 }: Props) {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
@@ -89,8 +93,10 @@ export default function ReviewHeaderToolBar({
   const handleMouseOut = (e: any, index: number) => {
     if (index !== 2) e.target.style.color = 'black'
   }
-
-  const date : string = f1Date(new Date())
+  let date :string = ''
+  if(project){
+    date = f1Date(project.dueAt)
+  }
 
   return (
     <RootStyle

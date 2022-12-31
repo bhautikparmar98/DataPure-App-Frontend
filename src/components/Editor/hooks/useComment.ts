@@ -121,7 +121,6 @@ const useComment = (
     customTextBox.appendChild(textarea)
     customTextBox.appendChild(iconSvg)
     customTextBox.appendChild(div)
-    console.log(customTextBox)
     document.body!.appendChild(customTextBox);
     customTextBox.classList.add('editor-comment-popup')
     // console.log(customTextBox.childNodes[0], textarea)

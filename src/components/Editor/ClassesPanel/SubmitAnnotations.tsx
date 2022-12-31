@@ -13,7 +13,7 @@ function SubmitAnnotations({
   const { role } = useAuth();
 
   return (
-    <Box alignSelf="flex-end" mt="auto" sx={{ width: '100%' }}>
+    <Box alignSelf="flex-end" sx={{ width: '100%' }}>
       <Grid
         container
         justifyContent="space-around"
